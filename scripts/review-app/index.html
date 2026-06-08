@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HistoryDex — Image Review</title>
+    <!-- Leaflet (carte du panneau Géo). CDN unpkg, pas de clé requise. -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <span class="logo">HD</span>
+        <span class="title">Image Review</span>
+      </div>
+      <div class="progress">
+        <span id="progress-count">— / —</span> reviewées
+      </div>
+      <div class="actions">
+        <button id="btn-push-db" class="btn-secondary" title="Push to DB (modal dry-run + confirmation)">
+          ⤴ Push to DB
+        </button>
+        <button id="btn-prev" title="Précédent (← / ↑ / k)">←</button>
+        <button id="btn-next" title="Suivant (→ / ↓ / j)">→</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Colonne 1 : sidebar liste cartes -->
+      <aside id="sidebar">
+        <div class="filters">
+          <label
+            ><input type="checkbox" id="filter-pending" checked /> Image non
+            cropée</label
+          >
+          <label
+            ><input type="checkbox" id="filter-reviewed" checked /> Image cropée</label
+          >
+        </div>
+        <div class="filters">
+          <span class="hint">Statut éditorial :</span>
+          <select id="filter-status">
+            <option value="all">Tous</option>
+            <option value="reviewed">À reviewer (status=reviewed)</option>
+            <option value="approved">Approuvées (status=approved)</option>
+          </select>
+        </div>
+        <ul id="card-list"></ul>
+      </aside>
+
+      <!-- Colonne 2 : éditeur image (source + crop + aperçus + toolbar) -->
+      <section id="workspace">
+        <div id="card-header">
+          <h2 id="card-title">Sélectionne une carte</h2>
+          <div id="card-meta"></div>
+          <button id="btn-open-upload" class="btn-secondary" title="Remplacer l'image source">
+            ⤴ Remplacer image
+          </button>
+        </div>
+
+        <div id="editor">
+          <div id="source-pane">
+            <div class="pane-label">Source</div>
+            <div id="source-wrap">
+              <canvas id="source-canvas"></canvas>
+              <div id="crop-rect">
+                <div class="crop-grid"></div>
+                <div class="handle h-nw" data-h="nw"></div>
+                <div class="handle h-n" data-h="n"></div>
+                <div class="handle h-ne" data-h="ne"></div>
+                <div class="handle h-e" data-h="e"></div>
+                <div class="handle h-se" data-h="se"></div>
+                <div class="handle h-s" data-h="s"></div>
+                <div class="handle h-sw" data-h="sw"></div>
+                <div class="handle h-w" data-h="w"></div>
+              </div>
+              <div id="crop-dims"></div>
+            </div>
+            <div class="pane-hint">
+              Glisse le rectangle pour le déplacer · poignées pour redimensionner ·
+              <strong>Alt+flèches</strong> pour ajuster au pixel · ratio verrouillé 1.37 (paysage 800×584)
+            </div>
+          </div>
+
+          <div id="previews-pane">
+            <div class="preview-block">
+              <div class="pane-label">Zoom HDCard <span class="sub">contain · 1.37</span></div>
+              <div class="preview-wrap zoom">
+                <canvas id="preview-zoom"></canvas>
+              </div>
+            </div>
+            <div class="preview-block">
+              <div class="pane-label">Mini collection <span class="sub">cover · ~1.19</span></div>
+              <div class="preview-wrap mini">
+                <canvas id="preview-mini"></canvas>
+              </div>
+            </div>
+            <div class="preview-block">
+              <div class="pane-label">Thumb strip <span class="sub">cover · ~1.0</span></div>
+              <div class="preview-wrap thumb">
+                <canvas id="preview-thumb"></canvas>
+              </div>
+            </div>
+            <div id="crop-info"></div>
+          </div>
+        </div>
+
+        <div id="toolbar">
+          <button id="btn-center" class="btn-secondary" title="Crop centré (c)">
+            Centrer
+          </button>
+          <button id="btn-reset" class="btn-tertiary" title="Reset crop">
+            Reset
+          </button>
+          <span class="spacer"></span>
+          <button id="btn-save-manual" class="btn-primary" title="Enregistrer le crop manuel (s)">
+            Enregistrer crop
+          </button>
+          <button id="btn-approve" class="btn-success" title="Sauve métadonnées + crop, passe le statut éditorial à approved (Entrée). 422 si pré-conditions manquantes.">
+            ✓ Approuver
+          </button>
+          <button id="btn-unapprove" class="btn-tertiary" style="display:none" title="Repasse le statut à reviewed (la carte ne sera plus poussée tant qu'elle n'est pas re-approuvée).">
+            ↩ Revenir en review
+          </button>
+        </div>
+
+        <div id="push-banner" class="push-banner hidden">
+          <span>
+            ⚠️ Pour pousser les changements en DB :
+            <code>npx tsx scripts/seed-card-images.ts --force</code>
+            depuis <code>../app/historydex/</code>
+          </span>
+          <button id="btn-banner-close" title="Masquer">×</button>
+        </div>
+
+        <div id="toast"></div>
+      </section>
+
+      <!-- Colonne 3 : panneau métadonnées (édition) -->
+      <aside id="metadata-pane">
+        <div class="meta-header">
+          <span class="pane-label">Métadonnées</span>
+          <button id="btn-save-meta" class="btn-primary" disabled title="Enregistrer">
+            Enregistrer
+          </button>
+        </div>
+        <div id="meta-empty" class="meta-empty">Sélectionne une carte pour voir les champs.</div>
+        <div id="meta-form" class="meta-form hidden">
+          <!-- Identité -->
+          <details class="section" open>
+            <summary>Identité</summary>
+            <dl class="grid">
+              <dt>dexNum</dt><dd id="meta-dexNum">—</dd>
+              <dt>id</dt><dd id="meta-cardId">—</dd>
+              <dt>type</dt><dd id="meta-type">—</dd>
+              <dt>era</dt><dd id="meta-era">—</dd>
+              <dt>région</dt><dd id="meta-region">—</dd>
+              <dt>pays</dt><dd id="meta-country">—</dd>
+              <dt>subjectKey</dt><dd id="meta-subjectKey">—</dd>
+              <dt>aliases</dt><dd id="meta-aliases">—</dd>
+            </dl>
+          </details>
+
+          <!-- Prompts WHERE/WHEN + lieu + géo : placés en haut pour servir de contexte
+               à la rédaction du blurb/body en dessous -->
+          <details class="section" open>
+            <summary>Prompts &amp; lieu</summary>
+
+            <!-- Prompts WHERE puis WHEN, l'un sous l'autre pour comparaison directe -->
+            <div class="field-row">
+              <label class="field">
+                <span class="lbl">wherePrompt.pre</span>
+                <input type="text" id="f-wp-pre" />
+              </label>
+              <label class="field">
+                <span class="lbl">verb <em class="hint">(mis en avant)</em></span>
+                <input type="text" id="f-wp-verb" />
+              </label>
+              <label class="field">
+                <span class="lbl">post</span>
+                <input type="text" id="f-wp-post" />
+              </label>
+            </div>
+            <p id="wp-preview"><span id="wp-preview-text">—</span></p>
+
+            <div class="field-row">
+              <label class="field">
+                <span class="lbl">whenPrompt.pre</span>
+                <input type="text" id="f-whenp-pre" />
+              </label>
+              <label class="field">
+                <span class="lbl">verb <em class="hint">(mis en avant)</em></span>
+                <input type="text" id="f-whenp-verb" />
+              </label>
+              <label class="field">
+                <span class="lbl">post</span>
+                <input type="text" id="f-whenp-post" />
+              </label>
+            </div>
+            <p id="whenp-preview"><span id="whenp-preview-text">—</span></p>
+            <p id="whenp-pre-warn" class="warn-inline hidden">—</p>
+
+            <!-- Carte Leaflet juste en dessous des deux prompts -->
+            <div class="field">
+              <span class="lbl">Globe — point + rayon (drag pour ajuster)</span>
+              <div id="map-wrap"></div>
+            </div>
+
+            <!-- Métadonnées géo détaillées en bas de la section -->
+            <dl class="grid">
+              <dt>placeKind</dt><dd id="meta-placeKind">—</dd>
+              <dt>placeCanonicalName</dt><dd id="meta-placeCanonicalName">—</dd>
+              <dt>geoKind</dt><dd id="meta-geoKind">—</dd>
+            </dl>
+            <label class="field">
+              <span class="lbl">placeLabel</span>
+              <input type="text" id="f-placeLabel" />
+            </label>
+            <div class="field-row">
+              <label class="field">
+                <span class="lbl">lat</span>
+                <input type="number" id="f-lat" step="0.0001" min="-90" max="90" />
+              </label>
+              <label class="field">
+                <span class="lbl">lon</span>
+                <input type="number" id="f-lon" step="0.0001" min="-180" max="180" />
+              </label>
+              <label class="field">
+                <span class="lbl">whereRadiusKm</span>
+                <input type="number" id="f-radius" step="1" min="1" />
+              </label>
+            </div>
+            <div class="radius-presets">
+              <span class="hint">Paliers recommandés :</span>
+              <button type="button" class="chip" data-radius="200">200</button>
+              <button type="button" class="chip" data-radius="500">500</button>
+              <button type="button" class="chip" data-radius="600">600</button>
+              <button type="button" class="chip" data-radius="800">800</button>
+              <button type="button" class="chip" data-radius="1000">1000</button>
+              <button type="button" class="chip" data-radius="1200">1200</button>
+              <button type="button" class="chip" data-radius="1500">1500</button>
+              <button type="button" class="chip" data-radius="2000">2000</button>
+              <button type="button" class="chip" data-radius="3000">3000</button>
+              <span class="spacer"></span>
+              <button type="button" id="btn-fit-radius" class="chip" title="Voir tout le rayon sur la carte">⤢ Fit</button>
+              <button type="button" id="btn-recenter-map" class="chip" title="Recentrer sur le point">⊙ Center</button>
+            </div>
+          </details>
+
+          <!-- Texte -->
+          <details class="section" open>
+            <summary>Texte affiché</summary>
+            <label class="field">
+              <span class="lbl">title <em class="hint">(2-80)</em></span>
+              <input type="text" id="f-title" maxlength="80" />
+            </label>
+            <label class="field">
+              <span class="lbl">blurb <em class="hint">(20-220) <span id="f-blurb-count">0</span></em></span>
+              <textarea id="f-blurb" rows="3" maxlength="220"></textarea>
+            </label>
+            <label class="field">
+              <span class="lbl">body <em class="hint">(40-800) <span id="f-body-count">0</span></em></span>
+              <textarea id="f-body" rows="6" maxlength="800"></textarea>
+            </label>
+          </details>
+
+          <!-- Image -->
+          <details class="section" open>
+            <summary>Image</summary>
+            <label class="field">
+              <span class="lbl">imageLabel <em class="hint">(1-16, court)</em></span>
+              <input type="text" id="f-imageLabel" maxlength="16" />
+            </label>
+            <label class="field">
+              <span class="lbl">attribution <em class="hint">(_index.json)</em></span>
+              <input type="text" id="f-attribution" />
+            </label>
+            <label class="field">
+              <span class="lbl">sourcePageUrl <em class="hint">(_index.json)</em></span>
+              <input type="url" id="f-sourcePageUrl" placeholder="https://..." />
+            </label>
+          </details>
+
+          <!-- Temporalité -->
+          <details class="section">
+            <summary>Temporalité</summary>
+            <div class="field-row">
+              <label class="field">
+                <span class="lbl">tag</span>
+                <select id="f-tag">
+                  <option value="ponctuelle">ponctuelle</option>
+                  <option value="periodique">periodique</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="lbl">timeKind</span>
+                <select id="f-timeKind">
+                  <option value="single_year">single_year</option>
+                  <option value="approximate_year">approximate_year</option>
+                  <option value="range">range</option>
+                  <option value="symbolic_pivot">symbolic_pivot</option>
+                  <option value="debated">debated</option>
+                </select>
+              </label>
+            </div>
+            <div class="field-row">
+              <label class="field">
+                <span class="lbl">
+                  pivotYear
+                  <button
+                    type="button"
+                    id="btn-pivot-midpoint"
+                    class="chip inline-chip hidden"
+                    title="Calculer = milieu de [startYear, endYear]"
+                  >⇄ milieu</button>
+                </span>
+                <input type="number" id="f-pivotYear" step="1" />
+              </label>
+              <label class="field">
+                <span class="lbl">startYear <em class="hint" id="f-startYear-hint">(periodique)</em></span>
+                <input type="number" id="f-startYear" step="1" placeholder="(null si ponctuelle)" />
+              </label>
+              <label class="field">
+                <span class="lbl">endYear <em class="hint" id="f-endYear-hint">(periodique)</em></span>
+                <input type="number" id="f-endYear" step="1" placeholder="(null si ponctuelle)" />
+              </label>
+            </div>
+            <label class="field">
+              <span class="lbl">timeDisplayLabel <em class="hint">(affiché au joueur)</em></span>
+              <input type="text" id="f-timeDisplayLabel" />
+            </label>
+            <label class="field">
+              <span class="lbl">justification <em class="hint">(min 3 chars, contexte du choix temporel)</em></span>
+              <textarea id="f-timeJustification" rows="2"></textarea>
+            </label>
+            <p class="hint"><em>Le whenPrompt (consigne quizz) est édité dans la section « Prompts &amp; lieu » plus haut, à côté du wherePrompt.</em></p>
+            <label class="field">
+              <span class="lbl">whenDelta <em class="hint">(dérivé de l'ère, read-only)</em></span>
+              <input type="number" id="f-whenDelta" step="1" min="1" readonly disabled title="Dérivé mécaniquement de gameplay.era via HD_ERA_WHEN_DELTAS (prehist=2000, antiq=100, medi=25, modern=10, contemp=5). Non éditable depuis l'UI." />
+            </label>
+            <p id="when-window-preview" class="hint">Fenêtre d'acceptation : <strong id="when-window-text">—</strong></p>
+          </details>
+
+          <!-- Gameplay (read-only — whenDelta éditable dans Temporalité, whereRadiusKm dans Lieu) -->
+          <details class="section">
+            <summary>Gameplay</summary>
+            <dl class="grid">
+              <dt>difficultyWhen</dt><dd id="meta-difficultyWhen">—</dd>
+              <dt>difficultyWhere</dt><dd id="meta-difficultyWhere">—</dd>
+              <dt>eligibleForWhen</dt><dd id="meta-eligibleForWhen">—</dd>
+              <dt>eligibleForWhere</dt><dd id="meta-eligibleForWhere">—</dd>
+            </dl>
+          </details>
+
+          <!-- Édito -->
+          <details class="section">
+            <summary>Édito</summary>
+            <dl class="grid">
+              <dt>status</dt><dd id="meta-status">—</dd>
+              <dt>confidence</dt><dd id="meta-confidence">—</dd>
+              <dt>contentVersion</dt><dd id="meta-contentVersion">—</dd>
+              <dt>sources</dt><dd id="meta-sourcesCount">—</dd>
+            </dl>
+            <div id="meta-warnings" class="warnings"></div>
+          </details>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Modal Push to DB : dry-run + confirmation + progress -->
+    <div id="push-modal" class="modal hidden">
+      <div class="modal-bg"></div>
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3>Push to InstantDB</h3>
+          <button id="btn-close-push" title="Fermer">×</button>
+        </div>
+        <div class="modal-body">
+          <div id="push-step-diff" class="push-step">
+            <p class="hint">Calcul du diff vs DB…</p>
+            <pre id="push-diff-preview" class="push-diff">—</pre>
+            <label class="push-confirm">
+              <input type="checkbox" id="push-confirm-check" />
+              <span>Je confirme vouloir pousser ces changements en production.</span>
+            </label>
+          </div>
+          <div id="push-step-progress" class="push-step hidden">
+            <p id="push-progress-title">Push en cours…</p>
+            <div class="push-bar"><div id="push-bar-fill" class="push-bar-fill"></div></div>
+            <p class="hint"><span id="push-progress-text">—</span></p>
+            <pre id="push-progress-errors" class="push-errors hidden">—</pre>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button id="btn-push-cancel" class="btn-tertiary">Annuler</button>
+          <button id="btn-push-confirm" class="btn-primary" disabled>Confirmer le push</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal upload image -->
+    <div id="upload-modal" class="modal hidden">
+      <div class="modal-bg"></div>
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3>Remplacer l'image source</h3>
+          <button id="btn-close-upload" title="Fermer">×</button>
+        </div>
+        <div class="modal-body">
+          <div id="drop-zone" class="drop-zone">
+            <p>Glisse une image ici ou clique pour choisir</p>
+            <p class="hint">JPEG, PNG, WebP ou AVIF, ≤ 10 Mo</p>
+            <input type="file" id="upload-file" accept="image/jpeg,image/png,image/webp,image/avif" hidden />
+            <div id="upload-preview" class="upload-preview hidden">
+              <img id="upload-preview-img" alt="" />
+              <span id="upload-preview-name"></span>
+            </div>
+          </div>
+          <label class="field">
+            <span class="lbl">attribution</span>
+            <input type="text" id="upload-attribution" placeholder="ex : Photo personnelle" />
+          </label>
+          <label class="field">
+            <span class="lbl">sourcePageUrl <em class="hint">(optionnel)</em></span>
+            <input type="url" id="upload-sourcePageUrl" placeholder="https://..." />
+          </label>
+        </div>
+        <div class="modal-foot">
+          <button id="btn-upload-cancel" class="btn-tertiary">Annuler</button>
+          <button id="btn-upload-go" class="btn-primary" disabled>Uploader & remplacer</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

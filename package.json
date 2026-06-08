@@ -1,0 +1,40 @@
+{
+  "name": "historydex-catalog-pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pipeline éditorial pour produire et valider le catalogue HistoryDex (recherche → normalisation → validation → export InstantDB).",
+  "type": "module",
+  "scripts": {
+    "validate": "tsx scripts/validate-catalog.ts",
+    "report": "tsx scripts/report-catalog.ts",
+    "normalize": "tsx scripts/normalize-card.ts",
+    "check-subject": "tsx scripts/check-subject.ts",
+    "fetch-images": "tsx scripts/fetch-card-images.ts",
+    "process-images": "tsx scripts/process-card-images.ts",
+    "verify-geo": "tsx scripts/verify-geo.ts",
+    "review-images": "tsx scripts/review-server.ts",
+    "push:db": "tsx scripts/push-db.ts",
+    "wipe-db": "tsx scripts/wipe-db.ts",
+    "check": "npm run validate && npm run report"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^22.10.0",
+    "@types/topojson-client": "^3.1.5",
+    "@types/topojson-specification": "^1.0.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  },
+  "dependencies": {
+    "@instantdb/admin": "latest",
+    "blurhash": "^2.0.5",
+    "dotenv": "^16.4.5",
+    "express": "^5.0.0",
+    "multer": "^2.1.1",
+    "sharp": "^0.33.5",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2",
+    "zod": "^3.23.8"
+  }
+}

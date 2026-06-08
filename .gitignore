@@ -1,0 +1,63 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+
+# Données brutes de recherche (régénérables, peuvent contenir des extraits longs)
+data/raw/*
+!data/raw/.gitkeep
+
+# Cache d'images Wikipedia (régénérables via npm run fetch-images)
+data/_images-cache/
+
+# Cache de géocodage Nominatim (régénérable via npm run verify-geo)
+data/_geo-cache/
+
+# Images finales rognées (régénérables via npm run review-images)
+data/_images-final/
+
+# Snapshot "avant review" — figeage de _images-final/ + data/approved/ pour
+# comparer auto-attention/textes générés vs corrections humaines
+# (script archivé scripts/archive/snapshot-baseline.ts)
+data/_images-baseline/
+data/_approved-baseline/
+
+# Batches produits par le subject-curator (sujets candidats avant recherche)
+data/_batches/
+
+# Exports régénérables
+exports/instantdb/*.json
+exports/instantdb/*.ts
+!exports/instantdb/.gitkeep
+
+# Rapports horodatés
+reports/*.md
+!reports/.gitkeep
+
+# Cartes générées — catalogue (régénérables via le pipeline ; non versionnées)
+data/cards/*.json
+!data/cards/.gitkeep
+
+# Sujets candidats (entrée du pipeline)
+data/candidates/*.md
+!data/candidates/.gitkeep
+
+# Audit honnêteté (sorties fact-checkers + progress)
+data/_audit/
+
+# Données de traduction (pipeline Azure-hybride)
+data/_translations/
+
+# Fichiers de travail jetables (debug one-shot)
+extract-cards.mjs
+existing-cards.json
+temp_results.json
+
+# Settings & état runtime locaux Claude Code (permissions / locks machine)
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# OS
+.DS_Store
+Thumbs.db
