@@ -29,8 +29,9 @@ Un fichier `data/raw/<slug>.md` structuré ainsi :
 <subjectKey>: même chose, sert d'identité sémantique
 
 ## Type proposé
-paint | sculpt | war | invent | person | archi | text | cata | explor | relig | sci | treaty | money | sport
+paint | sculpt | war | invent | person | archi | text | cata | explor | relig | sci | treaty | money | sport | music | polity | craft | dance
 (une seule valeur, justification courte)
+> `polity` = entité politique (empire/royaume/dynastie/sultanat/cité-État/civilisation — pas son souverain, qui reste `person`). `craft` = arts décoratifs/artisanat de prestige (orfèvrerie, céramique, tapis — pas une statue `sculpt` ni une machine `invent`). `dance` = danse/genre chorégraphique (si l'angle est le mouvement dansé ; sinon `music`). `music` = œuvre/genre/instrument musical.
 
 ## Temps
 - tag : ponctuelle | periodique

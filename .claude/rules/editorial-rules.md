@@ -64,6 +64,15 @@ La **pertinence** vaut autant pour WHERE que pour WHEN : si le sujet de la carte
 | `money` | monnaie, pièce, papier-monnaie, billet, étalon | frappée, émise, créée, mise en circulation |
 | `sport` | jeux, compétition, épreuve, tournoi | disputés, organisés, tenus, célébrés |
 | `music` | **œuvre** : œuvre, pièce, morceau, symphonie, concerto, sonate, suite, requiem, ballet, thème, partition, mélodie — **genre** : genre (musical), style, musique — **instrument** : instrument | **œuvre** : composé(e), créé(e), écrit(e), interprété(e) (1ʳᵉ), enregistré(e), publié(e) — **genre** : apparu, né(e), développé(e), popularisé(e) — **instrument** : inventé, conçu, mis au point, perfectionné |
+| `polity` | empire, royaume, dynastie, sultanat, khanat, khaganat, califat, principauté, cité-État, confédération, **civilisation**, **culture** (archéologique), État | étendu(e), régné, dominé(e), gouverné(e), prospéré, dirigé(e), fondé(e), épanouie |
+| `craft` | **objet d'art**, trésor, orfèvrerie, joyau, parure, vase, coupe, cratère, vaisselle, céramique, porcelaine, faïence, verrerie, laque, émail, tapis, tapisserie, broderie, mobilier | réalisé(e), façonné(e), produit(e), fabriqué(e), ciselé(e), tissé(e), brodé(e), émaillé(e), forgé(e), **découvert(e)** (trésor mis au jour), exposé(e) |
+| `dance` | **danse**, ballet, chorégraphie, genre (dansé) | apparue, née, développée, popularisée, dansée, créée |
+
+> **`craft`** = un **objet ou une tradition d'arts décoratifs / d'artisanat de prestige** (orfèvrerie, céramique d'art, porcelaine, tapis, tapisserie, verrerie, laque). À distinguer de `sculpt` (statue/relief en ronde-bosse), de `paint` (image) et de `invent` (procédé technique fonctionnel) : ici l'objet vaut comme **œuvre décorative de prestige**, pas comme statue, image ou machine. `placeKind` typique : `creation_place` (lieu de fabrication), `discovery_site` (trésor mis au jour) ou `current_exhibition`.
+
+> **`dance`** = une **danse / un genre chorégraphique** (tango, valse, flamenco, ballet…). Beaucoup de danses sont aussi des genres musicaux : si l'angle de la carte est le **mouvement dansé**, c'est `dance` ; si c'est purement une œuvre/genre **musical** non dansé (chant, symphonie), c'est `music`. `placeKind` typique : `origin_area`, `tag: periodique`.
+
+> **`polity`** = l'**entité politique ou civilisationnelle elle-même** (l'empire, le royaume, la dynastie, la cité-État, la civilisation), **pas** son souverain (qui reste `person`) ni un affrontement ponctuel (qui reste `war`). Cadrage typique : `tag: periodique`, `placeKind: capital_or_power_center` (ou `origin_area`/`diffusion_area`), `timeDisplayLabel` préfixé `extension:`. Un individu nommé (« Tamerlan »), un événement (« Proclamation de l'Empire allemand », « Conquête inca par Pizarro ») ou une œuvre (« Romance des Trois Royaumes ») ne sont **pas** des `polity`.
 
 ### Règles d'application
 
@@ -102,6 +111,10 @@ Le **verbe** est mis en évidence visuellement par l'app. Choisir le verbe le pl
 | Musique — œuvre (création) | `composée` / `créée` | `Où a été ` | ` cette symphonie ?` (ou `ce concerto`, `ce thème`, `cette œuvre`) |
 | Musique — genre | `apparu` / `né` | `Où est ` | ` ce genre ?` (ou `cette musique`) |
 | Musique — instrument | `inventé` / `conçu` | `Où a été ` | ` cet instrument ?` |
+| Entité politique (polity) | `étendu` / `régné` | `Où s'est ` | ` cet empire ?` (ou `ce royaume`, `cette dynastie`, `ce sultanat`, `cette civilisation`) |
+| Objet d'art (craft, fabrication) | `réalisé` / `façonné` / `produit` | `Où a été ` | ` ce trésor ?` (ou `ce vase`, `cette céramique`, `cette porcelaine`, `ce tapis`, `cette tapisserie`) |
+| Trésor (craft, découverte) | `découvert` | `Où a été ` | ` ce trésor ?` |
+| Danse (dance) | `apparue` / `née` | `Où est ` | ` cette danse ?` |
 
 **Toujours expliciter** : si on situe le lieu d'exposition d'une œuvre (et pas son lieu de création), le verbe doit le refléter (« exposée »), et le `placeKind` doit être `current_exhibition`. Le joueur n'a aucun moyen de deviner sans l'indication.
 

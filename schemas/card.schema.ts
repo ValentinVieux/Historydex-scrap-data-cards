@@ -16,6 +16,9 @@ export const CARD_TYPES = [
   "money",
   "sport",
   "music",
+  "polity",
+  "craft",
+  "dance",
 ] as const;
 
 export const ERAS = ["prehist", "antiq", "medi", "modern", "contemp"] as const;

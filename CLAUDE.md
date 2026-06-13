@@ -96,7 +96,7 @@ Le bouton 🤖 Claude nécessite `ANTHROPIC_API_KEY` dans `.env` (cf. `.env.exam
 
 ## Invariants HistoryDex (rappels)
 
-- 15 types de cartes (cf. `CARD_TYPES` dans `schemas/card.schema.ts`) — dont `music` (œuvre/objet musical : pièce, concerto, instrument, genre ; **pas** une personne — les musiciens restent `person`).
+- 18 types de cartes (cf. `CARD_TYPES` dans `schemas/card.schema.ts`) — dont `music` (œuvre/objet musical : pièce, concerto, instrument, genre ; **pas** une personne — les musiciens restent `person`), `polity` (entité politique/civilisationnelle : empire, royaume, dynastie, sultanat, khanat, cité-État, civilisation — **l'État lui-même**, pas son souverain qui reste `person`, ni un affrontement ponctuel qui reste `war`), `craft` (arts décoratifs / artisanat de prestige : orfèvrerie, trésor, céramique, porcelaine, tapis, tapisserie — **pas** une statue `sculpt` ni une machine `invent`) et `dance` (danse / genre chorégraphique — si l'angle est le mouvement dansé ; sinon un genre purement musical reste `music`).
 - 5 ères (`prehist`/`antiq`/`medi`/`modern`/`contemp`) avec bornes de jeu.
 - 10 régions historiques (cf. `REGION_LABELS`).
 - 15 `placeKind` du vocabulaire contrôlé.
