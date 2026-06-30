@@ -72,7 +72,35 @@ npm run verify-geo            # recoupe (lat,lon) ↔ lieu nommé via Nominatim
 arbitre — vrai écart de coordonnées → corriger `lat`/`lon` (via `historical-researcher`) ;
 lieu ancien/abstrait non géocodable → ignorer.
 
-### 6. Rapport final à l'utilisateur
+### 6. Audit honnêteté des bodies (skill `audit-card-bodies`)
+
+**Étape obligatoire du pipeline** (depuis 2026-06-19). Une fois les cartes valides et
+imagées, lance une passe d'audit véracité sur **la plage de dexNum du batch courant** :
+
+```
+/audit-card-bodies range:<minDex>-<maxDex>
+```
+
+où `<minDex>`/`<maxDex>` sont les dexNum extrêmes des cartes que ce batch vient de
+produire (ex. `range:915-944`). On utilise `range:` (et pas l'argument vide) pour cibler
+**exactement** ce batch, indépendamment du curseur global `data/_audit/_progress.json`.
+
+Ce que fait l'audit (cf. `.claude/skills/audit-card-bodies/SKILL.md`) : 2 fact-checkers
+indépendants par sous-lot (≤ 13 cartes), spot-check WebFetch des claims litigieux, et
+**application automatique des corrections** au `display.locales.fr.body` (avec
+incrément `contentVersion` + entrée datée dans `editorial.notes`). Il ne touche ni aux
+sources, ni au `canonical`, ni au `gameplay`, ni au `status`.
+
+Pourquoi dans le pipeline : la passe `card-qa` faite pendant la normalisation est une
+auto-relecture (mêmes yeux que l'éditeur) ; `audit-card-bodies` est une **vérification
+externe à œil neuf**, qui a historiquement rattrapé les erreurs résiduelles de chiffres
+et de datations (patterns P1-P7). Mieux vaut corriger avant la review humaine que de
+laisser passer en `approved`.
+
+> Si le batch dépasse ~13 cartes, l'audit chunke tout seul ; pour > 30 cartes, fais
+> plusieurs invocations `range:` successives (plafond dur de la skill à 30).
+
+### 7. Rapport final à l'utilisateur
 
 Affiche :
 
@@ -86,6 +114,7 @@ Batch de N sujets — bilan :
   · Images téléchargées : I / K (sujets sans wikipediaTitle exclus)
   · Validate           : vert (X warnings)
   · Géo (verify-geo)   : Y écart(s) à arbitrer / K
+  · Audit bodies       : Z correction(s) appliquée(s) / K (honesty-audit, range:min-max)
 
 Cartes nouvelles dans data/cards/ (status: reviewed) :
   - [dexNum] slug : titre
@@ -106,6 +135,8 @@ Prochaine étape :
   réellement traités (mettre à jour si des sujets ont été substitués).
 - Anti-doublon : aucun nouveau slug ne doit collisionner avec un slug existant
   dans `data/cards/`.
+- **Audit honnêteté passé** (étape 6) sur toute la plage de dexNum du batch via
+  `/audit-card-bodies range:<min>-<max>`, corrections appliquées, `validate` re-vert.
 
 ## Tu ne fais PAS
 

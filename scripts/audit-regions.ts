@@ -9,19 +9,31 @@
 //             → bugs (ex. Hawaii) ou cartes à reclassifier
 //   Liste D — divergences anneau (le centroïde du polygone touché diffère du
 //             centroïde de la métropole) — candidats per-anneau pour Phase 2
+//   Liste E — INJOUABLES en mode Explorateur (snap ≠ place.region)
+//   Liste F — pins sans pays tappable ≤ 150 km (snap = null)
 //
 // Sortie : reports/regions-audit-<ts>.md, plus un résumé console.
+//
+// `--fix` : aligne sur disque `place.region` sur la région réellement scorée en
+// jeu (`regionFromCountryHitWithSnap`) pour toute carte TERRESTRE de Liste E.
+// Mutation chirurgicale (re-lecture brute → seul `canonical.place.region` change),
+// sans rapport. Relancer sans `--fix` ensuite pour régénérer le rapport (Liste E
+// doit être vide). Doctrine : `place.region` (earth) est DÉRIVÉE de (lat, lon) ;
+// le globe du jeu est l'autorité (cf. region-latlon-mismatch dans _lib/invariants).
 
 import path from "node:path";
 import {
   countryHit,
+  regionFromCountryHitWithSnap,
   regionFromLatLon,
   regionLabel,
   type CountryHit,
   type RegionId,
 } from "./_lib/region-geo.js";
 import { loadCardsFromDir } from "./_lib/load-cards.js";
-import { PATHS, ensureDir, nowStamp, writeText } from "./_lib/io.js";
+import { PATHS, ensureDir, nowStamp, readJson, writeJson, writeText } from "./_lib/io.js";
+
+const FIX = process.argv.includes("--fix");
 
 type CardEntry = {
   dexNum: string;
@@ -34,6 +46,11 @@ type CardEntry = {
   countryCode: string | null;
   placeName: string;
   appRegion: RegionId | null;
+  // Région que le scoring explorateur de l'app compare réellement : tap exact
+  // si dans un pays, sinon snap au pays le plus proche (≤ 150 km). C'est la
+  // "vraie" région gagnante en jeu, là où `appRegion` (countryHit seul) rend
+  // null pour les pins maritimes (détroits, îles fines à 1:110M).
+  appRegionSnapped: RegionId | null;
   hit: CountryHit | null;
 };
 
@@ -61,6 +78,7 @@ function main(): number {
       countryCode: place.countryCode ?? null,
       placeName: place.placeCanonicalName ?? "",
       appRegion: hit ? hit.region : null,
+      appRegionSnapped: regionFromCountryHitWithSnap(place.lat, place.lon),
       hit,
     };
   });
@@ -93,12 +111,78 @@ function main(): number {
   // ---------- Liste B — cartes orphelines (hors polygone) -------------------
   const orphans = entries
     .filter((e) => e.appRegion === null)
-    .sort((a, b) => a.dexNum.localeCompare(b.dexNum));
+    .sort((a, b) => Number(a.dexNum) - Number(b.dexNum));
 
   // ---------- Liste C — désaccord pipeline ≠ app ---------------------------
   const disagreements = entries
     .filter((e) => e.appRegion !== null && e.appRegion !== e.pipelineRegion)
-    .sort((a, b) => a.dexNum.localeCompare(b.dexNum));
+    .sort((a, b) => Number(a.dexNum) - Number(b.dexNum));
+
+  // ---------- Liste E — injouables en mode Explorateur ----------------------
+  // La région réellement scorée en jeu = snap au pays le plus proche
+  // (`appRegionSnapped`). Quand elle diffère de `place.region`, AUCUN tap
+  // correct ne peut valider le OÙ explorateur : la carte est injouable (au
+  // mieux, gagnée en tapant le mauvais pays). Surensemble de Liste C : capte
+  // aussi les pins maritimes orphelins (regionFromCountryHit = null) que le
+  // snap résout — l'angle mort historique de cet audit.
+  const unplayable = entries
+    .filter(
+      (e) =>
+        e.appRegionSnapped !== null && e.appRegionSnapped !== e.pipelineRegion,
+    )
+    .sort((a, b) => Number(a.dexNum) - Number(b.dexNum));
+  // Cartes dont même le snap échoue (aucun pays ≤ 150 km) : pas de pays
+  // tappable près du pin — à surveiller, mais souvent des lieux océaniques /
+  // abstraits (Titanic, points de regroupement régionaux).
+  const unsnappable = entries
+    .filter((e) => e.appRegionSnapped === null)
+    .sort((a, b) => Number(a.dexNum) - Number(b.dexNum));
+
+  // ---------- --fix : aligner place.region sur la région scorée en jeu ------
+  // Pour chaque carte injouable (Liste E) ET terrestre (geoKind earth), réécrit
+  // `canonical.place.region = appRegionSnapped` directement dans le JSON. On
+  // re-lit le fichier BRUT (pas l'objet zod-parsé, qui réordonnerait les clés /
+  // injecterait les defaults) et ne touche QUE la valeur region → diff minimal.
+  // Les cartes non terrestres (Lune, abstrait) gardent leur region éditoriale
+  // (convention « région terrestre la plus proche »). Pas de rapport en mode fix.
+  if (FIX) {
+    const fixed: { dexNum: string; title: string; from: RegionId; to: RegionId }[] = [];
+    const skippedNonEarth: string[] = [];
+    for (const e of unplayable) {
+      const raw = readJson<{
+        canonical?: { place?: { region?: number; geoKind?: string } };
+      }>(e.file);
+      const place = raw?.canonical?.place;
+      if (!place) continue;
+      if ((place.geoKind ?? "earth") !== "earth") {
+        skippedNonEarth.push(`${e.dexNum} ${e.title}`);
+        continue;
+      }
+      place.region = e.appRegionSnapped!;
+      writeJson(e.file, raw);
+      fixed.push({
+        dexNum: e.dexNum,
+        title: e.title,
+        from: e.pipelineRegion,
+        to: e.appRegionSnapped!,
+      });
+    }
+    console.log(`--fix : ${fixed.length} carte(s) corrigée(s) sur disque.`);
+    for (const f of fixed) {
+      console.log(
+        `   • ${f.dexNum} ${f.title} : R${f.from} ${regionLabel(f.from)} → R${f.to} ${regionLabel(f.to)}`,
+      );
+    }
+    if (skippedNonEarth.length > 0) {
+      console.log(
+        `   (${skippedNonEarth.length} carte(s) non terrestre(s) ignorée(s) : ${skippedNonEarth.join(", ")})`,
+      );
+    }
+    console.log(
+      "\nRelancer `npx tsx scripts/audit-regions.ts` (sans --fix) pour régénérer le rapport — Liste E doit être vide.",
+    );
+    return 0;
+  }
 
   // ---------- Liste D — anneau pourrait suggérer une autre région ----------
   // Pour chaque entrée hit, on compare la région courante (hit.region) à ce
@@ -144,7 +228,7 @@ function main(): number {
   lines.push(`# Regions audit — ${new Date().toISOString()}`);
   lines.push("");
   lines.push(
-    `- Total cartes : **${entries.length}** (dont **${orphans.length}** orphelines, **${disagreements.length}** en désaccord pipeline≠app)`,
+    `- Total cartes : **${entries.length}** (dont **${orphans.length}** orphelines, **${disagreements.length}** en désaccord pipeline≠app, **${unplayable.length}** injouables en explorateur, **${unsnappable.length}** sans pays tappable ≤ 150 km)`,
   );
   lines.push("");
 
@@ -164,6 +248,48 @@ function main(): number {
   }
   const orphanCount = orphans.length;
   lines.push(`| – | _orpheline (null)_ | – | ${orphanCount} | – |`);
+  lines.push("");
+
+  // Liste E — la plus actionnable : cartes cassées en jeu
+  lines.push("## Liste E — INJOUABLES en mode Explorateur (snap ≠ place.region)");
+  lines.push("");
+  lines.push(
+    "Région réellement scorée en jeu = `regionFromCountryHitWithSnap(lat,lon)` (tap exact, sinon pays le plus proche ≤ 150 km). Quand elle diffère de `place.region`, **aucun tap correct ne valide le OÙ explorateur** : la carte est injouable. Surensemble de Liste C — capte aussi les pins maritimes orphelins que le snap résout (angle mort historique). **À corriger en priorité** : aligner `place.region` sur la colonne « Snap (jeu) ».",
+  );
+  lines.push("");
+  if (unplayable.length === 0) {
+    lines.push("_(aucune)_");
+  } else {
+    lines.push(
+      "| Dex | Titre | Lieu | (lat,lon) | place.region | Snap (jeu) | countryHit exact |",
+    );
+    lines.push("|---|---|---|---|---|---|---|");
+    for (const e of unplayable) {
+      lines.push(
+        `| ${e.dexNum} | ${e.title} | ${e.placeName || "–"} | ${e.lat.toFixed(2)}, ${e.lon.toFixed(2)} | R${e.pipelineRegion} ${regionLabel(e.pipelineRegion)} | **R${e.appRegionSnapped} ${regionLabel(e.appRegionSnapped!)}** | ${e.appRegion === null ? "null (orphelin)" : `R${e.appRegion}`} |`,
+      );
+    }
+  }
+  lines.push("");
+
+  // Liste F — pins sans pays tappable (snap null)
+  lines.push("## Liste F — sans pays tappable ≤ 150 km (snap = null)");
+  lines.push("");
+  lines.push(
+    "Le pin n'a aucun pays à portée de snap : le joueur ne peut viser la bonne région en tapant près du lieu (lieux océaniques ou points abstraits). Non bloquant, mais signale que le OÙ explorateur de ces cartes repose sur une connaissance géographique extérieure au globe.",
+  );
+  lines.push("");
+  if (unsnappable.length === 0) {
+    lines.push("_(aucune)_");
+  } else {
+    lines.push("| Dex | Titre | Lieu | (lat,lon) | place.region |");
+    lines.push("|---|---|---|---|---|");
+    for (const e of unsnappable) {
+      lines.push(
+        `| ${e.dexNum} | ${e.title} | ${e.placeName || "–"} | ${e.lat.toFixed(2)}, ${e.lon.toFixed(2)} | R${e.pipelineRegion} ${regionLabel(e.pipelineRegion)} |`,
+      );
+    }
+  }
   lines.push("");
 
   // Liste C
@@ -196,11 +322,20 @@ function main(): number {
   if (orphans.length === 0) {
     lines.push("_(aucune)_");
   } else {
-    lines.push("| Dex | Titre | Lieu | (lat,lon) | Pipeline | Pays canonique |");
-    lines.push("|---|---|---|---|---|---|");
+    lines.push(
+      "| Dex | Titre | Lieu | (lat,lon) | Pipeline | Snap (jeu) | Pays canonique | Verdict |",
+    );
+    lines.push("|---|---|---|---|---|---|---|---|");
     for (const e of orphans) {
+      const snap = e.appRegionSnapped;
+      const verdict =
+        snap === null
+          ? "⚠️ snap null"
+          : snap === e.pipelineRegion
+            ? "✅ snap = region"
+            : "❌ INJOUABLE";
       lines.push(
-        `| ${e.dexNum} | ${e.title} | ${e.placeName || "–"} | ${e.lat.toFixed(2)}, ${e.lon.toFixed(2)} | R${e.pipelineRegion} ${regionLabel(e.pipelineRegion)} | ${e.countryCode ?? "–"} |`,
+        `| ${e.dexNum} | ${e.title} | ${e.placeName || "–"} | ${e.lat.toFixed(2)}, ${e.lon.toFixed(2)} | R${e.pipelineRegion} ${regionLabel(e.pipelineRegion)} | ${snap === null ? "null" : `R${snap}`} | ${e.countryCode ?? "–"} | ${verdict} |`,
       );
     }
   }
@@ -265,6 +400,15 @@ function main(): number {
 
   // Console summary
   console.log(`Cartes auditées : ${entries.length}`);
+  console.log(`Liste E — INJOUABLES explorateur (snap≠region) : ${unplayable.length}`);
+  if (unplayable.length > 0) {
+    for (const e of unplayable) {
+      console.log(
+        `   • ${e.dexNum} ${e.title} : place.region=R${e.pipelineRegion} → jeu=R${e.appRegionSnapped}`,
+      );
+    }
+  }
+  console.log(`Liste F — sans pays tappable ≤150km (snap null) : ${unsnappable.length}`);
   console.log(`Liste B — orphelines (null)   : ${orphans.length}`);
   console.log(`Liste C — désaccords (≠)      : ${disagreements.length}`);
   console.log(

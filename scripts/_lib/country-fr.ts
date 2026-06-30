@@ -21,6 +21,8 @@ const COUNTRY_FR: Record<string, string> = {
   SE: "Suède",
   FI: "Finlande",
   IS: "Islande",
+  VA: "Vatican",
+  GI: "Gibraltar",
   // Europe orientale & Balkans
   PL: "Pologne",
   CZ: "Tchéquie",
@@ -154,6 +156,9 @@ const COUNTRY_FR: Record<string, string> = {
   FJ: "Fidji",
   PF: "Polynésie française",
   RE: "La Réunion",
+  MU: "Maurice",
+  FM: "États fédérés de Micronésie",
+  SB: "Îles Salomon",
   // Amériques précolombiennes & latines
   MX: "Mexique",
   GT: "Guatemala",

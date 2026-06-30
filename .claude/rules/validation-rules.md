@@ -31,6 +31,13 @@ Sert de référence aux humains qui relisent une carte avant promotion en `appro
 - `lat ∈ [-90, 90]`
 - `lon ∈ [-180, 180]`
 - `region ∈ [1..10]`
+- `region-latlon-mismatch` (**bloquant pour les cartes `approved`**, warning sinon) :
+  `place.region` doit égaler la région que le OÙ explorateur score réellement, c.-à-d.
+  celle du pays tapé sur le globe — `regionFromCountryHitWithSnap(lat, lon)` (pays
+  contenant le point, sinon snap au pays le plus proche ≤ 150 km). Si elles diffèrent,
+  **aucun tap correct ne valide la carte** → injouable en explorateur. Une carte
+  `approved` dans ce cas bloque `validate` (donc `push:db`). Détail + liste : section
+  « Géographie suspecte » des warnings et `npx tsx scripts/audit-regions.ts` (Liste E).
 
 ### Cohérence whenDelta / era (`whenDelta-era-mismatch`)
 - `gameplay.whenDelta` doit être strictement égal à `HD_ERA_WHEN_DELTAS[gameplay.era]` :
@@ -59,10 +66,16 @@ des sources depuis la fiche raw. On attrape ça ici, pas plus tard quand l'humai
 - (Côté app de review uniquement) ≥ 2 **publishers** distincts (deux pages du même éditeur =
   1) ; crop d'image présent. Cf. `scripts/_lib/pre-approve.ts`.
 
+### Localisabilité obligatoire (bloquant)
+Toute carte **doit être jouable en OÙ ET en QUAND** (règle utilisateur 2026-06-27 : « il faut obligatoirement créer des cartes qui peuvent être localisées dans le temps et l'espace »). Un sujet sans lieu réel défendable (ex. Bitcoin, monnaie décentralisée) n'est **pas** une carte valide.
+- `not-localizable-where` : `gameplay.eligibleForWhere === false` **ou** `place.geoKind === "abstract"` **ou** `lat = 0 ET lon = 0` (Null Island = geocode manquant). Toute carte doit avoir un lieu réel. Pour une mission spatiale (Lune, Mars, pôle), ancrer les coordonnées sur un **point réel du pays opérateur** (ex. Apollo 11/8 → un point des USA, `region 10`, `geoKind: extraterrestrial`) pour que le tap explorateur valide. (Remplace l'ancien `null-island`, qui était un simple warning et ne couvrait pas le geoKind `extraterrestrial` — c'est l'angle mort qui a laissé passer Apollo 8 à 0,0.)
+- `not-localizable-when` : `gameplay.eligibleForWhen === false`. Toute carte doit avoir une date jouable.
+
 ### Affichage
 - `display.defaultLocale` doit être `"fr"`.
 - `display.locales.fr` doit exister et avoir tous ses champs (title, blurb, body, placeLabel, timeDisplayLabel, wherePrompt complet).
-- `title-when-spoiler` : le `title` contient un nombre qui tombe dans la fenêtre de devinette WHEN `[pivotYear ± whenDelta]` (ou `[startYear-δ .. endYear+δ]` pour les `periodique`) — révèle la réponse au quizz WHEN. Ex. « Maracanazo (1950) » avec pivot 1950 / whenDelta 5 flagge 1950 ∈ [1945..1955]. Politique « toujours renommer » (cf. `editorial-rules.md` « À éviter absolument ») : déplacer la date vers `timeDisplayLabel`/`body`. Le **lieu** dans le titre reste autorisé (« Bataille de Marignan »).
+- `title-contains-date` : le `title` contient **une date quelconque** — année (`\d{3,4}`), marqueur « av./ap. J.-C. », ou date jour-mois (« 11 septembre ») — **interdit dans tout titre** (règle utilisateur 2026-06-27 : « la date ne doit jamais apparaître dans le titre »). Plus strict que `title-when-spoiler` (qui ne couvre que la fenêtre WHEN). Déplacer la date vers `timeDisplayLabel`/`body` et renommer le sujet (« Krach de 1987 » → « Krach du Lundi noir »). **Échappatoire** : une note `editorial.notes` contenant la chaîne « exception titre-date » rétrograde l'erreur en warning, réservée aux œuvres dont le titre **est** une date (seul cas actuel : le roman « 1984 » d'Orwell, dexNum 1077). Le **lieu** dans le titre reste autorisé (« Bataille de Marignan »).
+- `title-when-spoiler` : (conservé) le `title` contient un nombre qui tombe dans la fenêtre de devinette WHEN `[pivotYear ± whenDelta]` (ou `[startYear-δ .. endYear+δ]` pour les `periodique`) — révèle la réponse au quizz WHEN. Cas plus restreint que `title-contains-date` ci-dessus ; les deux peuvent se déclencher ensemble. Le **lieu** dans le titre reste autorisé.
 
 ### Hygiène des prompts (bloquant)
 - `wherePrompt-verb-post-glue` / `whenPrompt-verb-post-glue` : le `verb` (trimé) n'apparaît pas comme token isolé dans `pre+verb+post` → mot collé (espace manquant entre verbe et `pre`/`post`). Ex. `verb:"déroulées"` + `post:"ces conquêtes ?"` → `"…déroulées​ces conquêtes ?"`. Cf. convention d'espacement dans `editorial-rules.md`.
@@ -74,16 +87,20 @@ des sources depuis la fiche raw. On attrape ça ici, pas plus tard quand l'humai
 - (`whenDelta` n'est plus en warning : depuis la migration era-based, il est vérifié en **erreur bloquante** via `whenDelta-era-mismatch` — cf. section « Erreurs bloquantes ».)
 
 ### Géographie suspecte
-- `lat = 0` ET `lon = 0` (Null Island) : presque toujours un geocode oublié.
-- `region-latlon-mismatch` : `place.region` ne correspond pas à la classification
-  géographique de `(lat, lon)` calculée par le port `scripts/_lib/region-geo.ts`
+- `lat = 0` ET `lon = 0` (Null Island) : **désormais bloquant** via `not-localizable-where` (cf. « Localisabilité obligatoire ») — ce n'est plus un simple warning.
+- `region-latlon-mismatch` (**warning pour `reviewed`/`draft` ; bloquant pour `approved`** —
+  cf. section « Cohérence géographique » des erreurs) : `place.region` ne correspond pas à la
+  région que le OÙ explorateur score, calculée par le port `scripts/_lib/region-geo.ts`
   (qui miroir la doctrine app — per-anneau pour les territoires d'outre-mer,
-  ISO overrides pour les bridge cases comme Iran=R4, Mongolie=R3, Égypte=R4).
+  ISO overrides pour les bridge cases comme Iran=R4, Mongolie=R3, Égypte=R4, Turquie=R4).
   Détecte les cartes mal classées (Hawaii en R10 au lieu de R8, Guyane en R1
-  au lieu de R9, Vienne en R2 au lieu de R1, etc.). Ignoré quand le tap est
-  orphelin (regionFromCountryHit → null : lieu abstrait, ou île trop petite
-  pour le TopoJSON 1:110M — le snap nearest de l'app rattrape ces cas).
-  Pour identifier la liste, lancer `npx tsx scripts/audit-regions.ts`.
+  au lieu de R9, Vienne en R2 au lieu de R1, etc.). Utilise désormais le **snap**
+  (`regionFromCountryHitWithSnap`) : un pin maritime/orphelin (détroit du Bosphore,
+  île trop petite pour le TopoJSON 1:110M) est résolu au pays le plus proche ≤ 150 km
+  — c'est ce que fait l'app en jeu, donc on ne l'ignore plus (c'était l'angle mort qui
+  laissait passer la Mosquée bleue R2 / Théra R4). Seul `snap = null` (océan, lieu
+  abstrait) reste ignoré. Pour identifier la liste, lancer `npx tsx scripts/audit-regions.ts`
+  (Liste E = injouables, Liste F = snap null).
 
 ### Unicité éditoriale
 - `subjectKey` déjà utilisé par une autre carte (warning, pas erreur — utile pour repérer des doublons sémantiques).

@@ -49,7 +49,7 @@ Si `data/cards/<slug>.json` n'existe pas encore, tu le crées en intégrant auss
 ### `title` (2-80 chars)
 - Court, sans article inutile : "Bataille de Marignan", pas "La bataille de Marignan".
 - Suffisamment précis pour distinguer cette carte d'une autre similaire.
-- **Jamais l'année / la date-réponse du quizz WHEN dans le titre.** Le titre peut nommer l'objet et le **lieu** (« Bataille de Marignan »), mais pas l'année à deviner. Si le nom usuel contient une date (« Maracanazo (1950) », « Acte d'Union de 1707 »), renomme sans la date (« Maracanazo », « Acte d'Union anglo-écossais ») — la date vit dans `timeDisplayLabel`/`body`. Invariant **bloquant** `title-when-spoiler`.
+- **AUCUNE date dans le titre — jamais.** Le titre peut nommer l'objet et le **lieu** (« Bataille de Marignan »), mais **aucune date sous aucune forme** : ni année (« 1789 »), ni « av./ap. J.-C. », ni date jour-mois (« 11 septembre »), ni date entre parenthèses. C'est plus strict que l'anti-spoiler : même une date hors fenêtre de devinette est interdite (règle utilisateur 2026-06-27). Si le nom usuel contient une date (« Maracanazo (1950) », « Krach de 1987 », « Acte d'Union de 1707 »), renomme sans la date (« Maracanazo », « Krach du Lundi noir », « Acte d'Union anglo-écossais ») — la date vit dans `timeDisplayLabel`/`body`. Invariant **bloquant** `title-contains-date` (doublé de `title-when-spoiler`).
 
 ### `blurb` (20-220 chars)
 - **Une phrase d'accroche**.
@@ -125,7 +125,7 @@ Pour `tag: "periodique"` : **préfixer par un label de type** pour lever l'ambig
 - [ ] Le verbe n'est pas dupliqué entre `pre` et `verb` (jamais `"Où a régné " + "régné"`).
 - [ ] Tout le vocabulaire de précision lexicale est appliqué (cf. table par `canonical.type` dans editorial-rules.md) : ne pas retomber sur « ce monument » générique pour une muraille, statuette, cathédrale spécifique.
 - [ ] Si `tag = "periodique"` : `timeDisplayLabel` commence par un **préfixe de type** (`construction:`, `règne:`, `extension:`…) et ses bornes numériques matchent `startYear`/`endYear` (tolérance ±50 ans).
-- [ ] Le titre ne contient pas l'année/date-réponse du quizz WHEN (le **lieu** peut, lui, figurer : « Bataille de Marignan »). Détecté par l'invariant **bloquant** `title-when-spoiler`.
+- [ ] Le titre ne contient **aucune date** (année, « av. J.-C. », date jour-mois), même hors fenêtre de devinette (le **lieu** peut, lui, figurer : « Bataille de Marignan »). Détecté par les invariants **bloquants** `title-contains-date` + `title-when-spoiler`.
 - [ ] Le ton est neutre et pédagogique.
 
 ### Prudence épistémique (les 7 patterns)

@@ -5,7 +5,7 @@ import {
   type Card,
 } from "../../schemas/card.schema.js";
 import type { LoadedCard } from "./load-cards.js";
-import { regionFromCountryHit, regionLabel } from "./region-geo.js";
+import { regionFromCountryHitWithSnap, regionLabel } from "./region-geo.js";
 
 export type Severity = "error" | "warning";
 
@@ -475,31 +475,72 @@ function checkSingleCard(file: string, c: Card): Issue[] {
     }
   }
 
-  // Geographic sanity
-  const { lat, lon, geoKind } = c.canonical.place;
-  if (geoKind === "earth") {
-    if (lat === 0 && lon === 0) {
+  // title-contains-date : AUCUNE date (année, « av./ap. J.-C. », date jour-mois) ne doit
+  // figurer dans le titre — plus strict que title-when-spoiler (qui ne couvre que la fenêtre
+  // WHEN). Règle utilisateur 2026-06-27 ; cf. editorial-rules.md « À éviter absolument ».
+  // Échappatoire : une note editorial.notes contenant « exception titre-date » rétrograde en
+  // warning (cas du roman « 1984 » d'Orwell, dont le titre EST le nom propre de l'œuvre).
+  {
+    const t = c.display.locales.fr.title;
+    const MONTHS = "janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre|decembre";
+    const hasYear = /\d{3,4}/.test(t);
+    const hasBC = /av\.?\s*j\.?-?c\.?|ap\.?\s*j\.?-?c\.?/i.test(t);
+    const hasDayMonth = new RegExp(`\\b\\d{1,2}\\s+(${MONTHS})\\b`, "i").test(t);
+    if (hasYear || hasBC || hasDayMonth) {
+      const sanctioned = c.editorial.notes.some((n) => /exception titre-date/i.test(n));
       out.push({
-        severity: "warning",
+        severity: sanctioned ? "warning" : "error",
         file,
         cardId,
-        rule: "null-island",
-        message: "lat=0,lon=0 (Null Island) — likely a missing geocode, not Equator/Greenwich intersection",
+        rule: "title-contains-date",
+        message: `title ${JSON.stringify(t)} contient une date (année / « av. J.-C. » / date jour-mois) — interdit dans un titre. Déplacer la date vers timeDisplayLabel/body et renommer le sujet.${sanctioned ? " (exception sanctionnée via editorial.notes)" : ""}`,
       });
     }
+  }
 
-    // region ↔ (lat, lon) — warning si la région attribuée diffère de la
-    // classification géographique (port app). null = orphelin (lieu abstrait,
-    // île trop petite pour 1:110M) → ignoré ; le snap nearest de l'app
-    // rattrape côté Explorateur.
-    const appRegion = regionFromCountryHit(lat, lon);
+  // Localisabilité obligatoire (règle utilisateur 2026-06-27) : toute carte doit être jouable
+  // en OÙ ET en QUAND. Pas de lieu abstrait, pas de coordonnées 0,0, pas d'axe désactivé.
+  const { lat, lon, geoKind } = c.canonical.place;
+  if (c.gameplay.eligibleForWhere === false || geoKind === "abstract" || (lat === 0 && lon === 0)) {
+    out.push({
+      severity: "error",
+      file,
+      cardId,
+      rule: "not-localizable-where",
+      message: `carte non localisable dans l'espace (eligibleForWhere=${c.gameplay.eligibleForWhere}, geoKind="${geoKind}", lat=${lat}, lon=${lon}) — toute carte doit avoir un lieu réel jouable en OÙ. Choisir un sujet localisable, renseigner de vraies coordonnées, ou ancrer sur un point réel (ex. pays opérateur pour une mission spatiale).`,
+    });
+  }
+  if (c.gameplay.eligibleForWhen === false) {
+    out.push({
+      severity: "error",
+      file,
+      cardId,
+      rule: "not-localizable-when",
+      message: "carte non localisable dans le temps (eligibleForWhen=false) — toute carte doit avoir une date jouable en QUAND.",
+    });
+  }
+
+  // Geographic sanity (region ↔ tap explorateur, earth seulement)
+  if (geoKind === "earth") {
+    // region ↔ (lat, lon) — la région réellement scorée en OÙ explorateur est
+    // celle du PAYS tapé sur le globe : `regionFromCountryHitWithSnap` rend le
+    // pays contenant le point, sinon snappe au pays le plus proche ≤ 150 km
+    // (pin en mer/détroit, île trop fine pour le 1:110M — ex. Bosphore pour
+    // Istanbul). Si elle diffère de place.region, AUCUN tap correct ne valide
+    // la carte → injouable. Bloquant pour une carte `approved` (gate de push) ;
+    // warning sinon (édition en cours). snap = null (océan, lieu abstrait) →
+    // indéterminable, ignoré. NB : utiliser le snap ferme l'angle mort historique
+    // où les pins maritimes orphelins (regionFromCountryHit = null) sautaient ce
+    // contrôle (cf. Mosquée bleue / Théra, audit 2026-06-14).
+    const appRegion = regionFromCountryHitWithSnap(lat, lon);
     if (appRegion !== null && appRegion !== c.canonical.place.region) {
+      const blocking = c.editorial.status === "approved";
       out.push({
-        severity: "warning",
+        severity: blocking ? "error" : "warning",
         file,
         cardId,
         rule: "region-latlon-mismatch",
-        message: `place.region=R${c.canonical.place.region} (${regionLabel(c.canonical.place.region as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10)}) mais la classification géographique (lat=${lat.toFixed(2)}, lon=${lon.toFixed(2)}) donne R${appRegion} (${regionLabel(appRegion)}) — vérifier la coord ou la doctrine`,
+        message: `place.region=R${c.canonical.place.region} (${regionLabel(c.canonical.place.region as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10)}) mais le tap explorateur (lat=${lat.toFixed(2)}, lon=${lon.toFixed(2)}) résout R${appRegion} (${regionLabel(appRegion)}) → carte injouable en OÙ explorateur. Aligner place.region sur R${appRegion}, ou déplacer le pin / revoir le countryCode.`,
       });
     }
   }
