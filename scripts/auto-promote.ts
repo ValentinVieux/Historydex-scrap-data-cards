@@ -86,7 +86,7 @@ for (const file of cardFiles) {
   });
 }
 
-verdicts.sort((a, b) => a.dexNum.localeCompare(b.dexNum));
+verdicts.sort((a, b) => Number(a.dexNum) - Number(b.dexNum));
 
 const promoted = verdicts.filter((v) => v.decision === "promote");
 const blocked = verdicts.filter((v) => v.decision === "block");

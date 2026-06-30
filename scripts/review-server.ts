@@ -35,6 +35,7 @@ import { ensureDir, nowIso, PATHS } from "./_lib/io.js";
 import { countryNameFr } from "./_lib/country-fr.js";
 import { loadCardFile, saveCardFile } from "./_lib/save-card.js";
 import { runInvariants } from "./_lib/invariants.js";
+import { regionFromCountryHitWithSnap } from "./_lib/region-geo.js";
 import { checkApprovalPreconditions } from "./_lib/pre-approve.js";
 import { REGION_LABELS } from "../schemas/card.schema.js";
 import {
@@ -269,7 +270,7 @@ async function main(): Promise<void> {
     const index = loadIndex();
     const summaries = all.cards
       .map((c) => buildCardSummary(c.data, index[c.data.dexNum]))
-      .sort((a, b) => a.dexNum.localeCompare(b.dexNum));
+      .sort((a, b) => Number(a.dexNum) - Number(b.dexNum));
     res.json({ count: summaries.length, cards: summaries });
   });
 
@@ -708,6 +709,19 @@ async function main(): Promise<void> {
 
     if (isFiniteNumber(body.lat)) card.canonical.place.lat = body.lat;
     if (isFiniteNumber(body.lon)) card.canonical.place.lon = body.lon;
+    // place.region est DÉRIVÉE de (lat, lon), jamais saisie à la main : c'est la
+    // région qu'un tap correct produit en Explorateur (regionFromCountryHitWithSnap,
+    // MÊME fonction que le scoring du jeu). Toute valeur divergente rend la carte
+    // injouable (cf. invariant region-latlon-mismatch). On re-dérive donc à chaque
+    // édition de coordonnées. Cartes non terrestres (Lune/abstrait) ou pins sans
+    // pays tappable ≤150 km (snap null) → on garde la region éditoriale existante.
+    if (isFiniteNumber(body.lat) || isFiniteNumber(body.lon)) {
+      const place = card.canonical.place;
+      if ((place.geoKind ?? "earth") === "earth") {
+        const derived = regionFromCountryHitWithSnap(place.lat, place.lon);
+        if (derived !== null) place.region = derived;
+      }
+    }
     if (isFiniteNumber(body.whereRadiusKm)) {
       // whereRadiusKm doit être un entier positif (cf. schema)
       card.gameplay.whereRadiusKm = Math.max(1, Math.round(body.whereRadiusKm));

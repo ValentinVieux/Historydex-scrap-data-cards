@@ -136,6 +136,7 @@ Prends la **valeur typique** comme premier réflexe, ajuste dans la **fourchette
 Lance `npx tsx scripts/validate-catalog.ts` (ou demande au `data-validator` de le faire). Toute erreur bloquante doit être corrigée avant de poser le crayon.
 
 Liste personnelle :
+- [ ] **Localisable OÙ + QUAND (bloquant).** `eligibleForWhere` ET `eligibleForWhen` doivent rester `true` ; `place.geoKind` ≠ `"abstract"` ; coordonnées réelles (jamais `0,0`). Une carte sans lieu réel jouable est refusée (`not-localizable-where` / `not-localizable-when`). Pour une mission spatiale (Lune, Mars, pôle), ancrer `lat/lon` sur un point réel du **pays opérateur** (ex. un point des USA pour la NASA, `region 10`, `geoKind: extraterrestrial`) — ne jamais laisser `0,0`. Si le sujet n'a aucun lieu défendable (concept délocalisé type cryptomonnaie), remonte-le : ce n'est pas une carte valide.
 - [ ] `tag = periodique` ⇒ `startYear` ET `endYear` non null, `pivotYear` dans l'intervalle, **`endYear - startYear > 10`**.
 - [ ] Si `endYear - startYear ≤ 10` : bascule en `ponctuelle`, choix `pivotYear` emblématique, `startYear`/`endYear` à `null`, fourchette préservée dans `timeDisplayLabel`.
 - [ ] `era` cohérente avec `pivotYear` ou justifiée dans `notes`.

@@ -132,6 +132,57 @@ const OVERSEAS_COUNTRIES = new Set<number>([
   840, 250, 826, 724, 620, 528, 208, 578,
 ]);
 
+// ---------- Surcouche d'îles critiques (miroir app extraIslands.ts) ---------
+// Petites îles absentes ou trop fines dans le TopoJSON 1:110M. Chaque entrée est
+// un rectangle hitbox injecté dans REGION_POLYGONS_INDEX (comme countriesGeo.ts
+// L345-361 côté app) → rend l'île tappable / classable. DOIT rester synchronisé
+// avec app/historydex/lib/catalog/extraIslands.ts.
+type ExtraIsland = {
+  name: string;
+  regionId: RegionId;
+  ring: ReadonlyArray<readonly [number, number]>; // [lon, lat], fermé
+};
+
+function box(
+  lonW: number,
+  latS: number,
+  lonE: number,
+  latN: number,
+): ReadonlyArray<readonly [number, number]> {
+  return [
+    [lonW, latS],
+    [lonE, latS],
+    [lonE, latN],
+    [lonW, latN],
+    [lonW, latS],
+  ];
+}
+
+const EXTRA_ISLANDS: readonly ExtraIsland[] = [
+  // Pacifique central/est (R8)
+  { name: "Polynésie française", regionId: 8, ring: box(-152, -19, -148, -16) },
+  { name: "Atoll de Midway", regionId: 8, ring: box(-178.5, 27.5, -176.5, 29) },
+  { name: "Île de Pâques (Rapa Nui)", regionId: 8, ring: box(-110, -28, -108.5, -26.5) },
+  { name: "Yap (Micronésie)", regionId: 8, ring: box(137, 8.5, 139, 10.5) },
+  // Caraïbes & Amériques (R9)
+  { name: "Bahamas", regionId: 9, ring: box(-79, 21, -72.5, 27.5) },
+  { name: "Martinique", regionId: 9, ring: box(-61.4, 14.3, -60.7, 14.95) },
+  { name: "Guadeloupe", regionId: 9, ring: box(-61.85, 15.85, -61.15, 16.55) },
+  { name: "Galápagos", regionId: 9, ring: box(-92, -1.5, -89, 0.6) },
+  // Atlantique nord proche Europe (R1)
+  { name: "Açores", regionId: 1, ring: box(-31.5, 36.8, -25, 39.8) },
+  { name: "Madère", regionId: 1, ring: box(-17.5, 32.4, -16.3, 33.2) },
+  { name: "Île d'Elbe", regionId: 1, ring: box(10.0, 42.65, 10.55, 42.9) },
+  // Atlantique sud / océan Indien africain (R5)
+  { name: "Sainte-Hélène", regionId: 5, ring: box(-6.1, -16.2, -5.4, -15.7) },
+  { name: "La Réunion", regionId: 5, ring: box(55.1, -21.5, 56, -20.7) },
+  { name: "Mayotte", regionId: 5, ring: box(44.9, -13.1, 45.4, -12.6) },
+  // Mer de Béring (R3)
+  { name: "Île Béring (Commander)", regionId: 3, ring: box(165.7, 54.5, 166.6, 55.5) },
+  // Mélanésie / Salomon (R8)
+  { name: "Vanikoro (Salomon)", regionId: 8, ring: box(166.7, -11.85, 167.15, -11.4) },
+];
+
 // ---------- Build polygon index --------------------------------------------
 
 type IndexedRing = {
@@ -311,6 +362,27 @@ function build(): RegionPolygonEntry[] {
       });
     }
   }
+
+  // Surcouche d'îles critiques (miroir app) : append après les pays → un point
+  // dans un vrai pays matche d'abord le pays ; les boîtes ne servent que pour
+  // les points hors de tout polygone-pays (îles/océan).
+  for (const isl of EXTRA_ISLANDS) {
+    const ring = unwrapRing(isl.ring);
+    if (ring.length < 3) continue;
+    const idx = indexRing(ring);
+    indexedPolygons.push({
+      region: isl.regionId,
+      meta: { isoNum: null, rawName: isl.name },
+      outer: idx,
+      holes: [],
+      ringIndex: 0,
+      bboxCentroid: {
+        lat: (idx.latMin + idx.latMax) / 2,
+        lon: normalizeLon((idx.lonMin + idx.lonMax) / 2),
+      },
+    });
+  }
+
   return indexedPolygons;
 }
 
@@ -332,6 +404,85 @@ export function regionFromCountryHit(
 ): RegionId | null {
   const hit = countryHit(lat, lon);
   return hit ? hit.region : null;
+}
+
+// ---------- Snap nearest (miroir app countriesGeo.ts:428-490) ---------------
+// L'app résout le tap explorateur via `regionFromCountryHitWithSnap` : si le
+// point ne tombe dans aucun polygone (eau, détroit, île trop petite à 1:110M),
+// elle le rattache au pays le plus proche dans un rayon EXPLORER_SNAP_KM. La
+// région **réellement scorée en jeu** est donc celle-ci, pas `countryHit` seul.
+// C'est exactement l'angle mort de l'audit "orphelin" : un pin maritime (ex.
+// Bosphore pour Istanbul) renvoyait null et sautait le test de désaccord, alors
+// que le snap le résout à R4 → carte injouable si place.region ≠ R4.
+export const EXPLORER_SNAP_KM = 150;
+
+const EARTH_KM = 6371;
+
+function haversineKm(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return EARTH_KM * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Distance planaire approximative en km d'un point à la bbox d'un anneau
+// (0 si le point est dans la bbox). Prefilter rapide avant le calcul vertex.
+function distanceToBboxKm(lat: number, lon: number, outer: IndexedRing): number {
+  const normLon = normalizeLon(lon);
+  const center = (outer.lonMin + outer.lonMax) / 2;
+  const testLon = normLon + Math.round((center - normLon) / 360) * 360;
+  const clampedLat = Math.max(outer.latMin, Math.min(outer.latMax, lat));
+  const clampedLon = Math.max(outer.lonMin, Math.min(outer.lonMax, testLon));
+  const dLat = (lat - clampedLat) * 111.32;
+  const dLon = (testLon - clampedLon) * 111.32 * Math.cos((lat * Math.PI) / 180);
+  return Math.sqrt(dLat * dLat + dLon * dLon);
+}
+
+function minVertexDistanceKm(
+  lat: number,
+  lon: number,
+  ring: readonly LngLat[],
+): number {
+  let m = Infinity;
+  for (let i = 0; i < ring.length; i++) {
+    const d = haversineKm(lat, lon, ring[i][1], ring[i][0]);
+    if (d < m) m = d;
+  }
+  return m;
+}
+
+// Comme `regionFromCountryHit` mais si le tap est hors polygone, cherche le
+// pays/île le plus proche dans un rayon `maxKm` (défaut EXPLORER_SNAP_KM) et
+// retourne sa région. C'est la région que le scoring explorateur de l'app
+// (`evalWhere` → `answer.regionId === card.region`) compare réellement.
+export function regionFromCountryHitWithSnap(
+  lat: number,
+  lon: number,
+  maxKm: number = EXPLORER_SNAP_KM,
+): RegionId | null {
+  const exact = regionFromCountryHit(lat, lon);
+  if (exact !== null) return exact;
+
+  let bestKm = maxKm;
+  let bestRegion: RegionId | null = null;
+  for (const entry of REGION_POLYGONS_INDEX) {
+    const distBbox = distanceToBboxKm(lat, lon, entry.outer);
+    if (distBbox >= bestKm) continue;
+    const minVertex = minVertexDistanceKm(lat, lon, entry.outer.ring);
+    if (minVertex < bestKm) {
+      bestKm = minVertex;
+      bestRegion = entry.region;
+    }
+  }
+  return bestRegion;
 }
 
 export function countryHit(lat: number, lon: number): CountryHit | null {

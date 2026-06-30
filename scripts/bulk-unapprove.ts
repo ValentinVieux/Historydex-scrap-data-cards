@@ -49,7 +49,7 @@ for (const file of cardFiles) {
   });
 }
 
-targets.sort((a, b) => a.dexNum.localeCompare(b.dexNum));
+targets.sort((a, b) => Number(a.dexNum) - Number(b.dexNum));
 
 console.log(`${APPLY ? "" : "[DRY-RUN] "}Bulk-unapprove bilan :\n`);
 console.log(`  À flipper (approved → reviewed) : ${targets.length}`);
