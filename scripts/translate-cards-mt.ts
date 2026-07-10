@@ -42,7 +42,7 @@ const THROTTLE_MS = 1200;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-type Args = { locale: string; limit: number; apply: boolean; status: "approved" | "reviewed" | "both" };
+type Args = { locale: string; limit: number; apply: boolean; status: "approved" | "reviewed" | "both"; minDex: number };
 function parseArgs(): Args {
   const a = process.argv.slice(2);
   const locale = a.find((x) => !x.startsWith("--")) ?? "";
@@ -50,7 +50,11 @@ function parseArgs(): Args {
   const limit = limFlag ? Number(limFlag.split("=")[1] ?? a[a.indexOf(limFlag) + 1]) : Infinity;
   const statusFlag = a.find((x) => x.startsWith("--status"));
   const status = (statusFlag ? (statusFlag.split("=")[1] ?? a[a.indexOf(statusFlag) + 1]) : "approved") as Args["status"];
-  return { locale, limit: Number.isFinite(limit) ? limit : Infinity, apply: a.includes("--apply"), status };
+  // --min-dex : plancher dexNum. Sert à scoper `en` aux cartes neuves (les anciennes
+  // ont leur `en` backfillé en DB sans display.locales.en local — ne pas re-traduire).
+  const minFlag = a.find((x) => x.startsWith("--min-dex"));
+  const minDex = minFlag ? Number(minFlag.split("=")[1] ?? a[a.indexOf(minFlag) + 1]) : 0;
+  return { locale, limit: Number.isFinite(limit) ? limit : Infinity, apply: a.includes("--apply"), status, minDex: Number.isFinite(minDex) ? minDex : 0 };
 }
 
 type Card = {
@@ -123,7 +127,7 @@ async function mtTranslate(texts: string[], target: string): Promise<string[]> {
 const fmt = (n: number) => n.toLocaleString("en-US");
 
 async function main() {
-  const { locale, limit, apply, status } = parseArgs();
+  const { locale, limit, apply, status, minDex } = parseArgs();
   if (!locale || !targetLocales().includes(locale)) {
     console.error(`locale invalide. Cibles: ${targetLocales().join(", ")} (cf. supported-locales.json)`);
     process.exit(1);
@@ -144,7 +148,7 @@ async function main() {
 
   // À traduire = bon statut, pas déjà traduit en amont (display.locales[loc]), pas déjà staged.
   const todo = all
-    .filter((c) => wantStatus(c.editorial?.status) && !c.display?.locales?.[locale] && c.display?.locales?.fr && !seen.has(c.dexNum))
+    .filter((c) => wantStatus(c.editorial?.status) && !c.display?.locales?.[locale] && c.display?.locales?.fr && !seen.has(c.dexNum) && Number(c.dexNum) >= minDex)
     .slice(0, limit);
 
   let chars = 0;
