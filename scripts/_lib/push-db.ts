@@ -10,6 +10,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import sharp from "sharp";
 import { encode as encodeBlurhash } from "blurhash";
 import { id } from "@instantdb/admin";
@@ -33,6 +34,25 @@ import {
 
 const IMAGES_FINAL = path.join(PATHS.cards, "..", "_images-final");
 
+// Id singleton de catalogStats (dénominateur « X / N » du profil + Dex).
+// DUPLIQUÉ depuis ../app/historydex/scripts/refresh-catalog-stats.ts — c'est la
+// source de vérité (le cron l'écrit aussi). Un update sur cet id converge donc
+// toujours vers la MÊME ligne (merge, pas de doublon).
+const CATALOG_STATS_ID = "ca7a1057-0000-4000-8000-c00000000001";
+
+// Ordre des ères pour eraSort. MIROIR de ../app/historydex/lib/catalog/eras.ts
+// (ERA_ORDER) et de scripts/backfill-era-sort.ts. Ère inconnue → rank 9.
+const ERA_ORDER = ["prehist", "antiq", "medi", "modern", "contemp"] as const;
+
+// eraSort = eraRank × 10000 + int(dexNum). Clé de tri era-major de la grille Dex ;
+// une carte sans ce champ est INVISIBLE dans le catalogue (garde $isNull:false côté
+// app). Miroir exact de computeEraSort() du backfill app.
+function computeEraSort(era: string, dexNum: string): number {
+  const num = Number.parseInt(dexNum, 10);
+  const rank = ERA_ORDER.indexOf(era as (typeof ERA_ORDER)[number]);
+  return (rank === -1 ? 9 : rank) * 10000 + (Number.isFinite(num) ? num : 0);
+}
+
 // ── Types ────────────────────────────────────────────────────────────────
 
 export type FlatCard = {
@@ -41,6 +61,7 @@ export type FlatCard = {
   normalizedTitle: string;
   type: string;
   era: string;
+  eraSort: number;
   region: number;
   country: string;
   tag: "ponctuelle" | "periodique";
@@ -91,6 +112,11 @@ export type Diff = {
   // création (résolu après le push texte, comme les images).
   toPushTranslations: Array<{ dexNum: string; cardId: string; locale: string; row: CardTranslationRow }>;
   unchanged: number;
+  // Cartes à pousser (neuves ou texte mis à jour) auxquelles il manque au moins
+  // une locale cible (display.locales.<loc> null). Gate traduction : pushDelta
+  // refuse si non vide (sauf allowUntranslated) — sinon ces cartes partent en
+  // FR seul et l'app retombe sur le fallback. Lance /translate-cards-mt d'abord.
+  untranslated: Array<{ dexNum: string; missing: string[] }>;
   // Pour le rapport.
   warnings: string[];
   countryFallbacks: string[];
@@ -100,6 +126,8 @@ export type Diff = {
 export type PushOptions = {
   dryRun: boolean;
   maxDex?: number; // ne pousse que les cartes dexNum ≤ maxDex (numérique)
+  /** Si true, pousse même si des cartes n'ont pas toutes leurs locales cibles. */
+  allowUntranslated?: boolean;
   /** Callback de progression — utile pour le polling depuis l'app. */
   onProgress?: (status: PushProgress) => void;
 };
@@ -134,6 +162,7 @@ function flatten(card: Card, publishedAt: number): { flat: FlatCard; warnings: s
     normalizedTitle: normalizeForSearch(fr.title),
     type: card.canonical.type,
     era: card.gameplay.era,
+    eraSort: computeEraSort(card.gameplay.era, card.dexNum),
     region: card.canonical.place.region,
     country,
     tag: card.canonical.time.tag,
@@ -236,6 +265,7 @@ export async function computeDiff(opts: { maxDex?: number; forceTranslations?: b
   const warnings: string[] = [];
   const countryFallbacks: string[] = [];
   const translationRejects: string[] = [];
+  const untranslated: Diff["untranslated"] = [];
 
   for (const card of selected) {
     const { flat, warnings: w, countryFallback } = flatten(card, publishedAt);
@@ -247,6 +277,45 @@ export async function computeDiff(opts: { maxDex?: number; forceTranslations?: b
     else warnings.push(`[${card.dexNum}] image locale manquante (data/_images-final/${card.dexNum}.jpg) — texte poussé sans image`);
 
     const dbCard = dbByDex.get(card.dexNum);
+
+    // Traductions : pour chaque locale cible remplie en amont (display.locales.<loc>),
+    // (ré)écrire si la ligne manque OU si sa sourceContentVersion ≠ contentVersion FR.
+    // ⚠️ Ce bloc DOIT tourner AVANT le early-continue des cartes en création :
+    // le bug historique (78 cartes du 2026-07-06 poussées sans aucune ligne
+    // cardTranslations malgré un `en` rempli) venait d'un `continue` qui
+    // court-circuitait ce calcul pour toute carte absente de la DB.
+    const existingTrans = dbTransByDex.get(card.dexNum) ?? new Map<string, number | null>();
+    const cardIdForTrans = dbCard ? dbCard.id : ""; // "" = création (cardId résolu au push)
+    const missingLocales: string[] = [];
+    for (const locale of locales) {
+      const loc = localeTextOf(card, locale);
+      if (!loc) {
+        // Locale absente du JSON. On ne la compte comme "manquante" (gate) que si
+        // elle est AUSSI absente de la DB : le `en` des cartes anciennes a été
+        // backfillé côté app (cardTranslations en base) sans être re-transcrit
+        // dans le JSON du pipeline. Bloquer ces cartes serait un faux positif —
+        // leur traduction existe déjà en base et ne se perd pas au push.
+        if (!existingTrans.has(locale)) missingLocales.push(locale);
+        continue;
+      }
+      const v = validateTranslatedLocale(loc, card.canonical.time.tag, locale);
+      if (!v.ok) {
+        translationRejects.push(`[${card.dexNum}/${locale}] ${v.issues.join(" | ")}`);
+        continue;
+      }
+      const stale = opts.forceTranslations || !existingTrans.has(locale) || existingTrans.get(locale) !== card.editorial.contentVersion;
+      if (stale) {
+        toPushTranslations.push({
+          dexNum: card.dexNum,
+          cardId: cardIdForTrans,
+          locale,
+          row: buildTranslationRow(card, locale, loc),
+        });
+      }
+    }
+    if (missingLocales.length > 0) {
+      untranslated.push({ dexNum: card.dexNum, missing: missingLocales });
+    }
 
     if (!dbCard) {
       toCreate.push(flat);
@@ -287,29 +356,6 @@ export async function computeDiff(opts: { maxDex?: number; forceTranslations?: b
       }
     }
 
-    // Traductions : pour chaque locale cible remplie en amont (display.locales.<loc>),
-    // (ré)écrire si la ligne manque OU si sa sourceContentVersion ≠ contentVersion FR.
-    const existingTrans = dbTransByDex.get(card.dexNum) ?? new Map<string, number | null>();
-    const cardIdForTrans = dbCard ? dbCard.id : ""; // "" = création (cardId résolu au push)
-    for (const locale of locales) {
-      const loc = localeTextOf(card, locale);
-      if (!loc) continue; // pas encore traduit en amont → repli FR côté app
-      const v = validateTranslatedLocale(loc, card.canonical.time.tag, locale);
-      if (!v.ok) {
-        translationRejects.push(`[${card.dexNum}/${locale}] ${v.issues.join(" | ")}`);
-        continue;
-      }
-      const stale = opts.forceTranslations || !existingTrans.has(locale) || existingTrans.get(locale) !== card.editorial.contentVersion;
-      if (stale) {
-        toPushTranslations.push({
-          dexNum: card.dexNum,
-          cardId: cardIdForTrans,
-          locale,
-          row: buildTranslationRow(card, locale, loc),
-        });
-      }
-    }
-
     if (!textDirty && !imageDirty) unchanged++;
   }
 
@@ -319,6 +365,7 @@ export async function computeDiff(opts: { maxDex?: number; forceTranslations?: b
     toUploadImage,
     toPushTranslations,
     unchanged,
+    untranslated,
     warnings,
     countryFallbacks,
     translationRejects,
@@ -366,9 +413,61 @@ async function makeBlurhash(srcBuffer: Buffer): Promise<string> {
   return encodeBlurhash(new Uint8ClampedArray(data), info.width, info.height, 4, 3);
 }
 
+// Recale le singleton catalogStats (cardCount + eraCounts) après un push qui a
+// CRÉÉ des cartes — sinon le « X / N » du profil/Dex reste périmé jusqu'au cron
+// de maintenance. Best-effort : une erreur ici n'échoue pas le push (les cartes
+// sont déjà écrites ; le cron rattrapera). `update` sur l'id singleton = merge,
+// donc registeredCollectors / rarityComputedAt (rareté, cron) ne sont pas touchés.
+// Miroir de ../app/historydex/scripts/refresh-catalog-stats.ts.
+async function refreshCatalogStats(errors: string[]): Promise<void> {
+  try {
+    const res = await db.query({ cards: { $: { fields: ["dexNum", "era"], limit: 100_000 } } });
+    const cards = (res.cards ?? []) as Array<{ era?: string }>;
+    const eraCounts: Record<string, number> = {};
+    for (const c of cards) {
+      const era = c.era ?? "unknown";
+      eraCounts[era] = (eraCounts[era] ?? 0) + 1;
+    }
+    await db.transact([
+      db.tx.catalogStats[CATALOG_STATS_ID]!.update({
+        cardCount: cards.length,
+        eraCounts,
+        updatedAt: Date.now(),
+      }),
+    ]);
+  } catch (err) {
+    errors.push(`catalogStats non recalé (le cron rattrapera) : ${(err as Error).message}`);
+  }
+}
+
+// Déclenche la notif joueurs « 🆕 nouvelles cartes » après un push réel qui a CRÉÉ des
+// cartes — et uniquement là (décision 2026-07-10 : le cron quotidien est débranché,
+// new-card-push.yml ne garde que le déclenchement manuel). Délègue au script du repo app
+// (watermark publishedAt, anti-spoiler compte-seul, no-op propre sans EXPO_ACCESS_TOKEN).
+// Best-effort : un échec n'invalide pas le push — relancer le script à la main.
+function notifyNewCards(errors: string[]): void {
+  const appDir = path.resolve(process.cwd(), "..", "app", "historydex");
+  try {
+    const res = spawnSync("npx", ["tsx", "scripts/send-new-card-push.ts", "--apply"], {
+      cwd: appDir,
+      shell: process.platform === "win32", // npx = npx.cmd sous Windows
+      encoding: "utf8",
+      timeout: 120_000,
+    });
+    const out = `${res.stdout ?? ""}\n${res.stderr ?? ""}`.trim();
+    if (res.status !== 0) {
+      errors.push(`Notif nouvelles-cartes non envoyée (relancer send-new-card-push.ts --apply côté app) : ${out.slice(-300)}`);
+    } else {
+      console.log(`Notif nouvelles-cartes : ${out.split("\n").filter(Boolean).pop() ?? "ok"}`);
+    }
+  } catch (err) {
+    errors.push(`Notif nouvelles-cartes non envoyée : ${(err as Error).message}`);
+  }
+}
+
 // Push effectif. Si dryRun, retourne le diff sans toucher la DB.
 export async function pushDelta(diff: Diff, options: PushOptions): Promise<{ pushed: number; errors: string[] }> {
-  const { dryRun, onProgress } = options;
+  const { dryRun, onProgress, allowUntranslated } = options;
   const errors: string[] = [];
   const totalSteps =
     diff.toCreate.length +
@@ -380,6 +479,23 @@ export async function pushDelta(diff: Diff, options: PushOptions): Promise<{ pus
   if (dryRun) {
     onProgress?.({ phase: "done", processed: 0, total: totalSteps, errors });
     return { pushed: 0, errors };
+  }
+
+  // Gate traduction : refuse un push réel si des cartes approuvées n'ont pas
+  // toutes leurs locales cibles — sinon elles partent en FR seul et l'app
+  // retombe sur le fallback (bug du 2026-07-06 : 78 cartes poussées sans es/de/it/pt).
+  // Lance /translate-cards-mt d'abord, ou --allow-untranslated pour forcer.
+  // Le dry-run n'est PAS bloqué (il liste diff.untranslated pour information).
+  if (!allowUntranslated && diff.untranslated.length > 0) {
+    const preview = diff.untranslated
+      .slice(0, 8)
+      .map((u) => `${u.dexNum} (${u.missing.join(",")})`)
+      .join(", ");
+    throw new Error(
+      `Refus de push : ${diff.untranslated.length} carte(s) approuvée(s) sans toutes leurs traductions ` +
+        `— lance \`/translate-cards-mt\` avant le push (ou --allow-untranslated pour forcer). ` +
+        `Ex. : ${preview}${diff.untranslated.length > 8 ? " …" : ""}`,
+    );
   }
 
   // a) Phase texte : un seul transact pour les "new" + les "update".
@@ -449,6 +565,10 @@ export async function pushDelta(diff: Diff, options: PushOptions): Promise<{ pus
   // laisser la phase à "text" avec processed=totalSteps (UI affichait alors
   // "Push texte — 100 %" et donnait l'impression de figer).
   if (diff.toUploadImage.length === 0) {
+    if (diff.toCreate.length > 0) {
+      await refreshCatalogStats(errors);
+      notifyNewCards(errors);
+    }
     onProgress?.({ phase: "done", processed, total: totalSteps, errors });
     return { pushed: processed, errors };
   }
@@ -535,6 +655,10 @@ export async function pushDelta(diff: Diff, options: PushOptions): Promise<{ pus
     await new Promise((r) => setTimeout(r, 200));
   }
 
+  if (diff.toCreate.length > 0) {
+    await refreshCatalogStats(errors);
+    notifyNewCards(errors);
+  }
   onProgress?.({ phase: "done", processed, total: totalSteps, errors });
   return { pushed: processed, errors };
 }

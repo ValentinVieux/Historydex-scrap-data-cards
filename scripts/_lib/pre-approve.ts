@@ -21,6 +21,24 @@ import { PATHS } from "./io.js";
 import { runInvariants } from "./invariants.js";
 
 const IMAGES_FINAL = path.join(PATHS.cards, "..", "_images-final");
+const AUDIT_PROGRESS = path.join(PATHS.cards, "..", "_audit", "_progress.json");
+
+// Set des dexNum ayant passé l'audit honnêteté (data/_audit/_progress.json).
+// Mémoïsé : chargé une fois par process (auto-promote itère des centaines de
+// cartes). `null` = fichier absent (gitignoré, checkout frais) → on NE bloque
+// PAS l'approbation dans ce cas (le gate ne s'applique que si l'historique
+// d'audit existe localement).
+let _auditedCache: Set<string> | null | undefined;
+function loadAuditedDexNums(): Set<string> | null {
+  if (_auditedCache !== undefined) return _auditedCache;
+  try {
+    const raw = JSON.parse(fs.readFileSync(AUDIT_PROGRESS, "utf8")) as { auditedDexNums?: string[] };
+    _auditedCache = new Set(raw.auditedDexNums ?? []);
+  } catch {
+    _auditedCache = null; // absent ou illisible → gate désactivé
+  }
+  return _auditedCache;
+}
 
 export type Blocker = {
   rule: string;
@@ -34,6 +52,8 @@ export type PreApproveOptions = {
   imageIndex?: Record<string, { crop?: { finalFile?: string | null } | undefined }>;
   /** Si true, ne bloque pas sur "moins de 2 éditeurs distincts" (override review humaine). */
   skipSourceCount?: boolean;
+  /** Si true, saute le gate audit honnêteté (échappatoire explicite). */
+  skipHonestyAudit?: boolean;
 };
 
 // Vérifie toutes les pré-conditions. Retourne la liste des bloqueurs (vide = OK).
@@ -125,6 +145,21 @@ export function checkApprovalPreconditions(
         rule: "approved-needs-cropped-image",
         message:
           "image non rognée (applique un crop dans l'app de review avant d'approuver)",
+      });
+    }
+  }
+
+  // 8. Audit honnêteté du body (patterns P1-P7). Une carte doit avoir passé
+  // /audit-card-bodies avant d'être approuvée+poussée — c'est ce qui manquait
+  // aux 78 cartes 553-630 du 2026-07-06. Désactivé si _progress.json absent
+  // (checkout frais) ou via skipHonestyAudit.
+  if (!options.skipHonestyAudit) {
+    const audited = loadAuditedDexNums();
+    if (audited !== null && !audited.has(card.dexNum)) {
+      blockers.push({
+        rule: "approved-needs-honesty-audit",
+        message:
+          `carte non auditée (honnêteté du body) — lance \`/audit-card-bodies range:${card.dexNum}\` avant d'approuver`,
       });
     }
   }

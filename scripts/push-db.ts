@@ -9,6 +9,8 @@
 //   npm run push:db                       # diff + push delta
 //   npm run push:db -- --dry-run          # diff seulement, sans push
 //   npm run push:db -- --max-dex 120      # ne pousse que dexNum ≤ 120
+//   npm run push:db -- --allow-untranslated  # pousse même si des cartes n'ont
+//                                            # pas toutes leurs locales cibles
 //
 // Pré-requis :
 //   - .env avec EXPO_PUBLIC_INSTANT_APP_ID + INSTANT_APP_ADMIN_TOKEN
@@ -17,13 +19,15 @@
 
 import { computeDiff, pushDelta, type PushProgress } from "./_lib/push-db.js";
 
-function parseArgs(): { dryRun: boolean; maxDex: number | undefined; retranslate: boolean } {
+function parseArgs(): { dryRun: boolean; maxDex: number | undefined; retranslate: boolean; allowUntranslated: boolean } {
   const args = process.argv.slice(2);
   const dryRun = args.includes("--dry-run");
   // Force le ré-envoi des cardTranslations même si la version correspond (la
   // détection de "stale" est sinon version-only → un fix de contenu dérivé comme
   // `country` ne repartirait pas). Idempotent (cardTranslationId).
   const retranslate = args.includes("--retranslate");
+  // Bypass du gate traduction (pousse même si des cartes manquent une locale cible).
+  const allowUntranslated = args.includes("--allow-untranslated");
   const maxDexArg = args.find((a) => a === "--max-dex" || a.startsWith("--max-dex="));
   let maxDex: number | undefined;
   if (maxDexArg) {
@@ -40,7 +44,7 @@ function parseArgs(): { dryRun: boolean; maxDex: number | undefined; retranslate
     }
     maxDex = parseInt(val, 10);
   }
-  return { dryRun, maxDex, retranslate };
+  return { dryRun, maxDex, retranslate, allowUntranslated };
 }
 
 function fmtDexList(arr: Array<{ dexNum: string }>, limit = 5): string {
@@ -49,7 +53,7 @@ function fmtDexList(arr: Array<{ dexNum: string }>, limit = 5): string {
 }
 
 async function main(): Promise<number> {
-  const { dryRun, maxDex, retranslate } = parseArgs();
+  const { dryRun, maxDex, retranslate, allowUntranslated } = parseArgs();
 
   console.log(`[push:db] ${dryRun ? "DRY-RUN — aucun changement réel ne sera poussé." : "Push effectif vers InstantDB."}`);
   if (maxDex != null) console.log(`[push:db] Restriction --max-dex ${maxDex}`);
@@ -74,6 +78,19 @@ async function main(): Promise<number> {
     console.log(`  · ${diff.translationRejects.length.toString().padStart(4)} traductions REJETÉES (validation) :`);
     for (const r of diff.translationRejects.slice(0, 15)) console.log(`       ${r}`);
     if (diff.translationRejects.length > 15) console.log(`       … +${diff.translationRejects.length - 15}`);
+  }
+  if (diff.untranslated.length > 0) {
+    console.warn(
+      `\n⚠️  ${diff.untranslated.length} carte(s) approuvée(s) sans toutes leurs traductions ` +
+        `(partiraient en FR seul) :`,
+    );
+    for (const u of diff.untranslated.slice(0, 15)) console.warn(`       ${u.dexNum} → manque ${u.missing.join(", ")}`);
+    if (diff.untranslated.length > 15) console.warn(`       … +${diff.untranslated.length - 15}`);
+    console.warn(
+      allowUntranslated
+        ? "   → --allow-untranslated : le push continuera malgré tout."
+        : "   → lance `/translate-cards-mt` avant le push (ou --allow-untranslated pour forcer). Le push réel sera REFUSÉ.",
+    );
   }
 
   if (diff.countryFallbacks.length > 0) {
@@ -112,7 +129,7 @@ async function main(): Promise<number> {
     }
   };
 
-  const result = await pushDelta(diff, { dryRun: false, onProgress });
+  const result = await pushDelta(diff, { dryRun: false, onProgress, allowUntranslated });
 
   if (result.errors.length > 0) {
     console.error(`\n✗ ${result.errors.length} erreur(s) durant le push :`);

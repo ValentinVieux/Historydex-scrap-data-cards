@@ -28,6 +28,13 @@ const _schema = i.schema({
       normalizedTitle: i.string().indexed().optional(),
       type: i.string().indexed(),
       era: i.string().indexed(),
+      // Clé de tri era-major pour la grille Dex sectionnée : eraRank(ERA_ORDER)
+      // × 10000 + int(dexNum). La grille catalogue de l'app filtre
+      // `eraSort: { $isNull: false }` — une carte poussée sans ce champ est
+      // INVISIBLE dans le Dex jusqu'au backfill cron. Le push le calcule donc
+      // désormais (cf. flatten() dans push-db.ts) pour que les nouvelles cartes
+      // soient visibles immédiatement, sans attendre le cron de maintenance.
+      eraSort: i.number().indexed().optional(),
       region: i.number().indexed(),
       country: i.string(),
       tag: i.string(),
@@ -75,6 +82,22 @@ const _schema = i.schema({
       body: i.string(),
       status: i.string(), // 'machine' | 'human' | 'reviewed'
       sourceContentVersion: i.number().optional(),
+    }),
+
+    // ── Compteur singleton du catalogue (dénominateur « X / N ») ──────────
+    // Mirror de l'app. Écrit surtout par le cron de maintenance
+    // (../app/historydex/scripts/refresh-catalog-stats.ts), MAIS le push amont
+    // le recale aussi en fin de run (cardCount + eraCounts) pour que le « X / N »
+    // du profil / Dex reflète les nouvelles cartes sans attendre le cron.
+    // `update` sur l'id singleton = merge → ne clobbe pas registeredCollectors /
+    // rarityComputedAt (maintenus par refresh-card-scarcity.ts). Champs optionnels
+    // alignés sur l'app pour que ce mirror n'écrase pas leur typage au push schema.
+    catalogStats: i.entity({
+      cardCount: i.number(),
+      eraCounts: i.json().optional(),
+      registeredCollectors: i.number().optional(),
+      rarityComputedAt: i.number().optional(),
+      updatedAt: i.number(),
     }),
   },
   rooms: {},

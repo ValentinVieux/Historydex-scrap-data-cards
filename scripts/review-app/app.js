@@ -289,7 +289,13 @@ function closePushModal() {
 }
 
 function pickInitial() {
-  return cards.find((c) => c.hasSource && !c.reviewed) ?? cards[0];
+  // Priorité : première carte qui attend la review humaine (statut éditorial
+  // "reviewed"), sinon premier crop non reviewé, sinon la première tout court.
+  return (
+    cards.find((c) => c.editorialStatus === "reviewed") ??
+    cards.find((c) => c.hasSource && !c.reviewed) ??
+    cards[0]
+  );
 }
 
 async function loadCards() {
@@ -380,6 +386,7 @@ async function selectCard(dexNum) {
   for (const li of els.list.querySelectorAll("li")) {
     li.classList.toggle("active", li.dataset.dexNum === dexNum);
   }
+  els.list.querySelector("li.active")?.scrollIntoView({ block: "nearest" });
   const detail = await fetch(`/api/cards/${dexNum}`).then((r) => r.json());
   activeDetail = detail;
 

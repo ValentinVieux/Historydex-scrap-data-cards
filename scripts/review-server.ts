@@ -1005,6 +1005,10 @@ async function main(): Promise<void> {
       imageDexNums: diff.toUploadImage.map((i) => i.dexNum),
       countryFallbacks: diff.countryFallbacks,
       warnings: diff.warnings,
+      // Gate traduction : cartes qui partiraient en FR seul. Un push réel sera
+      // REFUSÉ par pushDelta tant que cette liste n'est pas vide (lance
+      // /translate-cards-mt d'abord). Affiché dans le modal dry-run.
+      untranslated: diff.untranslated,
     };
 
     if (dryRun) {
