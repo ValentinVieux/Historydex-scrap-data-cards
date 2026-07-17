@@ -14,6 +14,7 @@ L'entité `cards` de l'app est définie dans `app/historydex/instant.schema.ts` 
 | `era` | string (indexed) | `Card.gameplay.era` |
 | `region` | number (indexed) | `Card.canonical.place.region` |
 | `country` | string | `countryNameFr(Card.canonical.place.countryCode)` |
+| `placeLabel` | string (optional) | `Card.display.locales.fr.placeLabel` — bonne réponse OÙ du recap Historien (aussi poussé par locale dans `cardTranslations.placeLabel`) |
 | `tag` | string (indexed) | `Card.canonical.time.tag` |
 | `pivotYear` | number (indexed) | `Card.canonical.time.pivotYear` |
 | `startYear` | number (optional) | `Card.canonical.time.startYear` |
@@ -49,12 +50,12 @@ Le pipeline conserve plus d'information que ce que l'app ingère aujourd'hui. Ce
 - `canonical.time.timeKind`, `canonical.time.justification`
 - `canonical.place.placeKind`, `canonical.place.placeCanonicalName`, `canonical.place.geoKind`, `canonical.place.justification`
 - `gameplay.difficultyWhen`, `gameplay.difficultyWhere`, `gameplay.eligibleForWhen`, `gameplay.eligibleForWhere`, `gameplay.balanceNotes`
-- `display.locales.fr.placeLabel`, `display.locales.fr.timeDisplayLabel`
-- `display.locales.en` (et autres locales futures)
 - `display.translationNotes`
 - Tout `editorial.*` (status, confidence, notes, warnings, sources)
 
-**À terme** : faire évoluer `app/historydex/instant.schema.ts` pour ingérer progressivement ces champs (par ordre de priorité : `placeKind`, `placeLabel`, `aliases`, puis i18n `en`).
+(`placeLabel` et `timeDisplayLabel` sont transmis depuis juillet 2026 — colonne `cards` + pendant par locale dans `cardTranslations` ; backfill one-shot : `scripts/backfill-placelabel.ts`.)
+
+**À terme** : faire évoluer `app/historydex/instant.schema.ts` pour ingérer progressivement ces champs (par ordre de priorité : `placeKind`, `aliases`).
 
 ## Format des artefacts produits
 

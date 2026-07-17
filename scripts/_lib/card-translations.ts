@@ -4,8 +4,9 @@
 // - Locales cibles = SOURCE UNIQUE : app/historydex/lib/i18n/supported-locales.json
 //   (lu via chemin frère). Toute locale non-`source` est une cible de traduction.
 // - Mapping LocaleText (schéma scrap) → ligne `cardTranslations` (schéma app) :
-//   wherePrompt/whenPrompt {pre,verb,post} → where/whenConsigne* ; placeLabel n'est
-//   PAS le pays — cardTranslations.country = countryName(countryCode, locale) (exonyme localisé).
+//   wherePrompt/whenPrompt {pre,verb,post} → where/whenConsigne* ; placeLabel (lieu
+//   précis, bonne réponse OÙ du recap Historien) est poussé tel quel — ce n'est PAS
+//   le pays : cardTranslations.country = countryName(countryCode, locale) (exonyme localisé).
 // - `status:'machine'` = état final (l'humain ne relit que le FR ; la garde LLM du
 //   skill est le QA des traductions).
 // - Validation (validateTranslatedLocale) = défense en profondeur AVANT écriture :
@@ -25,6 +26,7 @@ export type CardTranslationRow = {
   normalizedTitle: string;
   title: string;
   country: string;
+  placeLabel: string;
   whereVerb: string;
   whereConsignePre: string;
   whereConsignePost: string;
@@ -140,6 +142,7 @@ export function buildTranslationRow(card: Card, locale: string, loc: LocaleText)
     normalizedTitle: normalizeForSearch(loc.title),
     title: loc.title,
     country,
+    placeLabel: loc.placeLabel,
     whereVerb: loc.wherePrompt.verb,
     whereConsignePre: loc.wherePrompt.pre,
     whereConsignePost: loc.wherePrompt.post,
