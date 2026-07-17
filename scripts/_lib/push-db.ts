@@ -64,6 +64,9 @@ export type FlatCard = {
   eraSort: number;
   region: number;
   country: string;
+  // Lieu précis (« Philadelphie (Independence Hall) ») — bonne réponse OÙ du
+  // recap Historien côté app (le scoring est à la distance, pas au pays).
+  placeLabel: string;
   tag: "ponctuelle" | "periodique";
   pivotYear: number;
   startYear?: number;
@@ -165,6 +168,7 @@ function flatten(card: Card, publishedAt: number): { flat: FlatCard; warnings: s
     eraSort: computeEraSort(card.gameplay.era, card.dexNum),
     region: card.canonical.place.region,
     country,
+    placeLabel: fr.placeLabel,
     tag: card.canonical.time.tag,
     pivotYear: card.canonical.time.pivotYear,
     whenDelta: card.gameplay.whenDelta,

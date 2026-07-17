@@ -37,6 +37,9 @@ const _schema = i.schema({
       eraSort: i.number().indexed().optional(),
       region: i.number().indexed(),
       country: i.string(),
+      // Lieu précis (« Philadelphie (Independence Hall) ») — bonne réponse OÙ du
+      // recap Historien côté app. Optional : cartes pré-backfill sans valeur.
+      placeLabel: i.string().optional(),
       tag: i.string(),
       pivotYear: i.number(),
       startYear: i.number().optional(),
@@ -71,6 +74,9 @@ const _schema = i.schema({
       normalizedTitle: i.string().indexed(),
       title: i.string(),
       country: i.string(),
+      // Pendant localisé de cards.placeLabel (les lignes `en` backfillées
+      // côté app n'en ont pas → fallback colonne source côté app).
+      placeLabel: i.string().optional(),
       whereVerb: i.string(),
       whereConsignePre: i.string(),
       whereConsignePost: i.string(),
