@@ -31,7 +31,7 @@ export const ERA_BOUNDS: Record<(typeof ERAS)[number], { start: number; end: num
   contemp: { start: 1789, end: 9999 },
 };
 
-export const REGIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+export const REGIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
 
 export const REGION_LABELS: Record<number, string> = {
   1: "Europe occidentale",
@@ -44,6 +44,7 @@ export const REGION_LABELS: Record<number, string> = {
   8: "Asie du Sud-Est & Pacifique",
   9: "Amériques précolombiennes & latines",
   10: "Amérique du Nord",
+  11: "Antarctique",
 };
 
 export const PLACE_KINDS = [
@@ -130,7 +131,7 @@ const PlaceBlockSchema = z.object({
   lat: z.number().min(-90).max(90),
   lon: z.number().min(-180).max(180),
   region: z.number().int().refine((n) => REGIONS.includes(n as (typeof REGIONS)[number]), {
-    message: "region must be 1..10",
+    message: "region must be 1..11",
   }),
   countryCode: z.string().regex(/^[A-Z]{2}$/, "countryCode must be ISO-3166-1 alpha-2").nullable(),
   geoKind: z.enum(GEO_KINDS).default("earth"),
