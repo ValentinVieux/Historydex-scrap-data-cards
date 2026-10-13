@@ -28,7 +28,10 @@ import { targetLocales } from "./_lib/card-translations.js";
 const PROSE_FIELDS = ["title", "blurb", "body", "placeLabel", "timeDisplayLabel"] as const;
 type ProseField = (typeof PROSE_FIELDS)[number];
 
-const AZURE_TO: Record<string, string> = { es: "es", de: "de", it: "it", en: "en", pt: "pt" };
+const AZURE_TO: Record<string, string> = {
+  es: "es", de: "de", it: "it", en: "en", pt: "pt",
+  "pt-PT": "pt-pt", pl: "pl", tr: "tr", nl: "nl", ja: "ja", ko: "ko",
+};
 
 const CARDS_DIR = path.resolve(process.cwd(), "data", "cards");
 const STAGING_DIR = path.resolve(process.cwd(), "data", "_translations");

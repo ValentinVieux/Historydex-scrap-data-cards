@@ -30,7 +30,7 @@ Tu prends une fiche raw vérifiée et tu produis un JSON conforme au schéma Zod
    - Récap de la carte (titre, type, ère, région, dates, lieu, deltas, confidence).
    - Liste des warnings restants à examiner manuellement.
    - Chemin du fichier `data/cards/<slug>.json`.
-   - Étapes suivantes : « Lance `npm run fetch-images` puis `npm run review-images`. Dans l'app, recadre l'image et clique « ✓ Approuver » — l'app vérifie les pré-conditions et flip `editorial.status` à `approved`. **Puis, avant de pousser, lance `/translate-cards-mt`** (auto-traduction es/de/it/pt des cartes approuvées — la carte naît multilingue). Enfin pousse en DB via le bouton « Push to DB » de l'app, ou `npm run push:db` en CLI. »
+   - Étapes suivantes : « Lance `npm run fetch-images` puis `npm run review-images`. Dans l'app, recadre l'image et clique « ✓ Approuver » — l'app vérifie les pré-conditions et flip `editorial.status` à `approved`. **Puis, avant de pousser, lance `/translate-cards-mt`** (auto-traduction dans toutes les langues de l'app des cartes approuvées — la carte naît multilingue). Enfin pousse en DB via le bouton « Push to DB » de l'app, ou `npm run push:db` en CLI. »
 
 ## Choix du `dexNum`
 

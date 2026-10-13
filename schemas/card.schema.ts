@@ -31,7 +31,7 @@ export const ERA_BOUNDS: Record<(typeof ERAS)[number], { start: number; end: num
   contemp: { start: 1789, end: 9999 },
 };
 
-export const REGIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+export const REGIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
 
 export const REGION_LABELS: Record<number, string> = {
   1: "Europe occidentale",
@@ -44,6 +44,7 @@ export const REGION_LABELS: Record<number, string> = {
   8: "Asie du Sud-Est & Pacifique",
   9: "Amériques précolombiennes & latines",
   10: "Amérique du Nord",
+  11: "Antarctique",
 };
 
 export const PLACE_KINDS = [
@@ -130,7 +131,7 @@ const PlaceBlockSchema = z.object({
   lat: z.number().min(-90).max(90),
   lon: z.number().min(-180).max(180),
   region: z.number().int().refine((n) => REGIONS.includes(n as (typeof REGIONS)[number]), {
-    message: "region must be 1..10",
+    message: "region must be 1..11",
   }),
   countryCode: z.string().regex(/^[A-Z]{2}$/, "countryCode must be ISO-3166-1 alpha-2").nullable(),
   geoKind: z.enum(GEO_KINDS).default("earth"),
@@ -186,9 +187,11 @@ const LocaleTextSchema = z.object({
 // donc l'expansion, avec un garde-fou généreux (~2× le FR) contre une sortie MT
 // aberrante. Le rendu app scrolle le body, et `cardTranslations.body` côté DB n'a
 // aucune contrainte de longueur — la seule limite était ce schéma Zod.
+// Minimums assouplis pour les traductions : en japonais/coréen un titre peut tenir
+// en 1 caractère (« 紙 ») et un blurb complet en < 20.
 const TranslatedLocaleTextSchema = z.object({
-  title: z.string().min(2).max(160),
-  blurb: z.string().min(20).max(440),
+  title: z.string().min(1).max(160),
+  blurb: z.string().min(10).max(440),
   body: z.string().min(40).max(1600),
   placeLabel: z.string().min(1),
   timeDisplayLabel: z.string().min(1),
@@ -205,6 +208,12 @@ const DisplaySchema = z.object({
     de: TranslatedLocaleTextSchema.nullable().default(null),
     it: TranslatedLocaleTextSchema.nullable().default(null),
     pt: TranslatedLocaleTextSchema.nullable().default(null),
+    "pt-PT": TranslatedLocaleTextSchema.nullable().default(null),
+    pl: TranslatedLocaleTextSchema.nullable().default(null),
+    tr: TranslatedLocaleTextSchema.nullable().default(null),
+    nl: TranslatedLocaleTextSchema.nullable().default(null),
+    ja: TranslatedLocaleTextSchema.nullable().default(null),
+    ko: TranslatedLocaleTextSchema.nullable().default(null),
   }),
   imageLabel: z.string().min(1).max(16),
   translationNotes: z.array(z.string()).default([]),

@@ -5,7 +5,7 @@
 // "Reino Unido" ; countryName("GB","en")="United Kingdom".
 //
 // Overrides PAR LOCALE pour coller aux exonymes choisis par le catalogue
-// (ex. en: Türkiye plutôt que Turkey ; es/de/it/pt gardent l'exonyme naturel d'Intl).
+// (ex. en: Türkiye plutôt que Turkey ; les autres locales gardent l'exonyme naturel d'Intl).
 
 const OVERRIDES: Record<string, Record<string, string>> = {
   en: { TR: "Türkiye" },

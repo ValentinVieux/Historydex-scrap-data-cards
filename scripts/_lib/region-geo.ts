@@ -25,7 +25,7 @@ import type {
   Position,
 } from "geojson";
 
-export type RegionId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type RegionId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
 const REGION_LABELS: Record<RegionId, string> = {
   1: "Europe occidentale",
@@ -38,6 +38,7 @@ const REGION_LABELS: Record<RegionId, string> = {
   8: "Asie SE & Pacifique",
   9: "Amériques précol. & latines",
   10: "Amérique du Nord",
+  11: "Antarctique",
 };
 
 export function regionLabel(id: RegionId | null | undefined): string {
@@ -85,6 +86,7 @@ function pointInRing(lon: number, lat: number, ring: Ring): boolean {
 // ---------- regionFromLatLon (port de lib/game/geo.ts, post-2026-05-29) -----
 
 export function regionFromLatLon(lat: number, lon: number): RegionId | null {
+  if (lat < -60) return 11; // Antarctique (limite traité, 60°S)
   if (lat > 25 && lon < -50 && lon > -170) return 10;
   if (lat <= 25 && lat > -60 && lon < -30 && lon > -120) return 9;
   if (lat < 20 && lat > -50 && lon > 90 && lon < 180) return 8;
@@ -124,6 +126,7 @@ const ISO_OVERRIDES: Record<number, RegionId> = {
   484: 9, // Mexico → Latin America
   729: 5, // Sudan (audit 2026-05-29)
   148: 5, // Chad (audit 2026-05-29)
+  10: 11, // Antarctica → R11 (miroir app, 2026-07-20)
 };
 
 // Pays "à territoires détachés" : anneaux non-principaux classés par leur
@@ -313,6 +316,26 @@ function build(): RegionPolygonEntry[] {
     const isoOverride =
       isoNum !== null && ISO_OVERRIDES[isoNum] ? ISO_OVERRIDES[isoNum] : null;
     const hasOverseas = isoNum !== null && OVERSEAS_COUNTRIES.has(isoNum);
+
+    // Miroir app (2026-07-20) : l'anneau Antarctique est découpé à
+    // l'antiméridien et refermé à lat ≈ -84.7 → la calotte polaire serait hors
+    // polygone. On route l'arête de fermeture via le pôle, avec un point médian
+    // (lon 0) pour que unwrapRing ne recolle pas le saut de 360°.
+    if (isoNum === 10) {
+      for (const poly of polygons) {
+        const ring = poly[0];
+        if (!ring) continue;
+        for (let k = 0; k + 1 < ring.length; k++) {
+          const a = ring[k]?.[0];
+          const b = ring[k + 1]?.[0];
+          if (a === undefined || b === undefined) continue;
+          if (Math.abs(a - b) >= 360) {
+            ring.splice(k + 1, 0, [a, -90], [(a + b) / 2, -90], [b, -90]);
+            break;
+          }
+        }
+      }
+    }
 
     // Anneau principal = celui avec le plus de sommets.
     let mainRingIdx = 0;
