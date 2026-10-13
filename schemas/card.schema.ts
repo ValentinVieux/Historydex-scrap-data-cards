@@ -187,9 +187,11 @@ const LocaleTextSchema = z.object({
 // donc l'expansion, avec un garde-fou généreux (~2× le FR) contre une sortie MT
 // aberrante. Le rendu app scrolle le body, et `cardTranslations.body` côté DB n'a
 // aucune contrainte de longueur — la seule limite était ce schéma Zod.
+// Minimums assouplis pour les traductions : en japonais/coréen un titre peut tenir
+// en 1 caractère (« 紙 ») et un blurb complet en < 20.
 const TranslatedLocaleTextSchema = z.object({
-  title: z.string().min(2).max(160),
-  blurb: z.string().min(20).max(440),
+  title: z.string().min(1).max(160),
+  blurb: z.string().min(10).max(440),
   body: z.string().min(40).max(1600),
   placeLabel: z.string().min(1),
   timeDisplayLabel: z.string().min(1),
@@ -206,6 +208,12 @@ const DisplaySchema = z.object({
     de: TranslatedLocaleTextSchema.nullable().default(null),
     it: TranslatedLocaleTextSchema.nullable().default(null),
     pt: TranslatedLocaleTextSchema.nullable().default(null),
+    "pt-PT": TranslatedLocaleTextSchema.nullable().default(null),
+    pl: TranslatedLocaleTextSchema.nullable().default(null),
+    tr: TranslatedLocaleTextSchema.nullable().default(null),
+    nl: TranslatedLocaleTextSchema.nullable().default(null),
+    ja: TranslatedLocaleTextSchema.nullable().default(null),
+    ko: TranslatedLocaleTextSchema.nullable().default(null),
   }),
   imageLabel: z.string().min(1).max(16),
   translationNotes: z.array(z.string()).default([]),

@@ -1,11 +1,11 @@
 ---
 name: translate-cards-mt
-description: Auto-translate HistoryDex cards into every target locale (en/es/de/it/pt — all of targetLocales(), English included) via the cheap Azure-hybrid pipeline (Azure prose + LLM where/when re-split), filling display.locales.<loc> so push:db emits the cardTranslations. Idempotent — only cards still missing a locale. Run as the step BEFORE push:db so newly-approved cards ship multilingual. This is the DEFAULT path for ALL target locales including en; translate-cards (LLM) is the higher-quality opt-in alternative. Use when asked to translate cards cheaply / before pushing.
+description: Auto-translate HistoryDex cards into every target locale (every targetLocales() locale — en/es/de/it/pt/pt-PT/pl/tr/nl/ja/ko, English included) via the cheap Azure-hybrid pipeline (Azure prose + LLM where/when re-split), filling display.locales.<loc> so push:db emits the cardTranslations. Idempotent — only cards still missing a locale. Run as the step BEFORE push:db so newly-approved cards ship multilingual. This is the DEFAULT path for ALL target locales including en; translate-cards (LLM) is the higher-quality opt-in alternative. Use when asked to translate cards cheaply / before pushing.
 ---
 
 # translate-cards-mt
 
-Traduction **éco** des cartes (**en**/es/de/it/pt — **toutes** les `targetLocales()`, anglais compris) — le chemin
+Traduction **éco** des cartes (**en**/es/de/it/pt/pt-PT/pl/tr/nl/ja/ko — **toutes** les `targetLocales()`, anglais compris) — le chemin
 **par défaut** pour toute locale cible. L'alternative à la skill LLM `translate-cards`
 (traducteur+relecteur Opus), réservée désormais aux cas où l'on veut la garde qualité ≥90.
 Moteur **Azure AI Translator** (F0 gratuit, 2M car/mois) pour la **prose**, + un **sous-agent LLM** pour les 6 champs
@@ -22,14 +22,14 @@ que la MT ne sait pas faire). Garde : `validateTranslatedLocale` (déterministe)
 (`display.locales.<loc>` null). Idempotent : re-run = no-op si tout est traduit.
 
 > Différence avec `translate-cards` (LLM) : ici pas de relecteur LLM (garde =
-> validateTranslatedLocale seul). Qualité validée par le backfill es/de/it/pt (552×4).
+> validateTranslatedLocale seul). Qualité validée par le backfill es/de/it/pt (552×4) puis pt-PT/pl/tr/nl/ja/ko (1045×6, oct. 2026).
 > Réutilise EXACTEMENT les scripts du backfill.
 
 ## Pré-requis
 - `.env` : `AZURE_TRANSLATOR_KEY` (+ `AZURE_TRANSLATOR_REGION` si ressource régionale, ex. `francecentral`).
-- Locales cibles = `targetLocales()` (`scripts/_lib/card-translations.ts`, lit `../app/historydex/lib/i18n/supported-locales.json` — **source unique**). Aujourd'hui : **en, es, de, it, pt** (`en` inclus). S'étend automatiquement : ajouter une locale à `supported-locales.json` + son lead-in à `WHEN_LEAD_INS` suffit pour que cette skill la prenne en compte.
+- Locales cibles = `targetLocales()` (`scripts/_lib/card-translations.ts`, lit `../app/historydex/lib/i18n/supported-locales.json` — **source unique**). Aujourd'hui : **en, es, de, it, pt, pt-PT, pl, tr, nl, ja, ko** (`en` inclus). S'étend automatiquement : ajouter une locale à `supported-locales.json` + son lead-in à `WHEN_LEAD_INS` suffit pour que cette skill la prenne en compte.
 
-## Procédure (pour CHAQUE locale de `targetLocales()` — en, es, de, it, pt)
+## Procédure (pour CHAQUE locale de `targetLocales()` — en, es, de, it, pt, pt-PT, pl, tr, nl, ja, ko)
 
 ### 1. Prose (Azure) → staging
 ```bash
@@ -46,11 +46,15 @@ et, pour chaque carte, re-découpe `frWhere`/`frWhen` en `{pre,verb,post}` <loc>
 écrit `data/_translations/<loc>.whenwhere.jsonl` (1 ligne/carte : `{dexNum, wherePrompt, whenPrompt}`).
 Règles **dures** (sinon `validateTranslatedLocale` rejette à l'étape 3) :
 - Recomposer la phrase FR `pre+verb+post`, traduire **entière**, puis re-découper selon l'ordre des mots <loc> (ne pas traduire les fragments en place).
-- `whenPrompt.pre` DOIT commencer par le lead-in de la locale (source unique : `WHEN_LEAD_INS` dans `scripts/_lib/card-translations.ts`) selon `tag` (ponctuelle / periodique) : **en** When / Around what period · **es** ¿Cuándo / ¿En qué período · **de** Wann / In welchem Zeitraum · **it** Quando / In quale periodo · **pt** Quando / Em que período.
+- `whenPrompt.pre` DOIT commencer par le lead-in de la locale (source unique : `WHEN_LEAD_INS` dans `scripts/_lib/card-translations.ts`) selon `tag` (ponctuelle / periodique) : **en** When / Around what period · **es** ¿Cuándo / ¿En qué período · **de** Wann / In welchem Zeitraum · **it** Quando / In quale periodo · **pt** et **pt-PT** Quando / Em que período · **pl** Kiedy / W jakim okresie · **nl** Wanneer / In welke periode.
+- ⚠️ **Langues SOV (tr, ja, ko)** : le mot interrogatif suit le sujet → `whenPrompt.pre` doit le **contenir** (pas commencer par) : **tr** « ne zaman » / « hangi dönemde » (pre=`"Bu anıt ne zaman "`, verb=`"inşa edildi"`, post=`"?"`) · **ja** « いつ » / « どの時代 » (pre=`"この記念碑はいつ"`, verb=`"建てられました"`, post=`"か？"`) · **ko** « 언제 » / « 어느 시기 » (pre=`"이 기념물은 언제 "`, verb=`"세워졌나요"`, post=`"?"`). Le validateur applique « contient » pour ces 3 locales (`LEAD_IN_INSIDE`).
+- ⚠️ **Japonais** : aucune espace entre les mots — le contrôle « mots collés » est désactivé pour `ja` (`NO_WORD_SPACING`), le double espace reste interdit. Point d'interrogation pleine chasse `？`.
+- **pt-PT** = portugais du **Portugal** (code Azure `pt-pt`), distinct de `pt` (Brésil) : tu, « estar a + infinitif », ecrã, telemóvel, registar…
 - `verb` **non vide** = le verbe principal/participe, accordé. ⚠️ **Allemand V2** : pour « Wann ereignete sich X ? » (pas de participe final), mettre le verbe conjugué dans `verb` : pre=`"Wann "`, verb=`"ereignete"`, post=`" sich X?"`. Ne jamais laisser `verb` vide.
 - ⚠️ **Anglais — ordre sujet-verbe** : recomposer puis re-découper en ordre **sujet-verbe** anglais (sujet dans `pre`, participe/verbe dans `verb`, `post`=`"?"`). Ex. pre=`"When was this monument "`, verb=`"built"`, post=`"?"`. **BCE/CE** pour les dates et **en-dash** pour les intervalles (cf. `../app/historydex/prompts/translation/grammar-rules.md`).
 - Espacement : pas de double espace ni de mots collés ; verbe directement suivi de `?` autorisé. Ponctuation : es ouvre par `¿` ferme `?` ; **en**/de/it/pt ferment par `?`.
-> Pour un gros volume, batcher via `scripts/whenwhere-source.ts <start> <count>` (slices) ; pour quelques cartes neuves, un seul sous-agent suffit.
+> Pour un gros volume, batcher via `scripts/whenwhere-source.ts <start> <count>` (slices de ~100 cartes, un agent par locale × slice, chaque agent écrit `<loc>.whenwhere.bNNNN.jsonl` puis on concatène en `<loc>.whenwhere.jsonl`) ; pour quelques cartes neuves, un seul sous-agent suffit.
+> **Grosse passe** (nouvelle locale, ~800 k caractères de prose) : dépasse le palier Azure **F0** (2 M/mois) dès 3 locales → passer la ressource en **S1** (≈ 10 $/M, sans quota gratuit) le temps du rattrapage, puis revenir en F0. En S1, lancer les locales **en parallèle** (1 process `translate-cards-mt.ts` par locale) : le throttle par process est calibré F0.
 
 ### 3. Merge → `display.locales.<loc>`
 ```bash

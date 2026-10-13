@@ -46,7 +46,10 @@ const SOURCE_LOCALE = "fr";
 type LocaleEntry = { code: string; name?: string; native?: string; source?: boolean };
 
 export function loadSupportedLocales(): LocaleEntry[] {
-  const p = path.resolve(process.cwd(), "..", "app", "historydex", "lib", "i18n", "supported-locales.json");
+  // SUPPORTED_LOCALES_JSON : pointer un worktree de l'app (branche pas encore mergée).
+  const p =
+    process.env.SUPPORTED_LOCALES_JSON ??
+    path.resolve(process.cwd(), "..", "app", "historydex", "lib", "i18n", "supported-locales.json");
   try {
     return JSON.parse(fs.readFileSync(p, "utf8")) as LocaleEntry[];
   } catch {
@@ -75,15 +78,27 @@ export const WHEN_LEAD_INS: Record<string, Record<TemporalTag, string>> = {
   de: { ponctuelle: "Wann", periodique: "In welchem Zeitraum" },
   it: { ponctuelle: "Quando", periodique: "In quale periodo" },
   pt: { ponctuelle: "Quando", periodique: "Em que período" },
+  "pt-PT": { ponctuelle: "Quando", periodique: "Em que período" },
+  pl: { ponctuelle: "Kiedy", periodique: "W jakim okresie" },
+  nl: { ponctuelle: "Wanneer", periodique: "In welke periode" },
+  // tr/ja/ko = SOV : le mot interrogatif suit le sujet → « contient », pas « commence par ».
+  tr: { ponctuelle: "ne zaman", periodique: "hangi dönemde" },
+  ja: { ponctuelle: "いつ", periodique: "どの時代" },
+  ko: { ponctuelle: "언제", periodique: "어느 시기" },
 };
+
+// Miroir de app/historydex/lib/i18n/translationQuality.ts (LEAD_IN_INSIDE / NO_WORD_SPACING).
+const LEAD_IN_INSIDE = new Set(["tr", "ja", "ko"]);
+const NO_WORD_SPACING = new Set(["ja"]);
 
 const WORD_END = /[\p{L}\p{N}]$/u;
 const WORD_START = /^[\p{L}\p{N}]/u;
 
-function spacingIssues(axis: string, pre: string, verb: string, post: string): string[] {
+function spacingIssues(axis: string, pre: string, verb: string, post: string, spaced = true): string[] {
   const issues: string[] = [];
   const s = `${pre}${verb}${post}`;
   if (s.includes("  ")) issues.push(`${axis} double space: "${s.trim()}"`);
+  if (!spaced) return issues;
   if (WORD_END.test(pre) && WORD_START.test(verb)) issues.push(`${axis} verb glued to pre: "${s.trim()}"`);
   if (WORD_END.test(verb) && WORD_START.test(post)) issues.push(`${axis} verb glued to post: "${s.trim()}"`);
   return issues;
@@ -113,13 +128,16 @@ export function validateTranslatedLocale(
     issues.push(`locale '${locale}' missing from WHEN_LEAD_INS — add its lead-ins`);
   } else {
     const pre = typeof loc.whenPrompt?.pre === "string" ? loc.whenPrompt.pre : "";
-    if (!pre.trimStart().startsWith(leadIns[tag])) {
-      issues.push(`whenPrompt.pre must start with "${leadIns[tag]}" for ${tag} (${locale}); got "${pre.slice(0, 28)}…"`);
+    const inside = LEAD_IN_INSIDE.has(locale);
+    const ok = inside ? pre.toLocaleLowerCase(locale).includes(leadIns[tag]) : pre.trimStart().startsWith(leadIns[tag]);
+    if (!ok) {
+      issues.push(`whenPrompt.pre must ${inside ? "contain" : "start with"} "${leadIns[tag]}" for ${tag} (${locale}); got "${pre.slice(0, 28)}…"`);
     }
   }
 
-  issues.push(...spacingIssues("WHEN", loc.whenPrompt?.pre ?? "", loc.whenPrompt?.verb ?? "", loc.whenPrompt?.post ?? ""));
-  issues.push(...spacingIssues("WHERE", loc.wherePrompt?.pre ?? "", loc.wherePrompt?.verb ?? "", loc.wherePrompt?.post ?? ""));
+  const spaced = !NO_WORD_SPACING.has(locale);
+  issues.push(...spacingIssues("WHEN", loc.whenPrompt?.pre ?? "", loc.whenPrompt?.verb ?? "", loc.whenPrompt?.post ?? "", spaced));
+  issues.push(...spacingIssues("WHERE", loc.wherePrompt?.pre ?? "", loc.wherePrompt?.verb ?? "", loc.wherePrompt?.post ?? "", spaced));
 
   return { ok: issues.length === 0, issues };
 }

@@ -73,7 +73,7 @@ npm run verify-geo -- --card <slug>        # un seul sujet (utilisé par l'agent
 4. **Validation humaine dans l'app de review** : `npm run fetch-images` puis `npm run review-images` — les cartes au statut `reviewed` apparaissent dans la liste avec un tag orange. Tu peux y recadrer l'image, éditer les textes (title/blurb/body/wherePrompt/whenPrompt/imageLabel), corriger `lat`/`lon` et `whereRadiusKm`. Vérifie aussi ce que les scripts ne peuvent pas : ton, neutralité, pertinence du `placeLabel`.
 5. **Approbation** : clic « ✓ Approuver » dans l'app. L'endpoint vérifie les pré-conditions (≥ 2 publishers, sources date+place, confidence ≠ low, crop d'image, invariants OK, **audit honnêteté passé** — carte présente dans `data/_audit/_progress.json`, bloqueur `approved-needs-honesty-audit`) et flip `editorial.status: approved`. Sur 422, l'app affiche la liste des bloqueurs. Pour approuver en masse hors UI : `npx tsx scripts/auto-promote.ts --apply` (sans check de crop, batch CLI).
 6. **Skill `validate-card-catalog`** une dernière fois (vert obligatoire).
-7. **Skill `translate-cards-mt`** (auto-traduction es/de/it/pt — toutes les `targetLocales()`, **AVANT le push**) : remplit `display.locales.{es,de,it,pt}` des cartes **approuvées** non encore traduites, via le pipeline Azure-hybride (prose Azure + sous-agent where/when + merge), idempotent. Sans cette étape, `push:db` ne pousse que le FR (les autres langues retombent sur l'anglais/FR côté app). Cf. `.claude/skills/translate-cards-mt/SKILL.md`.
+7. **Skill `translate-cards-mt`** (auto-traduction en/es/de/it/pt/pt-PT/pl/tr/nl/ja/ko — toutes les `targetLocales()`, **AVANT le push**) : remplit `display.locales.<loc>` des cartes **approuvées** non encore traduites, via le pipeline Azure-hybride (prose Azure + sous-agent where/when + merge), idempotent. Sans cette étape, `push:db` ne pousse que le FR (les autres langues retombent sur l'anglais/FR côté app). Cf. `.claude/skills/translate-cards-mt/SKILL.md`.
 8. **Push effectif vers InstantDB** :
    - **CLI** : `npm run push:db` depuis le pipeline (diff vs DB, push delta, idempotent).
    - **UI** : bouton « Push to DB » dans l'app de review (modal dry-run + confirmation).
@@ -137,7 +137,7 @@ Détails dans [.claude/rules/editorial-rules.md](.claude/rules/editorial-rules.m
   - `/research-card-candidate <sujet>` — produit `data/raw/<slug>.md`
   - `/normalize-card-data <slug>` — produit `data/cards/<slug>.json` (status: reviewed)
   - `/validate-card-catalog` — résume erreurs + warnings + distribution
-  - `/translate-cards-mt` — auto-traduit es/de/it/pt (toutes les `targetLocales()`, Azure-hybride, bon marché) des cartes approuvées non traduites, **avant `push:db`** ; remplit `display.locales.{es,de,it,pt}`. (Alternative éco à `/translate-cards` LLM.)
+  - `/translate-cards-mt` — auto-traduit toutes les `targetLocales()` (en/es/de/it/pt/pt-PT/pl/tr/nl/ja/ko, Azure-hybride, bon marché) des cartes approuvées non traduites, **avant `push:db`** ; remplit `display.locales.<loc>`. (Alternative éco à `/translate-cards` LLM.)
   - `/audit-card-bodies [N|range:A-B]` — audit honnêteté du body sur les N prochaines cartes (ou plage explicite) : 2 fact-checkers parallèles + spot-check WebFetch + corrections appliquées automatiquement. Cursor d'avancement dans `data/_audit/_progress.json` ; détails dans `.claude/skills/audit-card-bodies/SKILL.md`.
 
 - **Agents** : invoqués par les skills, mais peuvent l'être directement si une étape doit être refaite (ex : relancer `source-verifier` après modification manuelle, ou `card-qa` pour re-contrôler une carte éditée à la main avant promotion).
@@ -193,7 +193,7 @@ Cherche dans `data/{raw,normalized,approved}` sur `id`, `dexNum`, `subjectKey`, 
 
 ## Ce que le pipeline ne fait pas (encore)
 
-- Traduction es/de/it/pt (toutes les `targetLocales()`) : **automatisée** via `/translate-cards-mt` (Azure-hybride, étape avant push) ; `en` a été backfillé côté app (`/translate-catalog en`). Non encore géré : re-traduction auto quand le FR change **après** une première traduction (cf. garde-fous de la skill).
+- Traduction de toutes les `targetLocales()` (es/de/it/pt/pt-PT/pl/tr/nl/ja/ko ; liste = `app/historydex/lib/i18n/supported-locales.json`, surchargeable par `SUPPORTED_LOCALES_JSON`) : **automatisée** via `/translate-cards-mt` (Azure-hybride, étape avant push) ; `en` a été backfillé côté app (`/translate-catalog en`). Non encore géré : re-traduction auto quand le FR change **après** une première traduction (cf. garde-fous de la skill).
 - Pas de génération d'images (`imageLabel` est un texte court).
 - Recherche narrative pilotée par les agents (pas d'extraction automatisée de faits). **Exception** : `npm run verify-geo` appelle Nominatim pour recouper les coordonnées (advisoire, hors `validate`).
 - Pas de hooks Claude (auto-validate à l'écriture, etc.).

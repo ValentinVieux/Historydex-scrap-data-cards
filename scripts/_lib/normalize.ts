@@ -8,5 +8,7 @@ export function normalizeForSearch(s: string): string {
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "");
+    // Kana/kanji/hangul gardés (ja/ko), sinon un titre CJK normalise en "". Aucun
+    // effet sur le latin → les normalizedTitle déjà en base restent valides.
+    .replace(/[^a-z0-9\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]+/gu, "");
 }
