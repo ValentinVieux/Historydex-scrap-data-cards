@@ -171,9 +171,19 @@ const WhenPromptSchema = z.object({
   post: z.string().min(1),
 });
 
+// Bornes du teaser (brève description visible PENDANT l'énigme — cf. editorial-rules
+// § « Teaser »). Partagées avec le détecteur d'indices (scripts/_lib/teaser-hint.ts).
+export const TEASER_MIN = 20;
+export const TEASER_MAX = 200;
+
 const LocaleTextSchema = z.object({
   title: z.string().min(2).max(80),
   blurb: z.string().min(20).max(220),
+  // Teaser : ce que c'est + pourquoi ça compte, SANS aucun indice OÙ/QUAND (toponyme,
+  // nationalité, date, siècle, style d'époque, nom de personne). Affiché au joueur
+  // pendant l'énigme, là où le blurb/body n'arrivent qu'après la réponse. Optionnel
+  // (warning `teaser-missing`) ; une fois présent, l'invariant `teaser-hint` le contrôle.
+  teaser: z.string().min(TEASER_MIN).max(TEASER_MAX).optional(),
   body: z.string().min(40).max(800),
   placeLabel: z.string().min(1),
   timeDisplayLabel: z.string().min(1),
@@ -192,6 +202,7 @@ const LocaleTextSchema = z.object({
 const TranslatedLocaleTextSchema = z.object({
   title: z.string().min(1).max(160),
   blurb: z.string().min(10).max(440),
+  teaser: z.string().min(10).max(400).optional(),
   body: z.string().min(40).max(1600),
   placeLabel: z.string().min(1),
   timeDisplayLabel: z.string().min(1),
@@ -217,6 +228,17 @@ const DisplaySchema = z.object({
   }),
   imageLabel: z.string().min(1).max(16),
   translationNotes: z.array(z.string()).default([]),
+  // Provenance des traductions : pour chaque locale, le sha256 du texte FR dont
+  // elle a été produite (stampé par merge-translations, cf. _lib/translation-hash.ts).
+  // Permet à l'invariant `translation-stale` de détecter un FR corrigé après coup
+  // sans retraduction — ce que `sourceContentVersion` ne peut pas voir, puisqu'il
+  // n'enregistre que la version au moment du PUSH, pas au moment de la traduction.
+  // `teaserHash` : hash DÉDIÉ du teaser FR (stampé par translate-teasers.ts / merge).
+  // Séparé de `sourceHash` pour qu'un teaser corrigé ne relance que la MT du teaser
+  // (150 caractères × 11 locales), pas tout le pipeline prose + where/when.
+  translationMeta: z
+    .record(z.string(), z.object({ sourceHash: z.string().optional(), teaserHash: z.string().optional() }))
+    .default({}),
 });
 
 const EditorialSchema = z.object({

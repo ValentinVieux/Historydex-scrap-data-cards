@@ -152,7 +152,7 @@ brièvement pourquoi (sujet niche, source primaire unique, etc.). Le card-editor
 
 ## Tu ne fais PAS
 
-- Tu ne rédiges pas les textes joueur (`title`, `blurb`, `body`). C'est le rôle du `card-editor`.
+- Tu ne rédiges pas les textes joueur (`title`, `teaser`, `blurb`, `body`). C'est le rôle du `card-editor`.
 - Tu ne choisis pas les paramètres gameplay (`whenDelta`, `whereRadiusKm`). C'est le rôle du `gameplay-balancer`.
 - Tu ne valides pas le schéma final. C'est le rôle du `data-validator`.
 

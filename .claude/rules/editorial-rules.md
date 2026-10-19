@@ -34,10 +34,27 @@ Synthèse des 7 patterns à chasser :
 | Champ | Min | Max | Rôle |
 |---|---:|---:|---|
 | `title` | 2 | 80 | Nom court de la carte. Pas d'article inutile. |
-| `blurb` | 20 | 220 | Une phrase d'accroche. Affichée sous le titre dans la carte. |
+| `teaser` | 20 | 200 | Brève description visible **pendant l'énigme** (aperçu de carte). Dit ce que c'est, **sans aucun indice OÙ/QUAND**. Cf. § « Teaser » ci-dessous. |
+| `blurb` | 20 | 220 | Une phrase d'accroche. Affichée sous le titre dans la carte, **après** la réponse. |
 | `body` | 40 | 800 | Paragraphe pédagogique, 1-3 phrases. Affiché en page détail. |
 | `placeLabel` | 1 | — | Étiquette pédagogique du lieu (« Louvre », « Front occidental », « CERN »). |
 | `timeDisplayLabel` | 1 | — | Étiquette pédagogique de la date (« 1789 », « XIIᵉ siècle », « ~17 000 av. J.-C. »). |
+
+## Teaser — brève description visible pendant l'énigme
+
+Pendant l'énigme, le joueur ne voit que l'image, le titre et la consigne ; le blurb et le body n'arrivent qu'après la réponse. Essai du 2026-10-19 (8 cartes du cercle 1, maquette validée) : les blurbs existants contiennent **8 fois sur 8** un indice OÙ ou QUAND (« chinois », « milieu du XIVᵉ siècle », « gothique », « Léonard de Vinci »…) — ils ne peuvent pas servir tels quels. Le `teaser` est donc un **champ dédié**, affiché dans l'aperçu de carte en jeu (`CardPreviewModal` côté app), écrit sous cette règle :
+
+1. **Dire ce que c'est et pourquoi ça compte** : nature de l'objet (portrait, charte, bataille navale, épidémie), enjeu, conséquence. Une à deux phrases, 90 à 180 caractères (bornes dures 20-200).
+2. **Aucun toponyme**, aucun pays, ville, fleuve, mer, continent ; aucun adjectif de nationalité ou de peuple (« chinois », « européenne », « romain », « viking », « maya »).
+3. **Aucune date, siècle, millénaire, décennie**, et aucun mot d'époque ou de style qui en tient lieu (« antique », « médiéval », « gothique », « baroque », « moderne », « Renaissance », « guerre froide »).
+4. **Aucun nom de personne, de dynastie, d'empire ou de peuple** : un peintre, un roi, un général situent l'œuvre pour qui les connaît.
+5. **Les mots du titre sont autorisés** (le joueur les voit déjà) — un lieu dans le titre reste permis, comme pour les consignes — mais le teaser ne répète pas le titre.
+6. **Un ordre de grandeur en toutes lettres** reste possible s'il ne date rien (« un tiers des habitants », « des millions de vies »). Jamais de chiffres arabes.
+7. **L'époque peut rester déductible par la nature du sujet** (un pas sur la Lune, une boîte de culture). On l'accepte : c'est le sujet, pas le teaser, qui la révèle.
+
+Exemples validés : « La Joconde » → *Portrait d'une femme au sourire énigmatique, peint à l'huile sur un panneau de bois. L'un des visages les plus reproduits de l'histoire de l'art.* · « Bataille d'Actium » → *Choc de deux flottes de guerre dont l'issue met fin à une longue guerre civile et donne à un seul homme le pouvoir sur un immense État.* · « Peste noire en Europe » → *Épidémie qui emporte entre un tiers et la moitié des habitants d'un continent en quelques années, et bouleverse durablement toute la société.*
+
+**Outillé** : détecteur `scripts/_lib/teaser-hint.ts` (invariant `teaser-hint` — **erreur** sur année, siècle, « av. J.-C. », mot d'époque fort, gentilé, continent, mot du `placeLabel`/pays ; **warning** sur nom propre hors titre et mot d'époque ambigu), `teaser-missing` (warning : carte sans teaser), `teaser-translation-stale` (hash dédié `translationMeta.<loc>.teaserHash`). Génération de masse : `npm run generate-teasers` (API Claude, ou `--brief`/`--import` pour des sous-agents) ; traduction : `npm run translate-teasers -- all --apply` (Azure, teaser seul). Édition manuelle : champ « teaser » de l'app de review.
 
 ## Précision lexicale par `canonical.type`
 
@@ -51,18 +68,18 @@ La **pertinence** vaut autant pour WHERE que pour WHEN : si le sujet de la carte
 |---|---|---|
 | `paint` | tableau, peinture, fresque, miniature, retable, icône, portrait | peint(e), réalisé(e), exposé(e), conservé(e) |
 | `sculpt` | statue, statuette, sculpture, bas-relief, buste, monument funéraire | sculpté(e), érigé(e), fondue, taillée |
-| `archi` | monument, temple, pyramide, palais, château, basilique, cathédrale, mosquée, tour, pont, aqueduc, mur, **muraille**, forteresse, mausolée, théâtre, amphithéâtre, stade | construit, érigé, bâti, élevé, **existé** (pour intervalle d'usage prolongé), **dressé**, **tenu** |
+| `archi` | monument, temple, pyramide, palais, château, basilique, cathédrale, mosquée, tour, pont, aqueduc, mur, **muraille**, forteresse, mausolée, théâtre, amphithéâtre, stade | construit, érigé, bâti, élevé, **existé** (monument disparu, intervalle d'usage — jamais pour un monument encore debout) |
 | `text` | texte, manuscrit, code, traité, livre, poème, chronique, encyclique, bulle, édit | écrit, rédigé, publié, paru, promulgué, proclamé |
 | `person` | personnage, philosophe, prophète, souverain, empereur, roi, reine, pape, pharaon, sultan, écrivain, peintre, sculpteur, architecte, scientifique, navigateur | né(e), mort(e), décédé(e), baptisé(e), sacré(e), couronné(e), exécuté(e) |
 | `war` | bataille, guerre, conflit, siège, conquête, croisade, révolution, soulèvement, insurrection, **massacre**, **génocide**, raid, escarmouche | déroulée, livrée, eu lieu, **commis** (massacre/génocide), **perpétré** (génocide), menée, livré (siège) |
 | `invent` | invention, technique, procédé, dispositif, instrument, machine, outil | inventé, mis au point, développé, conçu, breveté |
 | `relig` | religion, doctrine, mouvement, schisme, migration, prophétie, conversion, exode, hégire, prédication, révélation | fondée, prêchée, proclamée, accomplie, survenue |
 | `sci` | théorie, découverte, observation, expérience, formule, loi, modèle | découvert, énoncé, formulé, démontré, observé, publié |
-| `treaty` | traité, accord, paix, alliance, capitulation, édit, concordat, pacte, convention, armistice, déclaration | signé, ratifié, conclu, paraphé |
+| `treaty` | traité, accord, paix, alliance, capitulation, édit, concordat, pacte, convention, armistice, déclaration | signé, ratifié, conclu |
 | `cata` | catastrophe, éruption, séisme, épidémie, pandémie, famine, inondation, tsunami, ouragan | survenue, frappée, éclaté, déclenché |
 | `explor` | voyage, expédition, traversée, conquête, débarquement, exploration, mission | parti, débarqué, atterri, atteint, explorée |
 | `money` | monnaie, pièce, papier-monnaie, billet, étalon | frappée, émise, créée, mise en circulation |
-| `sport` | jeux, compétition, épreuve, tournoi | disputés, organisés, tenus, célébrés |
+| `sport` | jeux, compétition, épreuve, tournoi | disputés, organisés, célébrés |
 | `music` | **œuvre** : œuvre, pièce, morceau, symphonie, concerto, sonate, suite, requiem, ballet, thème, partition, mélodie — **genre** : genre (musical), style, musique — **instrument** : instrument | **œuvre** : composé(e), créé(e), écrit(e), interprété(e) (1ʳᵉ), enregistré(e), publié(e) — **genre** : apparu, né(e), développé(e), popularisé(e) — **instrument** : inventé, conçu, mis au point, perfectionné |
 | `polity` | empire, royaume, dynastie, sultanat, khanat, khaganat, califat, principauté, cité-État, confédération, **civilisation**, **culture** (archéologique), État | étendu(e), régné, dominé(e), gouverné(e), prospéré, dirigé(e), fondé(e), épanouie |
 | `craft` | **objet d'art**, trésor, orfèvrerie, joyau, parure, vase, coupe, cratère, vaisselle, céramique, porcelaine, faïence, verrerie, laque, émail, tapis, tapisserie, broderie, mobilier | réalisé(e), façonné(e), produit(e), fabriqué(e), ciselé(e), tissé(e), brodé(e), émaillé(e), forgé(e), **découvert(e)** (trésor mis au jour), exposé(e) |
@@ -83,6 +100,55 @@ La **pertinence** vaut autant pour WHERE que pour WHEN : si le sujet de la carte
 > - « Sacre de Charlemagne » → `verb: "couronné"`, `post: " cet empereur ?"` (pas « ce personnage »).
 
 > **Cohérence WHERE/WHEN** : `wherePrompt.post` et `whenPrompt.post` doivent référer au **même** substantif. Si `wherePrompt.post = " cette statuette ?"`, alors `whenPrompt.post = " cette statuette ?"` aussi. (L'invariant `where-when-post-mismatch` flagge si différent.)
+
+## Clarté pour un joueur non spécialiste (consignes OÙ / QUAND)
+
+Pendant l'énigme, le joueur ne voit que **l'image, le titre** et la **consigne recomposée** `pre + verb + post` (verbe mis en évidence). Le blurb et le body n'apparaissent qu'**après** la réponse. La consigne doit donc **se comprendre avec le seul titre**, par un ado ou un adulte **sans culture du domaine**, et survivre à une **traduction automatique** en 11 langues. Revue de clarté du 2026-10-18 (carte 774 « Quand a été doublé ce cap ? » incomprise, « doubler » rendu « multiplier par deux » dans 9 locales ; 1481 cartes relues, ~390 à retoucher) : [docs/2026-10-18-prompt-revue-clarte-consignes.md](../../docs/2026-10-18-prompt-revue-clarte-consignes.md).
+
+Cinq critères, pour **chaque** consigne (OÙ et QUAND) :
+
+1. **Verbe compris sans culture du domaine.** Le mot courant prime sur le terme technique : *contourné / franchi* plutôt que *doublé*, *construit* plutôt que *élancé*, *déchiffré* plutôt que *séquencé*. *Frappée* (monnaie) reste acceptable (usage répandu) ; *paraphé* ne l'est pas. Le verbe « précis et légitime » des tables ci-dessous n'est pas un but en soi s'il n'est pas compris.
+2. **L'événement daté / localisé est explicite.** Dire *ce qui* est demandé dès qu'il y a ambiguïté : **« pour la première fois »** quand l'événement se répète (cap franchi, sommet gravi, pôle atteint, record, vol) ; création ≠ première représentation ≠ exposition ; construction ≠ inauguration ; début ≠ fin ; naissance ≠ mort. La consigne pose exactement la question à laquelle `pivotYear` / `lat,lon` / `placeKind` répondent.
+3. **Phrase naturelle une fois recomposée** : référent clair (= l'objet du titre), substantif spécifique (règles ci-dessous), **pas de circularité** — si le titre *est* le lieu (cap, pôle, sommet, détroit, cité, grotte), le OÙ devient « Où se trouve … ? ».
+4. **Robuste à la traduction automatique** : un verbe FR polysémique devient un contresens dans 11 langues. Préférer le mot sans double sens ; sinon vérifier les traductions existantes (`npm run audit-translations`, détecteur « verbes polysémiques »).
+5. **Invariants conservés** : lead-in « Quand… » / « Vers quelle période… », espacement `pre`/`verb`/`post`, verbe sans espace en bord, même substantif OÙ/QUAND (`where-when-post-mismatch` est un warning : une exception motivée — « … ce cap pour la première fois ? » — se documente dans `editorial.notes`), aucune date dans le titre.
+
+### Table jargon → remplacement (issue de la revue du 2026-10-18)
+
+Les verbes de la première colonne sont **proscrits** dans `wherePrompt.verb` / `whenPrompt.verb` (denylist `PROMPT_VERB_JARGON` dans `scripts/_lib/invariants.ts`, warning `prompt-verb-jargon`). `npm run validate` liste en plus les verbes **rares** (≤ 2 cartes) à relire par `card-qa` — c'est dans cette queue que se cache le jargon.
+
+| Jargon / verbe à risque | Problème | Remplacement |
+|---|---|---|
+| doublé (un cap) | nautique ; MT « ×2 » (*duplicar*, *verdoppeln*, 倍増) | QUAND : franchi … **pour la première fois** ; OÙ : « Où se trouve ce cap ? » |
+| gravi, atteint, survolé, aperçu, franchi (sommet, pôle, détroit, continent) | OÙ circulaire (au sommet…) ; QUAND ambigu | OÙ : « Où se trouve … ? » ; QUAND : atteint / gravi … **pour la première fois** |
+| rayonné (cité, culture) | figuré, MT *irradier* ; OÙ circulaire | prospéré ; OÙ : « Où se trouve cette cité ? » |
+| existé (monument encore debout) | faux : le monument existe toujours | OÙ : « Où se trouve … ? » ; QUAND : construit — réserver *existé* aux monuments disparus (cadrage `existence:`) |
+| créé(e) (œuvre scénique = première représentation) | sens théâtral inconnu du grand public | joué(e) / représenté(e) / dansé(e) **pour la première fois** |
+| fondu(e)(s) (bronze) | MT *melted* | réalisé(e) / fabriqué(e) |
+| dressé(e) (stèle, carte, menhir) | polysémique (dresser une table, un animal) | érigé(e) (stèle, menhir) ; dessinée (carte) |
+| tenu(e) (concile, conférence, jeux) | polysémie « tenir » | réuni(e) (assemblée) ; déroulé(e) / organisé(e) |
+| codifié(e)s (règles, danse, rite) | soutenu ; MT *coded* | fixées par écrit / rédigées (règles) ; fixée (danse) |
+| élancé (course) | jargon sportif | parti / démarré (… pour la première fois) |
+| décimalisé(e) | technique | reformuler : « passé au système décimal » |
+| séquencé | technique | déchiffré / analysé |
+| synthétisé(e) | chimie | fabriqué(e) pour la première fois |
+| déferlé, sévi | littéraire | survenu(e) / frappé |
+| culminé | abstrait | reformuler (« atteint son maximum ») |
+| aluni | technique | posé sur la Lune |
+| enluminé | technique | peint / décoré |
+| impulsé(e) | soutenu | lancé(e) |
+| formalisé (système, théorie) | soutenu | défini / énoncé |
+| inoculé | médical | injecté / administré |
+| paraphé, acté, scellé | juridique / soutenu | signé / décidé |
+| mené(e) (expédition) sans destination | vague : départ ? arrivée ? | arrivé(e) / parti(e) — préciser l'étape que `lat,lon` désigne |
+| apparu(e) (dynastie, art) avec un pivot « apogée » | incohérent avec `pivotYear` | épanoui(e) / prospéré, ou recaler le pivot |
+| proclamé(e) (personne, christianisation) | elliptique | fondé (empire) / adopté (religion) |
+
+**Verbes polysémiques à éviter** (contresens MT probable) : doubler, dresser, tenir, relever, lever, arrêter, élever, tirer, rendre, remonter, descendre, aborder, sortir, marquer, investir, employer, donner, occuper, éclater, exercer, fondre, rayonner, créer (sens théâtral).
+
+**Substantifs à faux-ami MT** : « genre » (→ « genre musical » : *género* = sexe), « traité » pour un livre (→ « ouvrage » : *treaty*), « bulle » (→ « décret du pape » : *bubble*), « groupe » sculpté (→ « sculpture »), « périple » (→ « voyage »), « étalon » (→ reformuler : *stallion*), « comptoir » (→ « comptoir commercial »), « diète » (→ « assemblée »), « canon » (→ préciser : *cannon* / *cañón*), « entité politique » (→ « royaume / État »).
+
+Les colonnes « Verbes typiques » des tables par `type` / `placeKind` ci-dessous restent valables **sous réserve de ces critères** : un verbe peut y figurer comme vocabulaire possible du domaine (*aluni*, *codifié*, *dressé*) sans être une recommandation pour la consigne.
 
 ## Formules `wherePrompt`
 

@@ -6,6 +6,8 @@ import {
 } from "../../schemas/card.schema.js";
 import type { LoadedCard } from "./load-cards.js";
 import { regionFromCountryHitWithSnap, regionLabel } from "./region-geo.js";
+import { frSourceHash, frTeaserHash, HASH_TRACKED_LOCALES } from "./translation-hash.js";
+import { teaserHintsForCard } from "./teaser-hint.js";
 
 export type Severity = "error" | "warning";
 
@@ -23,7 +25,7 @@ const APPROVED_MIN_SOURCES = 2;
 // Normalise un participe passé en retirant l'accord (genre/nombre) :
 // signées→signé, construite→construit, née→né, déroulées→déroulé, peinte→peint.
 // (Les terminaisons en "é"/"i" ne sont pas touchées : é ≠ e, i ≠ e/s en fin.)
-function normVerb(v: string): string {
+export function normVerb(v: string): string {
   let s = v.trim().toLowerCase();
   if (s.endsWith("s")) s = s.slice(0, -1);
   if (s.endsWith("e")) s = s.slice(0, -1);
@@ -33,6 +35,30 @@ function normVerb(v: string): string {
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
+
+// Verbes de consigne PROSCRITS — jargon ou polysémie MT (revue de clarté du 2026-10-18,
+// docs/2026-10-18-prompt-revue-clarte-consignes.md ; table commentée dans editorial-rules.md
+// « Clarté pour un joueur non spécialiste »). Clé = forme normalisée (normVerb), valeur =
+// remplacement suggéré. Denylist seulement : une allowlist serait trop rigide — les verbes
+// RARES (≤ 2 cartes) sont listés par `npm run validate` pour relecture card-qa.
+export const PROMPT_VERB_JARGON: Record<string, string> = {
+  doublé: "franchi / contourné (+ « pour la première fois » si l'événement est un premier passage)",
+  paraphé: "signé",
+  élancé: "construit / érigé",
+  séquencé: "déchiffré / analysé",
+  synthétisé: "fabriqué / créé",
+  déferlé: "survenu / frappé",
+  sévi: "survenu / frappé",
+  culminé: "reformuler (ex. « connu son apogée »)",
+  aluni: "posé sur la Lune / atterri",
+  aperçu: "observé / découvert",
+  enluminé: "peint / décoré",
+  impulsé: "lancé",
+  formalisé: "défini / énoncé",
+  codifié: "rédigé / écrit",
+  inoculé: "administré / testé",
+  décimalisé: "reformuler (« passé au système décimal »)",
+};
 
 // placeKind ↔ verbe WHERE : familles de verbes attendues (warning si hors-famille —
 // l'agent card-qa tranche au cas par cas). Les placeKind absents de cette table
@@ -269,6 +295,100 @@ function checkSingleCard(file: string, c: Card): Issue[] {
         message: "approved cards cannot have confidence=low",
       });
     }
+    // An approved card must carry every MT-managed locale. `en` is exempt: it was
+    // backfilled straight into cardTranslations for 549 older cards and never
+    // re-transcribed into the pipeline JSON (cf. push-db.ts, missingLocales).
+    //
+    // This is what makes "invalidate then retranslate" safe after a honesty-audit
+    // correction: nulling display.locales.<loc> turns validate red, which blocks
+    // push:db, which forces /translate-cards-mt to regenerate the locale from the
+    // corrected fr. Without it, a nulled locale is silently skipped at push and the
+    // DB keeps serving a translation that contradicts the french body.
+    for (const locale of HASH_TRACKED_LOCALES) {
+      if (!c.display.locales[locale]) {
+        out.push({
+          severity: "error",
+          file,
+          cardId,
+          rule: "approved-locale-missing",
+          message: `approved card is missing display.locales.${locale} — run /translate-cards-mt before pushing (a null locale is skipped at push, leaving a stale translation in DB)`,
+        });
+      }
+    }
+  }
+
+  // Dérive FR ↔ traduction. `display.translationMeta.<loc>.sourceHash` porte le
+  // sha256 du texte FR dont la traduction a été produite (stampé par
+  // merge-translations). Si le FR a bougé depuis, la traduction en base contredit
+  // le français et rien d'autre ne le voit : sourceContentVersion n'enregistre que
+  // la version au moment du push, donc un simple bump la remet à « fraîche ».
+  // Bloquant sur `approved` (c'est ce qui part en prod), warning sinon.
+  if (c.editorial.status === "reviewed" || c.editorial.status === "approved") {
+    const meta = (c.display.translationMeta ?? {}) as Record<string, { sourceHash: string } | undefined>;
+    const currentHash = frSourceHash(c);
+    for (const locale of HASH_TRACKED_LOCALES) {
+      if (!c.display.locales[locale]) continue; // absence traitée par approved-locale-missing
+      const stamped = meta[locale]?.sourceHash;
+      if (!stamped) {
+        // Provenance inconnue : traduction produite avant l'introduction du hash.
+        // `npx tsx scripts/backfill-translation-hash.ts --apply` la stampe.
+        out.push({
+          severity: "warning",
+          file,
+          cardId,
+          rule: "translation-provenance-unknown",
+          message: `display.locales.${locale} has no translationMeta.${locale}.sourceHash — run backfill-translation-hash.ts`,
+        });
+        continue;
+      }
+      if (stamped !== currentHash) {
+        out.push({
+          severity: c.editorial.status === "approved" ? "error" : "warning",
+          file,
+          cardId,
+          rule: "translation-stale",
+          message: `display.locales.${locale} was translated from an older french text (stamped ${stamped}, current ${currentHash}) — re-run /translate-cards-mt for this locale, or the DB will keep serving a translation that contradicts the french body`,
+        });
+      }
+    }
+  }
+
+  // Teaser : brève description visible PENDANT l'énigme (cf. editorial-rules § « Teaser »).
+  // Absent → warning (la carte reste jouable, le joueur ne voit que le titre). Présent →
+  // le détecteur d'indices OÙ/QUAND tranche (erreur = marqueur quasi certain, warning =
+  // nom propre à relire). Dérive FR ↔ traductions : hash DÉDIÉ `teaserHash`, séparé de
+  // translation-stale pour qu'un teaser corrigé ne relance que translate-teasers.ts.
+  if (c.editorial.status === "reviewed" || c.editorial.status === "approved") {
+    const teaser = c.display.locales.fr.teaser;
+    if (!teaser) {
+      // Warning tant que la carte est en cours (reviewed) ; erreur une fois approved —
+      // l'approbation elle-même l'exige déjà (pre-approve `approved-needs-teaser`).
+      out.push({
+        severity: c.editorial.status === "approved" ? "error" : "warning",
+        file,
+        cardId,
+        rule: "teaser-missing",
+        message: "display.locales.fr.teaser absent — pendant l'énigme le joueur ne voit que le titre ; `npm run generate-teasers -- --dex <dexNum> --apply` ou rédaction card-editor",
+      });
+    } else {
+      for (const h of teaserHintsForCard(c)) {
+        out.push({ severity: h.severity, file, cardId, rule: "teaser-hint", message: `teaser : ${h.message}` });
+      }
+      const meta = (c.display.translationMeta ?? {}) as Record<string, { teaserHash?: string } | undefined>;
+      const th = frTeaserHash(c);
+      for (const [locale, loc] of Object.entries(c.display.locales)) {
+        if (locale === "fr" || !loc) continue;
+        if (!loc.teaser || meta[locale]?.teaserHash !== th) {
+          out.push({
+            severity: c.editorial.status === "approved" ? "error" : "warning",
+            file,
+            cardId,
+            rule: "teaser-translation-stale",
+            message: `display.locales.${locale}.teaser ${loc.teaser ? "dérive du teaser FR courant" : "manquant"} — npx tsx scripts/translate-teasers.ts ${locale} --apply`,
+          });
+        }
+      }
+    }
   }
 
   // Display invariants
@@ -326,6 +446,16 @@ function checkSingleCard(file: string, c: Card): Issue[] {
         cardId,
         rule: `${promptName}-verb-shape`,
         message: `${promptName}.verb="${prompt.verb}" ne ressemble pas à un verbe (attendu : participe passé ou verbe simple)`,
+      });
+    }
+    const jargon = PROMPT_VERB_JARGON[normVerb(prompt.verb)];
+    if (jargon) {
+      out.push({
+        severity: "warning",
+        file,
+        cardId,
+        rule: "prompt-verb-jargon",
+        message: `${promptName}.verb=${JSON.stringify(prompt.verb)} — jargon ou verbe polysémique (incompris d'un joueur non spécialiste, contresens MT probable) → préférer : ${jargon}`,
       });
     }
     if (prompt.post.trim().length < 3) {
@@ -540,7 +670,7 @@ function checkSingleCard(file: string, c: Card): Issue[] {
         file,
         cardId,
         rule: "region-latlon-mismatch",
-        message: `place.region=R${c.canonical.place.region} (${regionLabel(c.canonical.place.region as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10)}) mais le tap explorateur (lat=${lat.toFixed(2)}, lon=${lon.toFixed(2)}) résout R${appRegion} (${regionLabel(appRegion)}) → carte injouable en OÙ explorateur. Aligner place.region sur R${appRegion}, ou déplacer le pin / revoir le countryCode.`,
+        message: `place.region=R${c.canonical.place.region} (${regionLabel(c.canonical.place.region as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11)}) mais le tap explorateur (lat=${lat.toFixed(2)}, lon=${lon.toFixed(2)}) résout R${appRegion} (${regionLabel(appRegion)}) → carte injouable en OÙ explorateur. Aligner place.region sur R${appRegion}, ou déplacer le pin / revoir le countryCode.`,
       });
     }
   }

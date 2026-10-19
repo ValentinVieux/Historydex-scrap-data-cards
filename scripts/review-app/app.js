@@ -269,8 +269,9 @@ async function pollPushProgress() {
       }
       const successLabel = p.phase === "done" ? "✓ Push terminé avec succès" : `✗ Push terminé avec ${p.errors?.length ?? 0} erreur(s)`;
       toast(successLabel, p.phase === "error");
-      // Refresh la liste pour mettre à jour les indicateurs.
-      await refreshActiveInList();
+      // Refresh la liste pour mettre à jour les indicateurs (le push touche
+      // beaucoup de lignes → vrai rechargement, pas un patch de la ligne active).
+      await loadCards();
     }
   } catch (err) {
     console.warn("Polling push progress failed:", err);
@@ -995,11 +996,12 @@ async function approveAndNext() {
   } else {
     toast(`✓ Carte approuvée (v${data.contentVersion})`);
   }
-  // 4. Liste + navigation.
-  await refreshActiveInList();
-  // Reload detail pour rafraîchir le statut éditorial affiché.
+  // 4. Liste + navigation. activeDetail est patché d'abord : refreshActiveInList
+  //    en dérive la ligne de liste. L'approbation implique un crop (pré-condition),
+  //    donc crop.reviewed passe à true côté serveur.
   if (activeDetail) activeDetail.editorial = { ...(activeDetail.editorial ?? {}), status: "approved", contentVersion: data.contentVersion };
   updateEditorialStatusUI();
+  refreshActiveInList({ reviewed: true });
   // Sur "Mettre à jour" (noop), on reste sur la carte courante pour permettre
   // d'enchaîner les micro-corrections. Sur première approbation, on avance.
   if (!data.noop) navigate(1);
@@ -1061,9 +1063,23 @@ function updateEditorialStatusUI() {
   if (statusEl) statusEl.textContent = status ?? "—";
 }
 
-async function refreshActiveInList() {
-  const updated = await fetch("/api/cards").then((r) => r.json());
-  cards = updated.cards;
+// ponytail: après un save/approve, seule la ligne active change — on la
+// resynchronise depuis activeDetail au lieu de re-fetch /api/cards, qui relit
+// et re-parse les ~1500 JSON du catalogue (≈ 700 ms de latence à chaque
+// approbation). loadCards() reste la voie quand plusieurs lignes bougent
+// (fin de push:db).
+function refreshActiveInList(extra = {}) {
+  const row = cards.find((c) => c.dexNum === activeDexNum);
+  if (row) {
+    if (activeDetail) {
+      row.title = activeDetail.title;
+      row.editorialStatus = activeDetail.editorial?.status ?? row.editorialStatus;
+      row.reviewed = activeDetail.crop?.reviewed ?? false;
+      row.hasFinal = activeDetail.crop?.finalFile != null;
+      row.cropSource = activeDetail.crop?.source ?? null;
+    }
+    Object.assign(row, extra);
+  }
   renderList();
   renderProgress();
 }
@@ -1198,6 +1214,7 @@ function showPushBanner() {
 const META_FIELDS = [
   // [domId, key, kind] — kind: 'card' | 'source'
   ["f-title", "title", "card"],
+  ["f-teaser", "teaser", "card"],
   ["f-blurb", "blurb", "card"],
   ["f-body", "body", "card"],
   ["f-imageLabel", "imageLabel", "card"],
@@ -1232,7 +1249,11 @@ function bindMetaForm() {
     el.addEventListener("input", () => onMetaFieldChange(key, el));
     el.addEventListener("change", () => onMetaFieldChange(key, el));
   }
-  // Compteurs blurb/body
+  // Compteurs teaser/blurb/body
+  document.getElementById("f-teaser").addEventListener("input", () => {
+    document.getElementById("f-teaser-count").textContent =
+      document.getElementById("f-teaser").value.length;
+  });
   document.getElementById("f-blurb").addEventListener("input", () => {
     document.getElementById("f-blurb-count").textContent =
       document.getElementById("f-blurb").value.length;
@@ -1467,6 +1488,7 @@ function getBaseline(key) {
   if (!d) return null;
   switch (key) {
     case "title": return d.title;
+    case "teaser": return d.teaser ?? "";
     case "blurb": return d.blurb;
     case "body": return d.body;
     case "imageLabel": return d.imageLabel;
@@ -1497,6 +1519,8 @@ function getBaseline(key) {
 function validateField(key, v) {
   if (key === "title" && (typeof v !== "string" || v.length < 2 || v.length > 80))
     return "title 2-80";
+  if (key === "teaser" && (typeof v !== "string" || (v.trim().length > 0 && (v.length < 20 || v.length > 200))))
+    return "teaser vide ou 20-200";
   if (key === "blurb" && (typeof v !== "string" || v.length < 20 || v.length > 220))
     return "blurb 20-220";
   if (key === "body" && (typeof v !== "string" || v.length < 40 || v.length > 800))
@@ -1563,6 +1587,7 @@ function renderMetaForm(detail) {
 
   // Inputs édition
   setInput("f-title", detail.title);
+  setInput("f-teaser", detail.teaser ?? "");
   setInput("f-blurb", detail.blurb);
   setInput("f-body", detail.body);
   setInput("f-imageLabel", detail.imageLabel);
@@ -1589,6 +1614,7 @@ function renderMetaForm(detail) {
   setInput("f-endYear", detail.time?.endYear ?? "");
   setInput("f-timeJustification", detail.time?.justification ?? "");
 
+  document.getElementById("f-teaser-count").textContent = (detail.teaser ?? "").length;
   document.getElementById("f-blurb-count").textContent = (detail.blurb ?? "").length;
   document.getElementById("f-body-count").textContent = (detail.body ?? "").length;
   updateTagDependentUI();

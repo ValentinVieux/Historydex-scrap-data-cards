@@ -26,7 +26,8 @@ Le chemin d'une carte `data/cards/<slug>.json` (canonical + display + gameplay r
 1. Lis la carte ET la fiche raw correspondante (`data/raw/<slug>.md`) pour avoir la section « Faits à cross-référencer » sous les yeux.
 2. Lance `npm run validate` (via Bash) et repère les warnings/erreurs qui concernent cette carte
    (notamment `placeKind-verb-coherence`, `archi-construction-vs-existence`, `whereRadius-placekind-band`,
-   `*-verb-post-glue`, `where-when-post-mismatch`, `tdl-range-mismatch`, `*-post-generic`, `title-when-spoiler`).
+   `*-verb-post-glue`, `where-when-post-mismatch`, `tdl-range-mismatch`, `*-post-generic`, `title-when-spoiler`,
+   `prompt-verb-jargon`) ainsi que la section « Verbes de consigne rares » du rapport si la carte y figure.
 3. Lance `npm run verify-geo -- --card <slug>` (via Bash) et lis l'écart géocodé.
 4. **WEB-CHECK ciblé** (cf. section dédiée plus bas) : sélectionne 2-4 claims saillants du body et fais un WebFetch direct sur une source institutionnelle pour les confirmer. Ce filet a été ajouté en mai 2026 suite aux audits honnêteté qui ont révélé que la plupart des erreurs résiduelles sont des chiffres ou noms mal sourcés à l'unique (P4/P5/P6).
 5. Applique la checklist ci-dessous.
@@ -58,6 +59,26 @@ Le chemin d'une carte `data/cards/<slug>.json` (canonical + display + gameplay r
   peintures rupestres » (pas « cette grotte »). Aucun générique (« ce site / cet objet / cette chose »)
   sauf site archéologique non monumental.
 
+### Clarté pour un joueur non spécialiste (consignes OÙ et QUAND)
+Le joueur ne voit que le titre + la consigne recomposée, **avant** blurb/body, et en 11 langues traduites
+automatiquement (cf. editorial-rules.md § « Clarté pour un joueur non spécialiste » ; revue du 2026-10-18 :
+carte 774 « Quand a été doublé ce cap ? » incomprise et rendue « multiplier par deux » dans 9 locales).
+- [ ] **Verbe compris sans culture du domaine** : pas de jargon nautique / juridique / scientifique /
+  artistique. Un warning `prompt-verb-jargon` = `À CORRIGER`. Un verbe hors denylist mais **rare** (listé par
+  `npm run validate`) → tu juges : courant pour un ado ? sinon propose le mot simple.
+- [ ] **Événement explicite** : la consigne pose exactement la question à laquelle `pivotYear` / `lat,lon`
+  répondent — « pour la première fois » si l'événement se répète (cap franchi, sommet gravi, pôle atteint,
+  record) ; création ≠ première représentation (« créée ») ≠ exposition ; construction ≠ inauguration ;
+  début ≠ fin ; naissance ≠ mort.
+- [ ] **Ni circularité ni agrammaticalité** une fois recomposée : « Où a été atteint ce pôle ? » → « Où se
+  trouve ce pôle ? » quand le titre EST le lieu ; relire `pre+verb+post` à voix haute (accord, « Où s'est »).
+- [ ] **Robuste à la traduction automatique** : verbe sans double sens (doubler, dresser, tenir, relever,
+  lever, fondre, rayonner, créer au sens théâtral, employer, occuper, exercer…) et substantif sans faux-ami
+  (« genre » → « genre musical », « traité » pour un livre → « ouvrage », « bulle » → « décret du pape »).
+
+**Règle de verdict** : un seul item non coché ici = `VERDICT : À CORRIGER` (route : card-editor), proposition
+`{pre, verb, post}` concrète à l'appui, changement minimal.
+
 ### Géo (point + rayon)
 - [ ] `npm run verify-geo -- --card <slug>` : si la carte est **flaguée**, juge si c'est un vrai écart
   (coords à corriger → renvoyer au researcher) ou un faux positif (lieu ancien/abstrait non géocodable).
@@ -67,6 +88,7 @@ Le chemin d'une carte `data/cards/<slug>.json` (canonical + display + gameplay r
   justifié → `difficultyWhere: "special"` + `balanceNotes`.
 
 ### Texte
+- [ ] **Teaser sans indice** : `display.locales.fr.teaser` (visible PENDANT l'énigme) dit ce que c'est sans toponyme, nationalité, date, siècle, mot d'époque/style ni nom de personne — les mots du titre exceptés. Un hit **erreur** de l'invariant `teaser-hint` = `VERDICT : À CORRIGER` ; un **warning** (nom propre, « moderne », « classique »…) → tu juges si le mot situe l'œuvre. Teaser absent (`teaser-missing`) sur une carte neuve = `À CORRIGER` (route : card-editor). Règle : [editorial-rules.md § Teaser](../rules/editorial-rules.md).
 - [ ] **Anti-spoiler date** : ni le `title` ni le `blurb` ne contiennent l'**année/date-réponse** du quizz WHEN. Le **lieu** peut, lui, figurer dans le titre (« Bataille de Marignan ») — c'est autorisé. Cas à corriger : « Maracanazo (1950) », « JO d'Athènes 1896 », « Acte d'Union de 1707 » → renommer sans la date (elle vit dans `timeDisplayLabel`/`body`). Détecté par l'invariant **bloquant** `title-when-spoiler` : un hit = `VERDICT : À CORRIGER`.
 - [ ] Ton neutre, pédagogique. Pas d'eurocentrisme implicite (« orientales », « exotiques »,
   « primitives »). Pas d'adjectifs émotionnels gratuits (« célèbre », « légendaire », « incroyable »).

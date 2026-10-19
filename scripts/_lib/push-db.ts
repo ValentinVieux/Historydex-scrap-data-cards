@@ -84,6 +84,8 @@ export type FlatCard = {
   timeDisplayLabel?: string;
   blurb: string;
   body: string;
+  // Brève description visible pendant l'énigme (optionnel : backfill progressif).
+  teaser?: string;
   imageLabel: string;
   publishedAt: number;
   contentVersion: number;
@@ -193,6 +195,7 @@ function flatten(card: Card, publishedAt: number): { flat: FlatCard; warnings: s
     if (card.canonical.time.startYear != null) flat.startYear = card.canonical.time.startYear;
     if (card.canonical.time.endYear != null) flat.endYear = card.canonical.time.endYear;
   }
+  if (fr.teaser) flat.teaser = fr.teaser;
 
   return { flat, warnings, countryFallback };
 }
@@ -517,18 +520,32 @@ export async function pushDelta(diff: Diff, options: PushOptions): Promise<{ pus
   }
   for (const u of diff.toUpdateText) {
     idByDex.set(u.flat.dexNum, u.dbId);
-    textOps.push(db.tx.cards[u.dbId]!.update(u.flat));
+    // Carte déjà en base : on NE re-stampe PAS publishedAt. Côté app, ce champ est le
+    // filigrane de la notif « 🆕 nouvelles cartes » (send-new-card-push.ts) et l'horloge
+    // de maturité de la rareté (lib/dex/rarity.ts) : le réécrire faisait passer une simple
+    // correction de texte pour une nouvelle carte (retour Valentin 2026-10-18).
+    const { publishedAt: _keepDbValue, ...flatWithoutPublishedAt } = u.flat;
+    textOps.push(db.tx.cards[u.dbId]!.update(flatWithoutPublishedAt));
   }
   if (textOps.length > 0) {
+    // Chunk : 1045 updates (≈ 25 champs chacun) dans un seul transact dépassent la limite
+    // InstantDB (« too many parameters in the transaction », constaté au backfill des
+    // teasers du 2026-10-19). Même borne que la phase traductions ; idempotent, donc une
+    // reprise après échec partiel ne re-pousse que le delta restant.
+    const TEXT_CHUNK = 100;
     try {
-      await db.transact(textOps);
+      for (let i = 0; i < textOps.length; i += TEXT_CHUNK) {
+        const slice = textOps.slice(i, i + TEXT_CHUNK);
+        await db.transact(slice);
+        processed += slice.length;
+        onProgress?.({ phase: "text", processed, total: totalSteps, errors });
+      }
     } catch (err) {
       errors.push(`Phase texte échouée : ${(err as Error).message}`);
       onProgress?.({ phase: "done", processed, total: totalSteps, errors });
       return { pushed: processed, errors };
     }
   }
-  processed += diff.toCreate.length + diff.toUpdateText.length;
 
   // a.bis) Phase traductions : lignes cardTranslations (locales non-source),
   // keyées par cardTranslationId (idempotent), liées à la carte. cardId résolu

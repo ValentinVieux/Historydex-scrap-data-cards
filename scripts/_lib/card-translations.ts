@@ -38,6 +38,8 @@ export type CardTranslationRow = {
   status: string;
   sourceContentVersion: number;
   timeDisplayLabel?: string;
+  // Brève description visible pendant l'énigme (optionnel : backfill progressif).
+  teaser?: string;
 };
 
 const SOURCE_LOCALE = "fr";
@@ -173,5 +175,6 @@ export function buildTranslationRow(card: Card, locale: string, loc: LocaleText)
     sourceContentVersion: card.editorial.contentVersion,
   };
   if (nonEmpty(loc.timeDisplayLabel)) row.timeDisplayLabel = loc.timeDisplayLabel;
+  if (nonEmpty(loc.teaser)) row.teaser = loc.teaser;
   return row;
 }

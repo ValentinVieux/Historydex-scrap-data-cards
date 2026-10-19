@@ -316,6 +316,7 @@ async function main(): Promise<void> {
 
       // Texte affiché (éditable)
       title: fr.title,
+      teaser: fr.teaser ?? "",
       blurb: fr.blurb,
       body: fr.body,
       imageLabel: card.display.imageLabel,
@@ -686,6 +687,8 @@ async function main(): Promise<void> {
 
     // Apply mutations (pas de spread profond, on touche les sous-objets explicitement).
     if (isString(body.title)) card.display.locales.fr.title = body.title;
+    // Teaser optionnel : champ vidé → clé supprimée (JSON.stringify ignore undefined).
+    if (isString(body.teaser)) card.display.locales.fr.teaser = body.teaser.trim() ? body.teaser.trim() : undefined;
     if (isString(body.blurb)) card.display.locales.fr.blurb = body.blurb;
     if (isString(body.body)) card.display.locales.fr.body = body.body;
     if (isString(body.imageLabel)) card.display.imageLabel = body.imageLabel;

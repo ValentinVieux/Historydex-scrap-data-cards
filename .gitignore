@@ -45,6 +45,8 @@ data/candidates/*.md
 
 # Audit honnêteté (sorties fact-checkers + progress)
 data/_audit/
+# Briefs / propositions de teasers (generate-teasers.ts --brief / --import), reproductibles.
+data/_teasers/
 
 # Données de traduction (pipeline Azure-hybride)
 data/_translations/
@@ -61,3 +63,6 @@ temp_results.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Extraction revue clarté des consignes (régénérable via scripts/audit-prompt-clarity.ts)
+reports/prompt-clarity/

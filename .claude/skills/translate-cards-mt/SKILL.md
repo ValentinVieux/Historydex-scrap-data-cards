@@ -35,7 +35,7 @@ que la MT ne sait pas faire). Garde : `validateTranslatedLocale` (déterministe)
 ```bash
 npx tsx scripts/translate-cards-mt.ts <loc> --apply
 ```
-Traduit les 5 champs de prose (title, blurb, body, placeLabel, timeDisplayLabel) des
+Traduit les champs de prose (title, blurb, **teaser** s'il existe, body, placeLabel, timeDisplayLabel) des
 cartes `approved` non traduites → `data/_translations/<loc>.jsonl` (chaque ligne porte
 aussi `frWhere`/`frWhen`/`tag` pour l'étape 2). Backoff 429 + reprise incrémentale.
 S'il affiche « Rien à faire », il n'y a rien à traduire pour cette locale → passer.
@@ -75,8 +75,39 @@ keyé `cardTranslationId` (idempotent). Pas besoin de `--retranslate` pour des c
 (lignes manquantes → poussées). `--retranslate` ne sert qu'à re-pousser un champ dérivé
 modifié (ex. fix de `country`).
 
+## Teaser seul (carte déjà traduite dont le teaser FR est nouveau ou corrigé)
+
+Le teaser (brève description en jeu) a son **propre hash** (`translationMeta.<loc>.teaserHash`) : l'invariant `teaser-translation-stale` ne réclame que lui, et le chemin court suffit — pas de prose, pas de where/when, pas de merge :
+```bash
+npx tsx scripts/translate-teasers.ts                 # dry-run : volumes par locale + cartes « hors portée »
+npx tsx scripts/translate-teasers.ts all --apply     # toutes les locales (~150 car./carte, Azure)
+```
+Idempotent par hash. « Hors portée » = cartes sans `display.locales.<loc>` local : pour elles, le teaser traduit n'existe pas → l'app retombe sur le FR. Deux voies : si la ligne existe déjà en base (cas du `en` des cartes anciennes, backfillé côté app), `npx tsx scripts/pull-en-translations.ts --apply` la rapatrie dans le JSON (fait le 2026-10-19 pour les 416 cartes concernées) ; sinon la locale complète via la procédure ci-dessus (la prose embarque désormais le teaser).
+
 ## Garde-fous
-- Idempotent partout : prose (skip déjà-staged + déjà-traduit), merge (clé dexNum), push (clé déterministe + delta `sourceContentVersion`).
+- Idempotent partout : prose (skip déjà-staged + déjà-traduit — sauf `--dex`, qui force), merge (clé dexNum), push (clé déterministe + delta `sourceContentVersion`).
 - Ne traduire que `approved` (FR stable). Les cartes `reviewed` non encore approuvées sont ignorées → traduites au push suivant une fois approuvées.
-- **Non géré (TODO futur)** : re-traduction si le FR change APRÈS traduction (display.locales n'horodate pas la version FR par locale ; `push:db --retranslate` re-pousse mais ne re-traduit pas). Pour l'instant : éditer le FR ⇒ supprimer `display.locales.<loc>` de la carte puis re-lancer cette skill.
+- Re-traduction quand le FR change APRÈS traduction : voir la procédure ci-dessous. `push:db --retranslate` re-pousse mais ne re-traduit pas ; l'invariant `translation-stale` (hash du FR stampé au merge) bloque `push:db` tant que la locale n'est pas régénérée.
+
+## FR modifié après traduction (correction de consigne / body sur une carte déjà traduite)
+
+Cas typique : revue de clarté du 2026-10-18 (carte 774 « doublé » → « franchi … pour la première fois »). Trois pièges, tous constatés :
+1. `translate-cards-mt.ts` **saute** toute carte « déjà traduite » (`display.locales.<loc>` non null) ou « déjà staged » (présente dans `<loc>.jsonl`) ;
+2. l'ancienne ligne `<loc>.whenwhere.jsonl` serait re-mergée telle quelle ;
+3. `merge-translations.ts <loc> --apply` **réécrit toutes les cartes du staging** (≈ 1045) et **re-stampe le hash FR courant** sur chacune → toute autre carte dont le FR a bougé serait blanchie.
+
+Procédure (dexNums `a,b` = cartes approved dont le FR a changé) :
+```bash
+npm run validate                                   # translation-stale attendu sur a,b (ou approved-locale-missing si les locales ont été mises à null)
+npx tsx scripts/translate-cards-mt.ts <loc> --dex a,b --apply   # purge leurs lignes de <loc>.jsonl ET <loc>.whenwhere.jsonl, re-stage la prose Azure (pour CHAQUE loc)
+# → sous-agent where/when (étape 2) sur ces seules cartes : écrit (append) les lignes {dexNum, wherePrompt, whenPrompt} dans <loc>.whenwhere.jsonl.
+#   Gabarit par locale = les lignes dexNum 774 (lead-ins, SOV tr/ja/ko, ？ sans espace en ja, ¿…? en es, verb non vide).
+npx tsx scripts/merge-translations.ts <loc> --dex a,b --apply   # n'écrit QUE a,b (jamais sans --dex après une correction FR)
+npm run validate                                   # 0 translation-stale
+npx tsx scripts/audit-translations.ts --dex a      # nombres / pièges / verbes polysémiques sur la carte
+npm run push:db -- --dry-run                       # puis push réel après accord
+```
+`scripts/apply-prompt-rewrites.ts` (revue de clarté) met déjà les locales à `null` et supprime `translationMeta.<loc>` des cartes approved modifiées : `approved-locale-missing` bloque alors le push jusqu'à la retraduction, en plus de `translation-stale`.
+
+Quota Azure F0 (2 M car./mois) : ≈ 1,5 k car. de prose × 11 locales ≈ 17 k car. par carte → ~110 cartes = le quota ; au-delà, passer la ressource en S1 le temps du rattrapage ou étaler sur deux mois.
 - Plan d'ensemble : `../app/historydex/docs/i18n-upstream-translation.md`.

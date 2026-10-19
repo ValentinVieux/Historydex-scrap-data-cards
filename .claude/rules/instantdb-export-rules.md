@@ -30,6 +30,7 @@ L'entité `cards` de l'app est définie dans `app/historydex/instant.schema.ts` 
 | `whenPromptPre` | string | `Card.display.locales.fr.whenPrompt.pre` |
 | `whenPromptPost` | string | `Card.display.locales.fr.whenPrompt.post` |
 | `blurb` | string | `Card.display.locales.fr.blurb` |
+| `teaser` | string (optional) | `Card.display.locales.fr.teaser` — brève description visible **pendant** l'énigme (aperçu de carte), sans indice OÙ/QUAND. Aussi poussé par locale dans `cardTranslations.teaser`. |
 | `body` | string | `Card.display.locales.fr.body` |
 | `imageLabel` | string | `Card.display.imageLabel` |
 | `publishedAt` | number (indexed) | `Date.now()` à l'export |

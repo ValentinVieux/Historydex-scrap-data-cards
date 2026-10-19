@@ -27,6 +27,7 @@ Tu écris (ou complètes) `data/cards/<slug>.json` en remplissant :
     "locales": {
       "fr": {
         "title": "...",
+        "teaser": "...",
         "blurb": "...",
         "body": "...",
         "placeLabel": "...",
@@ -51,8 +52,14 @@ Si `data/cards/<slug>.json` n'existe pas encore, tu le crées en intégrant auss
 - Suffisamment précis pour distinguer cette carte d'une autre similaire.
 - **AUCUNE date dans le titre — jamais.** Le titre peut nommer l'objet et le **lieu** (« Bataille de Marignan »), mais **aucune date sous aucune forme** : ni année (« 1789 »), ni « av./ap. J.-C. », ni date jour-mois (« 11 septembre »), ni date entre parenthèses. C'est plus strict que l'anti-spoiler : même une date hors fenêtre de devinette est interdite (règle utilisateur 2026-06-27). Si le nom usuel contient une date (« Maracanazo (1950) », « Krach de 1987 », « Acte d'Union de 1707 »), renomme sans la date (« Maracanazo », « Krach du Lundi noir », « Acte d'Union anglo-écossais ») — la date vit dans `timeDisplayLabel`/`body`. Invariant **bloquant** `title-contains-date` (doublé de `title-when-spoiler`).
 
+### `teaser` (20-200 chars, cible 90-180)
+- **Brève description visible PENDANT l'énigme** (aperçu de carte en jeu). Le joueur ne voit que l'image, le titre et ce texte ; il doit comprendre *de quoi* il s'agit sans pouvoir en déduire la réponse.
+- Dis **ce que c'est et pourquoi ça compte** (nature de l'objet, enjeu, conséquence), une ou deux phrases.
+- **Interdits absolus** : toponyme, pays, continent, mer, fleuve ; adjectif de nationalité ou de peuple ; année, siècle, décennie, « av. J.-C. » ; mot d'époque ou de style (antique, médiéval, gothique, baroque, moderne, Renaissance…) ; nom de personne, de dynastie, d'empire ou de peuple ; chiffres arabes. Les mots du **titre** sont autorisés. Un ordre de grandeur en toutes lettres (« un tiers des habitants ») passe s'il ne date rien.
+- Contrôlé par l'invariant **bloquant** `teaser-hint` (détecteur `scripts/_lib/teaser-hint.ts`). Règle complète et exemples validés : [editorial-rules.md § Teaser](../rules/editorial-rules.md).
+
 ### `blurb` (20-220 chars)
-- **Une phrase d'accroche**.
+- **Une phrase d'accroche**, affichée **après** la réponse (elle peut nommer un peintre ou un peuple, pas la date-réponse).
 - Pas de spoiler de la date ou du lieu attendus (le quizz ne doit pas être révélé).
 - Présent de narration pour décrire l'objet, passé pour les événements.
 
@@ -127,6 +134,11 @@ Pour `tag: "periodique"` : **préfixer par un label de type** pour lever l'ambig
 - [ ] Si `tag = "periodique"` : `timeDisplayLabel` commence par un **préfixe de type** (`construction:`, `règne:`, `extension:`…) et ses bornes numériques matchent `startYear`/`endYear` (tolérance ±50 ans).
 - [ ] Le titre ne contient **aucune date** (année, « av. J.-C. », date jour-mois), même hors fenêtre de devinette (le **lieu** peut, lui, figurer : « Bataille de Marignan »). Détecté par les invariants **bloquants** `title-contains-date` + `title-when-spoiler`.
 - [ ] Le ton est neutre et pédagogique.
+- [ ] **Clarté pour un joueur non spécialiste** (cf. editorial-rules.md § « Clarté pour un joueur non spécialiste ») — le joueur ne voit que le titre + la consigne, en 11 langues traduites automatiquement :
+  - le verbe est un **mot courant**, pas du jargon (table des verbes proscrits : doublé, élancé, séquencé, codifiées, fondu pour un bronze, paraphé… → warning `prompt-verb-jargon`) ;
+  - l'**événement interrogé est explicite** : « pour la première fois » si l'événement se répète (cap, sommet, pôle, record) ; création ≠ première représentation ≠ exposition ; construction ≠ inauguration ; la consigne pose exactement la question à laquelle `pivotYear` / `lat,lon` répondent ;
+  - la phrase recomposée est **naturelle et non circulaire** (titre = lieu → « Où se trouve … ? »), relue à voix haute ;
+  - verbe et substantif **sans double sens** pour la MT (éviter dresser, tenir, relever, fondre, rayonner, créer au sens théâtral ; « genre » → « genre musical », « traité » pour un livre → « ouvrage »).
 
 ### Prudence épistémique (les 7 patterns)
 

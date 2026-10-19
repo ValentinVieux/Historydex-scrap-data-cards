@@ -63,8 +63,28 @@ des sources depuis la fiche raw. On attrape ça ici, pas plus tard quand l'humai
 ### Promotion à `approved`
 - Toutes les règles « Sources » ci-dessus.
 - `confidence ≠ "low"` (règle `approved-no-low-confidence`).
+- `approved-locale-missing` : une carte `approved` doit porter **toutes** les locales MT (`display.locales.{es,de,it,pt}`). `en` est exempté (backfillé directement en base pour 549 cartes anciennes, jamais retranscrit dans le JSON). Cet invariant est ce qui rend sûr le geste « invalider une locale puis retraduire » après une correction de body : mettre une locale à `null` rend `validate` rouge, donc bloque `push:db`, donc force le passage par `/translate-cards-mt`. Sans lui, une locale nulle est **silencieusement ignorée** au push et la DB continue de servir l'ancienne traduction.
+
+### Dérive FR ↔ traduction (`translation-stale`)
+**Bloquant sur `approved`, warning sur `reviewed`.**
+
+`display.translationMeta.<loc>.sourceHash` porte le sha256 du texte FR dont la traduction a été **produite** (stampé par `merge-translations.ts`, cf. `scripts/_lib/translation-hash.ts`). L'invariant recalcule le hash du FR courant et compare.
+
+Pourquoi ce mécanisme existe : `cardTranslations.sourceContentVersion` (côté DB) n'enregistre que la version FR au moment du **push**, pas au moment de la **traduction**. Corriger un body FR puis incrémenter `editorial.contentVersion` sans retoucher les locales fait donc re-pousser le texte traduit *inchangé* sous le nouveau numéro : la divergence est blanchie en « à jour » et plus aucun diff ne la rattrape. Constaté au batch 58 de l'honesty-audit (2026-07-19), où 9 cartes `approved` traduites ont dû être propagées à la main.
+
+Le hash de contenu n'a pas ce défaut : il ne dépend d'aucune discipline d'incrémentation — il n'y a rien à penser à bumper.
+
+- `translation-stale` : le FR a changé depuis la traduction → relancer `/translate-cards-mt` pour cette locale.
+- `translation-provenance-unknown` (warning) : traduction produite avant l'introduction du hash → `npx tsx scripts/backfill-translation-hash.ts --apply`.
+
+Champs FR couverts par le hash : `title`, `blurb`, `body`, `placeLabel`, `timeDisplayLabel`, `wherePrompt.{pre,verb,post}`, `whenPrompt.{pre,verb,post}`. Modifier l'un d'eux invalide les traductions ; toucher aux `sources`, au `gameplay` ou au `canonical` ne les invalide pas.
 - (Côté app de review uniquement) ≥ 2 **publishers** distincts (deux pages du même éditeur =
   1) ; crop d'image présent. Cf. `scripts/_lib/pre-approve.ts`.
+
+### Teaser (brève description visible pendant l'énigme)
+Cf. `editorial-rules.md` § « Teaser » et le détecteur `scripts/_lib/teaser-hint.ts` (testé : `npm test`).
+- `teaser-hint` (**erreur** dès `reviewed`) : `display.locales.fr.teaser` contient un indice OÙ/QUAND quasi certain — année en chiffres, siècle/millénaire numéroté, « av./ap. J.-C. », date jour-mois, mot d'époque fort (antique, médiéval, gothique, baroque, guerre froide…), gentilé/peuple (chinois, romain, viking…), continent/mer/orient-occident, ou un mot (≥ 4 lettres) du `placeLabel` / du nom de pays absent du titre. Les mots du **titre** sont autorisés. La même règle émet des **warnings** pour un nom propre hors titre et pour un mot d'époque ambigu (moderne, classique, colonial…) — à relire par `card-qa`.
+- `teaser-translation-stale` (**bloquant pour `approved`**, warning sinon) : pour chaque `display.locales.<loc>` présent, le `teaser` traduit manque ou `translationMeta.<loc>.teaserHash` ≠ sha256 du teaser FR courant → `npx tsx scripts/translate-teasers.ts <loc> --apply` (chemin court, Azure, teaser seul — indépendant de `translation-stale`, pour qu'un teaser corrigé ne relance pas prose + where/when + merge).
 
 ### Localisabilité obligatoire (bloquant)
 Toute carte **doit être jouable en OÙ ET en QUAND** (règle utilisateur 2026-06-27 : « il faut obligatoirement créer des cartes qui peuvent être localisées dans le temps et l'espace »). Un sujet sans lieu réel défendable (ex. Bitcoin, monnaie décentralisée) n'est **pas** une carte valide.
@@ -105,6 +125,10 @@ Toute carte **doit être jouable en OÙ ET en QUAND** (règle utilisateur 2026-0
 ### Unicité éditoriale
 - `subjectKey` déjà utilisé par une autre carte (warning, pas erreur — utile pour repérer des doublons sémantiques).
 
+### Teaser
+- `teaser-missing` : carte `reviewed` sans `display.locales.fr.teaser` — pendant l'énigme le joueur ne voit que le titre. `npm run generate-teasers -- --dex <dexNum> --apply` ou rédaction dans l'app de review. **Erreur** si la carte est `approved` ; l'approbation elle-même l'exige (bloqueur `approved-needs-teaser` dans `scripts/_lib/pre-approve.ts`, app de review + `auto-promote.ts`).
+- `teaser-hint` (variante warning) : nom propre hors titre / mot d'époque ambigu dans le teaser — cf. section « Teaser » des erreurs.
+
 ### Cohérence ère / pivotYear (cas justifié)
 - Si `editorial.notes` justifie une exception d'ère, c'est un warning au lieu d'une erreur.
 
@@ -120,6 +144,13 @@ Toute carte **doit être jouable en OÙ ET en QUAND** (règle utilisateur 2026-0
 - `wherePrompt-post-shape` / `whenPrompt-post-shape` : `post` trop court (< 3 caractères utiles).
 - `wherePrompt-post-generic` / `whenPrompt-post-generic` : substantif générique (« ce site », « cet objet », « cette chose »).
 - `where-when-post-mismatch` : `wherePrompt.post` et `whenPrompt.post` ne réfèrent pas au même substantif.
+- `prompt-verb-jargon` : `wherePrompt.verb` ou `whenPrompt.verb` figure dans la denylist `PROMPT_VERB_JARGON`
+  (`scripts/_lib/invariants.ts`, clé normalisée `normVerb`) — jargon ou verbe polysémique incompris d'un joueur
+  non spécialiste et source de contresens MT (« doublé » → *duplicar / verdoppeln*, carte 774). Le message porte
+  le remplacement suggéré ; table commentée dans `editorial-rules.md` § « Clarté pour un joueur non spécialiste ».
+  Denylist alimentée par la revue du 2026-10-18 ; pas d'allowlist (trop rigide).
+- Le rapport `validate` liste aussi les **verbes de consigne rares** (≤ 2 cartes approved/reviewed) : c'est dans
+  cette queue de distribution que se cache le jargon → relecture `card-qa`. Informatif, pas un warning.
 
 ### Cohérence tdl ↔ intervalle
 - `tdl-range-mismatch` : pour les `periodique`, les bornes numériques lues dans `timeDisplayLabel` ne correspondent pas à `startYear`/`endYear` (tolérance ±50 ans).

@@ -86,6 +86,16 @@ export function checkApprovalPreconditions(
     });
   }
 
+  // 2bis. Teaser (brève description visible PENDANT l'énigme, cf. editorial-rules § Teaser).
+  // Une carte approuvée sans teaser n'afficherait que son titre en jeu ; le contenu du
+  // teaser est contrôlé par l'invariant `teaser-hint` (étape 6), ici on exige sa présence.
+  if (!card.display.locales.fr.teaser) {
+    blockers.push({
+      rule: "approved-needs-teaser",
+      message: "display.locales.fr.teaser absent — rédiger la brève description en jeu (champ « teaser » de l'app de review, ou npm run generate-teasers -- --dex <dexNum> --apply)",
+    });
+  }
+
   // 3. Publishers distincts (deux pages du même éditeur = 1)
   if (!options.skipSourceCount) {
     const publishers = new Set<string>();

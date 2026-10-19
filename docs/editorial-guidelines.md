@@ -50,6 +50,7 @@ Lis le JSON `data/normalized/<slug>.json` et vérifie :
 - [ ] `placeLabel` est lisible pour un joueur non spécialiste — pas un nom interne de base.
 - [ ] Le titre ne révèle pas la réponse au quizz (date ou lieu attendus).
 - [ ] Le blurb ne révèle pas non plus la réponse.
+- [ ] Le teaser (seule prose visible **pendant** l'énigme) dit ce que c'est sans toponyme, nationalité, date, siècle, mot d'époque ni nom de personne — les mots du titre exceptés (cf. [editorial-rules § Teaser](../.claude/rules/editorial-rules.md)).
 - [ ] Le body apporte un contexte ou une retombée — pas une simple répétition de la fiche technique.
 
 ### Ton et neutralité
