@@ -30,11 +30,22 @@ function findFileForDexNum(dir: string): Map<string, string> {
   return out;
 }
 
+// ponytail: le scan lit et parse les ~1500 JSON du catalogue (~230 ms) juste
+// pour trouver un chemin. On mémoïse dexNum → fichier et on ne re-scanne que
+// sur miss (carte créée pendant la session) ou si le fichier a disparu. Seuls
+// les chemins sont cachés — le contenu est relu à chaque appel, donc une
+// édition externe du JSON reste visible.
+let _dexToFile: Map<string, string> | null = null;
+
 // Charge le fichier d'une carte par dexNum depuis data/cards/.
 // Lève si introuvable ou invalide.
 export function loadCardFile(dexNum: string): LoadedCardFile {
-  const cardsMap = findFileForDexNum(PATHS.cards);
-  const cardPath = cardsMap.get(dexNum);
+  let cardPath = _dexToFile?.get(dexNum);
+  if (cardPath && !fs.existsSync(cardPath)) cardPath = undefined;
+  if (!cardPath) {
+    _dexToFile = findFileForDexNum(PATHS.cards);
+    cardPath = _dexToFile.get(dexNum);
+  }
   if (!cardPath) {
     throw new Error(`Aucun fichier carte trouvé pour dexNum=${dexNum}`);
   }

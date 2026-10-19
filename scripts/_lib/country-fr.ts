@@ -160,6 +160,7 @@ const COUNTRY_FR: Record<string, string> = {
   FM: "États fédérés de Micronésie",
   SB: "Îles Salomon",
   // Amériques précolombiennes & latines
+  FK: "Îles Malouines",
   MX: "Mexique",
   GT: "Guatemala",
   BZ: "Belize",
