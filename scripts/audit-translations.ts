@@ -23,6 +23,10 @@
 //      consignes OÙ/QUAND (c'est là que le verbe vit). Même logique que les pièges :
 //      précision totale, rappel = la table POLYSEMY.
 //
+//   Pas de détecteur « titre resté en français » : essayé le 2026-10-25, il ne sort que des
+//   noms légitimes (« Pont du Gard », « Canal de Suez » en es). Les titres sont relus par
+//   l'agent de l'étape 2 (cf. _lib/translation-review.ts), c'est la vraie garde.
+//
 //   npx tsx scripts/audit-translations.ts               # tout le catalogue
 //   npx tsx scripts/audit-translations.ts --dex 529     # une carte
 //   npx tsx scripts/audit-translations.ts --numbers-only
@@ -63,6 +67,27 @@ const TRAPS: Array<{ fr: string; bad: Partial<Record<string, string[]>>; note: s
     fr: "Ming",
     bad: { de: ["das Meinige"] },
     note: "dynastie Ming",
+  },
+  // Audit des titres du 2026-10-25 (1 349 titres faux) : homonymes les plus parlants.
+  {
+    fr: "Réductions",
+    bad: { en: ["Discounts"], de: ["Rabatte"], it: ["Sconti"], pt: ["Descontos"], "pt-PT": ["Descontos"], nl: ["Kortingen"], pl: ["Zniżki"], tr: ["İndirim"], ja: ["割引"], ko: ["할인"] },
+    note: "réductions jésuites (missions) traduites comme des remises commerciales",
+  },
+  {
+    fr: "Crosse",
+    bad: { pt: ["Estoque"], "pt-PT": ["Estoque"] },
+    note: "le sport de la crosse traduit comme une arme",
+  },
+  {
+    fr: "Polonaise",
+    bad: { pt: ["Polaco"], "pt-PT": ["Polaco"], es: ["Polaco"] },
+    note: "la danse traduite comme la nationalité",
+  },
+  {
+    fr: "Sarcophage des Époux",
+    bad: { ko: ["탐욕"] },
+    note: "« Époux » lu comme « la mariée et l'avidité »",
   },
 ];
 

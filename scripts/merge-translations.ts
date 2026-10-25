@@ -1,6 +1,7 @@
-// Merge (étape 2/2) : combine la PROSE (Azure, staging `<loc>.jsonl`) + les champs
-// WHERE/WHEN re-découpés par le LLM (`<loc>.whenwhere.jsonl`) en une LocaleText
-// complète, la valide via validateTranslatedLocale, et l'écrit dans
+// Merge (étape 3) : combine la PROSE (Azure, staging `<loc>.jsonl`) + la RELECTURE LLM
+// (`<loc>.whenwhere.jsonl` : consignes re-découpées, titre traduit par l'agent, fixes de
+// prose — cf. _lib/translation-review.ts) en une LocaleText complète, la valide via
+// validateTranslatedLocale, et l'écrit dans
 // `display.locales.<loc>` de chaque carte. Puis `npm run push:db` émet les cardTranslations.
 //
 // DRY-RUN par défaut (n'écrit rien) ; --apply écrit les cartes. Idempotent.
@@ -11,6 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { validateTranslatedLocale } from "./_lib/card-translations.js";
 import { frSourceHash, frTeaserHash } from "./_lib/translation-hash.js";
+import { applyReview, type ReviewRow } from "./_lib/translation-review.js";
 
 const CARDS_DIR = path.resolve(process.cwd(), "data", "cards");
 const STAGING_DIR = path.resolve(process.cwd(), "data", "_translations");
@@ -29,7 +31,7 @@ if (!locale) {
 
 type Prompt = { pre: string; verb: string; post: string };
 type ProseRow = { dexNum: string; file: string; tag: "ponctuelle" | "periodique"; prose: Record<string, string> };
-type WhenWhereRow = { dexNum: string; wherePrompt: Prompt; whenPrompt: Prompt };
+type WhenWhereRow = ReviewRow & { wherePrompt: Prompt; whenPrompt: Prompt };
 
 function readJsonl<T>(p: string): T[] {
   if (!fs.existsSync(p)) return [];
@@ -55,14 +57,21 @@ for (const p of prose) {
     missingWW++;
     continue; // pas encore de where/when → on attend l'étape LLM
   }
+  const reviewed = applyReview(p.prose, ww);
+  if (!reviewed.ok) {
+    rejected++;
+    issues.push(`[${p.dexNum}] ${reviewed.issue}`);
+    continue;
+  }
+  const pr = reviewed.prose;
   const loc = {
-    title: p.prose.title,
-    blurb: p.prose.blurb,
+    title: pr.title,
+    blurb: pr.blurb,
     // Teaser optionnel : seulement s'il a été staged (FR présent au moment de la MT).
-    ...(p.prose.teaser ? { teaser: p.prose.teaser } : {}),
-    body: p.prose.body,
-    placeLabel: p.prose.placeLabel,
-    timeDisplayLabel: p.prose.timeDisplayLabel,
+    ...(pr.teaser ? { teaser: pr.teaser } : {}),
+    body: pr.body,
+    placeLabel: pr.placeLabel,
+    timeDisplayLabel: pr.timeDisplayLabel,
     wherePrompt: ww.wherePrompt,
     whenPrompt: ww.whenPrompt,
   };
@@ -92,7 +101,7 @@ for (const p of prose) {
 }
 
 console.log(`locale=${locale}${ONLY_DEX ? ` · --dex ${[...ONLY_DEX].join(",")}` : ""} · prose=${prose.length} · where/when=${whenwhere.length}`);
-console.log(`${APPLY ? "écrites" : "à écrire (dry-run)"}: ${written} · rejetées (validateTranslatedLocale): ${rejected} · sans where/when: ${missingWW}`);
+console.log(`${APPLY ? "écrites" : "à écrire (dry-run)"}: ${written} · rejetées (relecture / validateTranslatedLocale): ${rejected} · sans where/when: ${missingWW}`);
 if (issues.length) {
   console.log(`\nRejets (${issues.length}) :`);
   for (const i of issues.slice(0, 30)) console.log("  " + i);
