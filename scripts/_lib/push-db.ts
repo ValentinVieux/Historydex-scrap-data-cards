@@ -320,6 +320,13 @@ export async function computeDiff(opts: { maxDex?: number; forceTranslations?: b
         });
       }
     }
+    // Ligne `fr` (backfill app-side des ~550 cartes anciennes) : localizeCard la lit AVANT les
+    // colonnes source de `cards` → sans cette mise à jour, un joueur FR voit l'ancien texte
+    // (constaté le 2026-10-25 après la réécriture des bodies, et sur ~100 consignes du 18/10).
+    if (existingTrans.has("fr") && (opts.forceTranslations || existingTrans.get("fr") !== card.editorial.contentVersion)) {
+      const row = buildTranslationRow(card, "fr", card.display.locales.fr);
+      toPushTranslations.push({ dexNum: card.dexNum, cardId: cardIdForTrans, locale: "fr", row: { ...row, status: "human" } });
+    }
     if (missingLocales.length > 0) {
       untranslated.push({ dexNum: card.dexNum, missing: missingLocales });
     }
