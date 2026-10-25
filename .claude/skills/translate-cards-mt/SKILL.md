@@ -10,7 +10,8 @@ Traduction **éco** des cartes (**en**/es/de/it/pt/pt-PT/pl/tr/nl/ja/ko — **to
 (traducteur+relecteur Opus), réservée désormais aux cas où l'on veut la garde qualité ≥90.
 Moteur **Azure AI Translator** (F0 gratuit, 2M car/mois) pour la **prose**, + un **sous-agent LLM** pour les 6 champs
 structurés where/when (re-découpage selon l'ordre des mots cible + invariant lead-in
-que la MT ne sait pas faire). Garde : `validateTranslatedLocale` (déterministe).
+que la MT ne sait pas faire) **et la relecture obligatoire du titre et de la prose**. Gardes :
+relecture (`_lib/translation-review.ts`), `validateTranslatedLocale` (déterministe), `audit-translations`.
 
 > **Anglais (`en`)** : `en` fait partie de `targetLocales()` (cf. `supported-locales.json` : `en` n'est pas
 > `source`) et le script l'accepte (`AZURE_TO.en`, `WHEN_LEAD_INS.en`). fr→en est la paire la plus solide
@@ -21,9 +22,12 @@ que la MT ne sait pas faire). Garde : `validateTranslatedLocale` (déterministe)
 (FR finalisé après revue humaine → zéro traduction périmée) **encore non traduites**
 (`display.locales.<loc>` null). Idempotent : re-run = no-op si tout est traduit.
 
-> Différence avec `translate-cards` (LLM) : ici pas de relecteur LLM (garde =
-> validateTranslatedLocale seul). Qualité validée par le backfill es/de/it/pt (552×4) puis pt-PT/pl/tr/nl/ja/ko (1045×6, oct. 2026).
-> Réutilise EXACTEMENT les scripts du backfill.
+> ⚠️ **Qualité Azure seule = insuffisante** (audit du 2026-10-25, `docs/2026-10-25-audit-traductions-cartes.md`) :
+> ~12 % de titres faux et **~35 % des cartes × langue avec au moins une erreur majeure** dans la prose
+> (contresens d'homonymes, lieux affichés traduits comme des mots — Worms → « vers de terre » —, nombres
+> cassés par l'espace des milliers, « cal. BP » → « calories », pivot visible par l'anglais). Les champs
+> produits par LLM (consignes) étaient, eux, quasi propres. D'où la **relecture LLM obligatoire** de
+> l'étape 2 : le merge refuse une carte sans titre relu.
 
 ## Pré-requis
 - `.env` : `AZURE_TRANSLATOR_KEY` (+ `AZURE_TRANSLATOR_REGION` si ressource régionale, ex. `francecentral`).
@@ -40,11 +44,17 @@ cartes `approved` non traduites → `data/_translations/<loc>.jsonl` (chaque lig
 aussi `frWhere`/`frWhen`/`tag` pour l'étape 2). Backoff 429 + reprise incrémentale.
 S'il affiche « Rien à faire », il n'y a rien à traduire pour cette locale → passer.
 
-### 2. where/when (sous-agent LLM) → `<loc>.whenwhere.jsonl`
-Lancer **un sous-agent** (`general-purpose`) qui lit `data/_translations/<loc>.jsonl`
-et, pour chaque carte, re-découpe `frWhere`/`frWhen` en `{pre,verb,post}` <loc>, puis
-écrit `data/_translations/<loc>.whenwhere.jsonl` (1 ligne/carte : `{dexNum, wherePrompt, whenPrompt}`).
-Règles **dures** (sinon `validateTranslatedLocale` rejette à l'étape 3) :
+### 2. Relecture (sous-agent LLM, OBLIGATOIRE) → `<loc>.whenwhere.jsonl`
+Azure seul n'est **pas** publiable : audit du 2026-10-25 = **1 349 titres faux sur ~11 500** (≈ 12 %, 18-20 % en ja/ko) — homonymes dans le mauvais sens (« Crosse » → pt *Estoque*, « Polonaise » → *Polaco*, « Réductions jésuites » → en *Discounts*, ja 投影 pour une projection cartographique), noms propres restés en français (« Site de Monte Verde ») ou mal transcrits, grammaire cassée. Le merge (étape 3) **refuse** toute carte sans titre relu (`scripts/_lib/translation-review.ts`).
+
+Source du lot : `npx tsx scripts/whenwhere-source.ts <start> <count> --locale <loc>` → pour chaque carte staged : `fr` (titre, prose, consignes), `mt` (prose Azure), `tag`, `type`, `era`, `countryCode`.
+Le sous-agent (`general-purpose`) écrit `data/_translations/<loc>.whenwhere.jsonl`, 1 ligne/carte :
+`{dexNum, title, fixes?, wherePrompt, whenPrompt}` — où :
+- **`title`** (requis) : traduit par l'agent **depuis le FR**, jamais recopié de `mt.title` sans vérification. Nom **usuel** dans la langue cible (exonyme, titre d'œuvre consacré : it *La sagra della primavera*, ja 東海道五十三次, ko 부부의 석관), glossaire `../app/historydex/prompts/glossary/<loc>.json`. Un nom propre invariable reste tel quel ; un mot-outil français (« de », « Site de », « Culture ») ne reste jamais.
+- **`fixes`** (optionnel) : `{ blurb?, teaser?, body?, placeLabel?, timeDisplayLabel? }` = texte **complet** corrigé du champ quand la MT est fautive : contresens/homonyme, fait altéré (date, nombre, nom, rôle), nom propre traduit comme un mot commun (« Mio Figlio » pour Mỹ Sơn, « dem Lied » pour la dynastie Song), passage resté en français, phrase agrammaticale, sujet désigné autrement que par `title`, teaser qui ajoute un indice de lieu/date. Un style simplement perfectible ne justifie pas de fix. Pas de fix sur un champ absent de `mt` (teaser FR absent).
+- **`wherePrompt` / `whenPrompt`** : re-découpage des consignes, règles ci-dessous.
+
+Règles **dures** des consignes (sinon `validateTranslatedLocale` rejette à l'étape 3) :
 - Recomposer la phrase FR `pre+verb+post`, traduire **entière**, puis re-découper selon l'ordre des mots <loc> (ne pas traduire les fragments en place).
 - `whenPrompt.pre` DOIT commencer par le lead-in de la locale (source unique : `WHEN_LEAD_INS` dans `scripts/_lib/card-translations.ts`) selon `tag` (ponctuelle / periodique) : **en** When / Around what period · **es** ¿Cuándo / ¿En qué período · **de** Wann / In welchem Zeitraum · **it** Quando / In quale periodo · **pt** et **pt-PT** Quando / Em que período · **pl** Kiedy / W jakim okresie · **nl** Wanneer / In welke periode.
 - ⚠️ **Langues SOV (tr, ja, ko)** : le mot interrogatif suit le sujet → `whenPrompt.pre` doit le **contenir** (pas commencer par) : **tr** « ne zaman » / « hangi dönemde » (pre=`"Bu anıt ne zaman "`, verb=`"inşa edildi"`, post=`"?"`) · **ja** « いつ » / « どの時代 » (pre=`"この記念碑はいつ"`, verb=`"建てられました"`, post=`"か？"`) · **ko** « 언제 » / « 어느 시기 » (pre=`"이 기념물은 언제 "`, verb=`"세워졌나요"`, post=`"?"`). Le validateur applique « contient » pour ces 3 locales (`LEAD_IN_INSIDE`).
@@ -53,17 +63,19 @@ Règles **dures** (sinon `validateTranslatedLocale` rejette à l'étape 3) :
 - `verb` **non vide** = le verbe principal/participe, accordé. ⚠️ **Allemand V2** : pour « Wann ereignete sich X ? » (pas de participe final), mettre le verbe conjugué dans `verb` : pre=`"Wann "`, verb=`"ereignete"`, post=`" sich X?"`. Ne jamais laisser `verb` vide.
 - ⚠️ **Anglais — ordre sujet-verbe** : recomposer puis re-découper en ordre **sujet-verbe** anglais (sujet dans `pre`, participe/verbe dans `verb`, `post`=`"?"`). Ex. pre=`"When was this monument "`, verb=`"built"`, post=`"?"`. **BCE/CE** pour les dates et **en-dash** pour les intervalles (cf. `../app/historydex/prompts/translation/grammar-rules.md`).
 - Espacement : pas de double espace ni de mots collés ; verbe directement suivi de `?` autorisé. Ponctuation : es ouvre par `¿` ferme `?` ; **en**/de/it/pt ferment par `?`.
-> Pour un gros volume, batcher via `scripts/whenwhere-source.ts <start> <count>` (slices de ~100 cartes, un agent par locale × slice, chaque agent écrit `<loc>.whenwhere.bNNNN.jsonl` puis on concatène en `<loc>.whenwhere.jsonl`) ; pour quelques cartes neuves, un seul sous-agent suffit.
+> Pour un gros volume, batcher via `scripts/whenwhere-source.ts <start> <count> --locale <loc>` (slices de ~50 cartes — la relecture lit toute la prose, pas seulement les consignes —, un agent par locale × slice, chaque agent écrit `<loc>.whenwhere.bNNNN.jsonl` puis on concatène en `<loc>.whenwhere.jsonl`) ; pour quelques cartes neuves, un seul sous-agent par locale suffit.
 > **Grosse passe** (nouvelle locale, ~800 k caractères de prose) : dépasse le palier Azure **F0** (2 M/mois) dès 3 locales → passer la ressource en **S1** (≈ 10 $/M, sans quota gratuit) le temps du rattrapage, puis revenir en F0. En S1, lancer les locales **en parallèle** (1 process `translate-cards-mt.ts` par locale) : le throttle par process est calibré F0.
 
 ### 3. Merge → `display.locales.<loc>`
 ```bash
 npx tsx scripts/merge-translations.ts <loc> --apply
 ```
-Combine prose + where/when, valide via `validateTranslatedLocale` (champs non vides,
-lead-in, espacement), écrit `display.locales.<loc>` dans `data/cards/<slug>.json`.
-**Objectif : 0 rejet.** Un rejet (ex. verbe vide allemand) → re-lancer le sous-agent
-de l'étape 2 sur les dexNums rejetés, re-merger.
+Combine prose + relecture (titre de l'agent, `fixes` appliqués) + where/when, valide via
+`validateTranslatedLocale` (champs non vides, lead-in, espacement), écrit `display.locales.<loc>`
+dans `data/cards/<slug>.json`. **Objectif : 0 rejet.** Un rejet (titre relu manquant, verbe vide
+allemand…) → re-lancer le sous-agent de l'étape 2 sur les dexNums rejetés, re-merger.
+
+Puis **`npm run audit-translations`** : 0 piège MT, 0 verbe polysémique, nombres perdus triés (une reformulation en lettres est légitime). Chaque nouvelle erreur trouvée → une entrée dans `TRAPS`/`POLYSEMY` (`scripts/audit-translations.ts`).
 
 ### 4. Valider + pousser
 ```bash
@@ -82,6 +94,7 @@ Le teaser (brève description en jeu) a son **propre hash** (`translationMeta.<l
 npx tsx scripts/translate-teasers.ts                 # dry-run : volumes par locale + cartes « hors portée »
 npx tsx scripts/translate-teasers.ts all --apply     # toutes les locales (~150 car./carte, Azure)
 ```
+⚠️ Ce chemin court n'a **pas** de relecture automatique : avant `push:db`, faire relire les teasers traduits par un sous-agent (FR vs <loc>, critères de l'étape 2 + aucun indice de lieu/date ajouté) et écrire ses corrections directement dans `display.locales.<loc>.teaser` (le `teaserHash` hache le FR : il reste valide).
 Idempotent par hash. « Hors portée » = cartes sans `display.locales.<loc>` local : pour elles, le teaser traduit n'existe pas → l'app retombe sur le FR. Deux voies : si la ligne existe déjà en base (cas du `en` des cartes anciennes, backfillé côté app), `npx tsx scripts/pull-en-translations.ts --apply` la rapatrie dans le JSON (fait le 2026-10-19 pour les 416 cartes concernées) ; sinon la locale complète via la procédure ci-dessus (la prose embarque désormais le teaser).
 
 ## Garde-fous
@@ -100,7 +113,7 @@ Procédure (dexNums `a,b` = cartes approved dont le FR a changé) :
 ```bash
 npm run validate                                   # translation-stale attendu sur a,b (ou approved-locale-missing si les locales ont été mises à null)
 npx tsx scripts/translate-cards-mt.ts <loc> --dex a,b --apply   # purge leurs lignes de <loc>.jsonl ET <loc>.whenwhere.jsonl, re-stage la prose Azure (pour CHAQUE loc)
-# → sous-agent where/when (étape 2) sur ces seules cartes : écrit (append) les lignes {dexNum, wherePrompt, whenPrompt} dans <loc>.whenwhere.jsonl.
+# → sous-agent de relecture (étape 2) sur ces seules cartes : écrit (append) les lignes {dexNum, title, fixes?, wherePrompt, whenPrompt} dans <loc>.whenwhere.jsonl.
 #   Gabarit par locale = les lignes dexNum 774 (lead-ins, SOV tr/ja/ko, ？ sans espace en ja, ¿…? en es, verb non vide).
 npx tsx scripts/merge-translations.ts <loc> --dex a,b --apply   # n'écrit QUE a,b (jamais sans --dex après une correction FR)
 npm run validate                                   # 0 translation-stale
