@@ -63,10 +63,11 @@ Si `data/cards/<slug>.json` n'existe pas encore, tu le crées en intégrant auss
 - Pas de spoiler de la date ou du lieu attendus (le quizz ne doit pas être révélé).
 - Présent de narration pour décrire l'objet, passé pour les événements.
 
-### `body` (40-800 chars)
-- 1-3 phrases, pédagogique, accessible.
-- **Peut révéler date et lieu** (affiché après résolution).
-- Apporte du contexte ou une retombée historique.
+### `body` — fiche courte (3 phrases, ≤ 60 mots)
+- Gabarit obligatoire (cf. [editorial-rules § Body — fiche courte](../rules/editorial-rules.md)) : **quoi, où, quand** → **pourquoi ça compte** → **un détail concret**.
+- **Doit donner date et lieu de la réponse** (affiché après résolution).
+- Phrases courtes, mots courants ; ni parenthèses, ni tiret incise, ni abréviation savante, ni nom latin, ni date secondaire. Une nuance en quelques mots seulement (« sans doute », « vers »).
+- Plus de 60 mots = invariant bloquant `body-too-long`.
 
 ### `placeLabel`
 - L'**étiquette pédagogique** du lieu, telle qu'affichée à la résolution. Cohérente avec `placeKind`.

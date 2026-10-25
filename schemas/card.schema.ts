@@ -184,6 +184,9 @@ const LocaleTextSchema = z.object({
   // pendant l'énigme, là où le blurb/body n'arrivent qu'après la réponse. Optionnel
   // (warning `teaser-missing`) ; une fois présent, l'invariant `teaser-hint` le contrôle.
   teaser: z.string().min(TEASER_MIN).max(TEASER_MAX).optional(),
+  // Plafond de sécurité seulement : la règle « fiche courte » (≤ 60 mots, 2026-10-25) est
+  // l'invariant `body-too-long` — un plafond Zod plus bas empêcherait de charger une carte
+  // trop longue pour la réécrire (loadCardFile valide).
   body: z.string().min(40).max(800),
   placeLabel: z.string().min(1),
   timeDisplayLabel: z.string().min(1),

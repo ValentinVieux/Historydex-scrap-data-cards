@@ -36,7 +36,7 @@ Synthèse des 7 patterns à chasser :
 | `title` | 2 | 80 | Nom court de la carte. Pas d'article inutile. |
 | `teaser` | 20 | 200 | Brève description visible **pendant l'énigme** (aperçu de carte). Dit ce que c'est, **sans aucun indice OÙ/QUAND**. Cf. § « Teaser » ci-dessous. |
 | `blurb` | 20 | 220 | Une phrase d'accroche. Affichée sous le titre dans la carte, **après** la réponse. |
-| `body` | 40 | 800 | Paragraphe pédagogique, 1-3 phrases. Affiché en page détail. |
+| `body` | 40 | 800 | **Fiche courte** : 3 phrases, **60 mots au plus**. Affiché sur la fiche de la carte. Cf. § « Body — fiche courte ». |
 | `placeLabel` | 1 | — | Étiquette pédagogique du lieu (« Louvre », « Front occidental », « CERN »). |
 | `timeDisplayLabel` | 1 | — | Étiquette pédagogique de la date (« 1789 », « XIIᵉ siècle », « ~17 000 av. J.-C. »). |
 
@@ -284,6 +284,22 @@ Le verbe peut être identique à `wherePrompt.verb` quand l'événement est ponc
 - **Anachronismes implicites** : « France » au IXᵉ siècle est trompeur — préfère « royaume des Francs » dans le `body` (et utilise quand même `countryCode: FR` dans le canonical pour faciliter le geocoding).
 - **Eurocentrisme** : ne pas qualifier d'« orientales », « exotiques » ou « primitives » des civilisations non européennes.
 - **Adjectifs émotionnels gratuits** : « célèbre », « légendaire », « incroyable » dans le body. Le joueur jugera lui-même.
+
+## Body — fiche courte
+
+Décision Valentin du 2026-10-25 (format « A · Fiche courte »). Les bodies d'avant faisaient 96 mots en médiane (jusqu'à 124), écrits comme une notice d'encyclopédie : précautions de chercheur, parenthèses, noms latins, dates secondaires. Trop lourds pour un joueur, et ce sont ces phrases qui cassaient le plus en traduction.
+
+**Gabarit : 3 phrases, 60 mots au plus** (invariant bloquant `body-too-long`) :
+1. **Quoi, où, quand** — le fait ou l'objet, avec le lieu et la date de la réponse.
+2. **Pourquoi ça compte** — la conséquence, l'usage ou ce que ça change.
+3. **Un détail concret** qui reste en tête — un chiffre, un geste, une personne.
+
+Écriture :
+- Phrases courtes, mots courants, sujet-verbe-complément. Pas de parenthèses, pas de tiret incise, pas d'abréviation savante (« cal. BP », « 14C », « P. rubens ») : on écrit « vieux de 18 000 à 20 000 ans ».
+- Une nuance ne reste que si elle change ce que le joueur retient, en quelques mots (« sans doute », « vers », « une date encore discutée ») — la prudence épistémique (§ ci-dessus) reste un invariant, elle se dit juste plus court. Les controverses d'attribution, les noms latins, les dates secondaires et les citations d'origine sortent.
+- Aucun fait absent de la fiche vérifiée.
+
+Exemple (carte 088, validé) : « En 1928, à Londres, Alexander Fleming remarque qu'une moisissure tombée sur une de ses cultures empêche les bactéries de pousser. Il ne parvient pas à en tirer un médicament : ce sont Howard Florey et Ernst Chain, à Oxford, qui y arrivent à partir de 1939. Produite en masse pendant la Seconde Guerre mondiale, la pénicilline sauve d'innombrables blessés. »
 
 ## Anti-spoil dans le body
 

@@ -8,6 +8,7 @@ import type { LoadedCard } from "./load-cards.js";
 import { regionFromCountryHitWithSnap, regionLabel } from "./region-geo.js";
 import { frSourceHash, frTeaserHash, HASH_TRACKED_LOCALES } from "./translation-hash.js";
 import { teaserHintsForCard } from "./teaser-hint.js";
+import { BODY_MAX_WORDS, bodyWordCount } from "./body-rule.js";
 
 export type Severity = "error" | "warning";
 
@@ -351,6 +352,18 @@ function checkSingleCard(file: string, c: Card): Issue[] {
         });
       }
     }
+  }
+
+  // Body « fiche courte » (cf. editorial-rules § « Body — fiche courte ») : 60 mots au plus.
+  const bodyWords = bodyWordCount(c.display.locales.fr.body);
+  if (bodyWords > BODY_MAX_WORDS) {
+    out.push({
+      severity: "error",
+      file,
+      cardId,
+      rule: "body-too-long",
+      message: `body de ${bodyWords} mots (max ${BODY_MAX_WORDS}) — gabarit fiche courte : quoi/où/quand → pourquoi ça compte → un détail concret`,
+    });
   }
 
   // Teaser : brève description visible PENDANT l'énigme (cf. editorial-rules § « Teaser »).

@@ -35,11 +35,11 @@ relecture (`_lib/translation-review.ts`), `validateTranslatedLocale` (détermini
 
 ## Procédure (pour CHAQUE locale de `targetLocales()` — en, es, de, it, pt, pt-PT, pl, tr, nl, ja, ko)
 
-### 1. Prose (Azure) → staging
+### 1. Staging
 ```bash
-npx tsx scripts/translate-cards-mt.ts <loc> --apply
+npx tsx scripts/translate-cards-mt.ts <loc> --no-mt --apply   # DÉFAUT (2026-10-25) : sans Azure
 ```
-Traduit les champs de prose (title, blurb, **teaser** s'il existe, body, placeLabel, timeDisplayLabel) des
+**Par défaut, plus d'Azure** (décision Valentin 2026-10-25, après l'audit) : `--no-mt` écrit le staging avec une prose **vide** ; l'agent de l'étape 2 traduit **tout** depuis le FR (`title` + `fixes` pour chaque champ de prose présent en FR). Un champ oublié reste vide → rejeté au merge (`empty/missing`), un teaser oublié → `teaser-translation-stale` au validate. Sans `--no-mt` (grosse passe d'une nouvelle langue, quand le volume dépasse ce que les agents peuvent tenir), le script traduit les champs de prose (title, blurb, **teaser** s'il existe, body, placeLabel, timeDisplayLabel) des
 cartes `approved` non traduites → `data/_translations/<loc>.jsonl` (chaque ligne porte
 aussi `frWhere`/`frWhen`/`tag` pour l'étape 2). Backoff 429 + reprise incrémentale.
 S'il affiche « Rien à faire », il n'y a rien à traduire pour cette locale → passer.
@@ -51,7 +51,7 @@ Source du lot : `npx tsx scripts/whenwhere-source.ts <start> <count> --locale <l
 Le sous-agent (`general-purpose`) écrit `data/_translations/<loc>.whenwhere.jsonl`, 1 ligne/carte :
 `{dexNum, title, fixes?, wherePrompt, whenPrompt}` — où :
 - **`title`** (requis) : traduit par l'agent **depuis le FR**, jamais recopié de `mt.title` sans vérification. Nom **usuel** dans la langue cible (exonyme, titre d'œuvre consacré : it *La sagra della primavera*, ja 東海道五十三次, ko 부부의 석관), glossaire `../app/historydex/prompts/glossary/<loc>.json`. Un nom propre invariable reste tel quel ; un mot-outil français (« de », « Site de », « Culture ») ne reste jamais.
-- **`fixes`** (optionnel) : `{ blurb?, teaser?, body?, placeLabel?, timeDisplayLabel? }` = texte **complet** corrigé du champ quand la MT est fautive : contresens/homonyme, fait altéré (date, nombre, nom, rôle), nom propre traduit comme un mot commun (« Mio Figlio » pour Mỹ Sơn, « dem Lied » pour la dynastie Song), passage resté en français, phrase agrammaticale, sujet désigné autrement que par `title`, teaser qui ajoute un indice de lieu/date. Un style simplement perfectible ne justifie pas de fix. Pas de fix sur un champ absent de `mt` (teaser FR absent).
+- **`fixes`** : `{ blurb?, teaser?, body?, placeLabel?, timeDisplayLabel? }`. Avec `--no-mt` (défaut) : **tous** les champs présents dans `mt` (vides), traduits par l'agent depuis le FR. Avec Azure : texte **complet** corrigé du champ quand la MT est fautive : contresens/homonyme, fait altéré (date, nombre, nom, rôle), nom propre traduit comme un mot commun (« Mio Figlio » pour Mỹ Sơn, « dem Lied » pour la dynastie Song), passage resté en français, phrase agrammaticale, sujet désigné autrement que par `title`, teaser qui ajoute un indice de lieu/date. Un style simplement perfectible ne justifie pas de fix. Pas de fix sur un champ absent de `mt` (teaser FR absent).
 - **`wherePrompt` / `whenPrompt`** : re-découpage des consignes, règles ci-dessous.
 
 Règles **dures** des consignes (sinon `validateTranslatedLocale` rejette à l'étape 3) :
