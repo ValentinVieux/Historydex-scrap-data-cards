@@ -17,6 +17,7 @@
 //   npx tsx scripts/translate-cards-mt.ts es                    # dry-run (coût estimé)
 //   npx tsx scripts/translate-cards-mt.ts es --limit 5 --apply  # pilote 5 cartes
 //   npx tsx scripts/translate-cards-mt.ts es --apply            # locale complète (reprend où ça s'est arrêté)
+//   npx tsx scripts/translate-cards-mt.ts es --no-mt --apply    # DÉFAUT depuis 2026-10-25 : staging sans Azure, l'agent de l'étape 2 traduit tout
 //   npx tsx scripts/translate-cards-mt.ts es --dex 774,801 --apply  # RE-traduire ces cartes (FR modifié après traduction)
 //   npx tsx scripts/translate-cards-mt.ts es --dex 702,980 --prompts-only --apply  # seules les consignes OÙ/QUAND ont changé :
 //        pas d'appel Azure, met à jour frWhere/frWhen des lignes prose staged et purge leurs lignes whenwhere
@@ -39,7 +40,7 @@ const STAGING_DIR = path.resolve(process.cwd(), "data", "_translations");
 
 const CARDS_PER_CHUNK = 20; // ~100 segments / ~15k chars par chunk
 
-type Args = { locale: string; limit: number; apply: boolean; status: "approved" | "reviewed" | "both"; minDex: number; maxDex: number; dex: Set<string> | null; promptsOnly: boolean };
+type Args = { locale: string; limit: number; apply: boolean; status: "approved" | "reviewed" | "both"; minDex: number; maxDex: number; dex: Set<string> | null; promptsOnly: boolean; noMt: boolean };
 function parseArgs(): Args {
   const a = process.argv.slice(2);
   const locale = a.find((x) => !x.startsWith("--")) ?? "";
@@ -68,7 +69,7 @@ function parseArgs(): Args {
     console.error("--prompts-only requiert --dex a,b");
     process.exit(1);
   }
-  return { locale, limit: Number.isFinite(limit) ? limit : Infinity, apply: a.includes("--apply"), status, minDex: Number.isFinite(minDex) ? minDex : 0, maxDex: Number.isFinite(maxDex) ? maxDex : Infinity, dex, promptsOnly };
+  return { locale, limit: Number.isFinite(limit) ? limit : Infinity, apply: a.includes("--apply"), status, minDex: Number.isFinite(minDex) ? minDex : 0, maxDex: Number.isFinite(maxDex) ? maxDex : Infinity, dex, promptsOnly, noMt: a.includes("--no-mt") };
 }
 
 type Card = {
@@ -95,7 +96,7 @@ function loadCards(): Card[] {
 const fmt = (n: number) => n.toLocaleString("en-US");
 
 async function main() {
-  const { locale, limit, apply, status, minDex, maxDex, dex, promptsOnly } = parseArgs();
+  const { locale, limit, apply, status, minDex, maxDex, dex, promptsOnly, noMt } = parseArgs();
   if (!locale || !targetLocales().includes(locale)) {
     console.error(`locale invalide. Cibles: ${targetLocales().join(", ")} (cf. supported-locales.json)`);
     process.exit(1);
@@ -173,7 +174,7 @@ async function main() {
     console.log("\n(DRY-RUN — aucun appel réseau. Relancer avec --apply.)");
     return;
   }
-  if (!AZ_KEY) {
+  if (!AZ_KEY && !noMt) {
     console.error("\nAZURE_TRANSLATOR_KEY manquante dans .env.");
     process.exit(1);
   }
@@ -195,7 +196,10 @@ async function main() {
         if (text) flat.push({ ci, field: f, text }); // teaser absent → pas de segment
       }
     });
-    const translated = await mtTranslate(flat.map((x) => x.text), target);
+    // --no-mt : chemin par défaut depuis le 2026-10-25 — l'agent de l'étape 2 traduit TOUT depuis
+    // le FR (titre + prose via `fixes`). Prose staged vide : un champ oublié par l'agent reste ""
+    // et validateTranslatedLocale le rejette au merge (jamais de FR ni de MT publié par défaut).
+    const translated = noMt ? flat.map(() => "") : await mtTranslate(flat.map((x) => x.text), target);
     const prose: Record<string, string>[] = chunk.map(() => ({}));
     flat.forEach((x, k) => {
       prose[x.ci]![x.field] = translated[k] ?? "";

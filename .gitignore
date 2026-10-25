@@ -66,3 +66,7 @@ Thumbs.db
 
 # Extraction revue clarté des consignes (régénérable via scripts/audit-prompt-clarity.ts)
 reports/prompt-clarity/
+
+# Réécriture des bodies « fiche courte » (2026-10-25) : lots de travail + sauvegarde avant écriture
+data/_body-rewrite/
+data/_backup/
