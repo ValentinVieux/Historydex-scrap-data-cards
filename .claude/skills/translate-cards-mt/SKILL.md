@@ -95,7 +95,7 @@ npx tsx scripts/translate-teasers.ts                 # dry-run : volumes par loc
 npx tsx scripts/translate-teasers.ts all --apply     # toutes les locales (~150 car./carte, Azure)
 ```
 ⚠️ Ce chemin court n'a **pas** de relecture automatique : avant `push:db`, faire relire les teasers traduits par un sous-agent (FR vs <loc>, critères de l'étape 2 + aucun indice de lieu/date ajouté) et écrire ses corrections directement dans `display.locales.<loc>.teaser` (le `teaserHash` hache le FR : il reste valide).
-Idempotent par hash. « Hors portée » = cartes sans `display.locales.<loc>` local : pour elles, le teaser traduit n'existe pas → l'app retombe sur le FR. Deux voies : si la ligne existe déjà en base (cas du `en` des cartes anciennes, backfillé côté app), `npx tsx scripts/pull-en-translations.ts --apply` la rapatrie dans le JSON (fait le 2026-10-19 pour les 416 cartes concernées) ; sinon la locale complète via la procédure ci-dessus (la prose embarque désormais le teaser).
+Idempotent par hash. « Hors portée » = cartes sans `display.locales.<loc>` local : pour elles, le teaser traduit n'existe pas → l'app retombe sur le FR. Deux voies : si la ligne existe déjà en base (cas du `en` des cartes anciennes, backfillé côté app), `npx tsx scripts/pull-db-translations.ts <loc|all> --apply` la rapatrie dans le JSON (`en` fait le 2026-10-19 pour 416 cartes ; les 15 langues 2026-11 sont traduites côté app → même voie) ; sinon la locale complète via la procédure ci-dessus (la prose embarque désormais le teaser).
 
 ## Garde-fous
 - Idempotent partout : prose (skip déjà-staged + déjà-traduit — sauf `--dex`, qui force), merge (clé dexNum), push (clé déterministe + delta `sourceContentVersion`).

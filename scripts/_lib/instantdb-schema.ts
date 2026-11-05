@@ -86,6 +86,9 @@ const _schema = i.schema({
       timeDisplayLabel: i.string().optional(),
       blurb: i.string(),
       body: i.string(),
+      // Pendant localisé de cards.teaser — déjà dans le schéma app (le push l'écrit
+      // via buildTranslationRow) ; déclaré ici pour typer pull-db-translations.ts.
+      teaser: i.string().optional(),
       status: i.string(), // 'machine' | 'human' | 'reviewed'
       sourceContentVersion: i.number().optional(),
     }),

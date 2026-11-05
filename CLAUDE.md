@@ -36,7 +36,7 @@ npm run audit-translations                 # cherche les erreurs INTRODUITES par
 npm test                                   # tests unitaires du pipeline (détecteur d'indices du teaser)
 npm run generate-teasers -- --apply        # teaser FR (brève description en jeu, sans indice OÙ/QUAND) des cartes qui n'en ont pas — API Claude ; ou --brief/--import pour des sous-agents
 npm run translate-teasers -- all --apply   # traduit le teaser seul (Azure, hash dédié teaserHash) — chemin court après un teaser neuf/corrigé
-npx tsx scripts/pull-en-translations.ts --apply   # rapatrie dans display.locales.en les lignes `en` qui n'existaient qu'en base (fait le 2026-10-19 pour 416 cartes ; idempotent)
+npx tsx scripts/pull-db-translations.ts <loc|all> [--apply]   # rapatrie dans display.locales.<loc> les cardTranslations qui n'existent qu'en base (traduites côté app par /translate-catalog, ou backfill `en`) — cf. § ci-dessous
 npx tsx scripts/audit-prompt-clarity.ts --chunk 100   # extraction lecture seule des consignes OÙ/QUAND + fréquence des verbes (revue de clarté)
 npx tsx scripts/apply-prompt-rewrites.ts <validated.jsonl> --apply   # applique des consignes validées (note datée, contentVersion, locales invalidées)
 npx tsx scripts/apply-body-rewrites.ts <rewrites.jsonl> [--apply]    # applique des bodies « fiche courte » (≤ 60 mots, aucun nombre hors sources ; ancien body en note, locales invalidées)
@@ -46,6 +46,18 @@ npx tsx scripts/apply-body-rewrites.ts <rewrites.jsonl> [--apply]    # applique 
 ```
 
 `validate` exit 1 sur erreur bloquante. `push:db` ne pousse que les cartes à `editorial.status === "approved"`, refuse de tourner si l'une d'elles est invalide, et ne pousse que le delta (cartes neuves + `local.contentVersion > db.contentVersion` côté texte ; `sha256(_images-final/<dexNum>.jpg) ≠ db.imageHash` côté image). Il **calcule `eraSort`** pour chaque carte (visibilité immédiate dans la grille Dex sans attendre le backfill cron) et **recale le singleton `catalogStats`** (cardCount + eraCounts, les « X / N » du profil/Dex) en fin de push quand des cartes ont été créées, puis **déclenche la notif joueurs « 🆕 nouvelles cartes »** (hook `notifyNewCards` → `<repo app>/scripts/send-new-card-push.ts --apply`, repo app = `HISTORYDEX_APP_DIR` sinon `../app/historydex` ou `../Historydex` (`scripts/_lib/app-dir.ts`), watermark anti-doublon, no-op sans `EXPO_ACCESS_TOKEN` dans le `.env` de l'app ; le cron quotidien est débranché, secours manuel = workflow_dispatch `new-card-push.yml`). **Gate traduction** : `push:db` refuse un push réel si une carte approuvée n'a pas toutes ses locales cibles (`display.locales.{en,es,de,it,pt}`) — lance `/translate-cards-mt` avant, ou `--allow-untranslated` pour forcer (le dry-run liste les cartes concernées sans bloquer).
+
+**Traductions faites côté app → à rapatrier AVANT le prochain `push:db`** (sur le poste qui a `data/cards`) :
+depuis 2026-11, le catalogue des 15 langues de la vague 2026-11 (ru, zh-Hans, cs, el, ro, uk, vi, id, hu, ar, he, sv, da, nb, fi) est traduit **côté app** (`<repo app>/.claude/skills/translate-catalog`, écriture directe des `cardTranslations` en `status:'machine'`, teaser + placeLabel compris). Ces lignes n'existent qu'en base.
+```bash
+npx tsx scripts/pull-db-translations.ts all            # dry-run : par locale, à rapatrier / périmées / rejetées
+npx tsx scripts/pull-db-translations.ts all --apply    # écrit display.locales.<loc> (sans bump de contentVersion)
+npm run validate                                       # puis seulement push:db
+```
+- Ne touche jamais une locale déjà présente dans le JSON ; idempotent.
+- **Provenance** : une ligne n'est rapatriée que si `sourceContentVersion === editorial.contentVersion` (traduite depuis le FR local courant). Elle reçoit alors `translationMeta.<loc> = { sourceHash, teaserHash, origin: "db-pull", pulledContentVersion }` — hashes du FR courant, **vrais** par l'égalité de version (pas une provenance inventée) : `translation-stale` (locales de `HASH_TRACKED_LOCALES`) et `teaser-translation-stale` (toutes) détecteront ensuite toute édition du FR comme pour une traduction locale. `origin` dit que le texte vient de la garde LLM de l'app, pas de `merge-translations` (qui l'efface en retraduisant).
+- Ligne **périmée** (FR modifié depuis la traduction) : **non rapatriée**, listée « à retraduire » — la rapatrier puis la re-pousser sous la nouvelle version blanchirait la dérive (bug du batch 58). Après le `push:db` de la nouvelle version, l'outil app (`translation-source.ts`) la voit périmée et la retraduit.
+- Limite : une édition du FR local **sans** bump de `contentVersion` (hors `save-card`) n'est pas détectable — passer par les outils du pipeline.
 
 **Pré-requis push:db** :
 1. `.env` du pipeline contient `EXPO_PUBLIC_INSTANT_APP_ID` + `INSTANT_APP_ADMIN_TOKEN` (cf. `.env.example`).

@@ -256,7 +256,17 @@ const DisplaySchema = z.object({
   // Séparé de `sourceHash` pour qu'un teaser corrigé ne relance que la MT du teaser
   // (150 caractères × 11 locales), pas tout le pipeline prose + where/when.
   translationMeta: z
-    .record(z.string(), z.object({ sourceHash: z.string().optional(), teaserHash: z.string().optional() }))
+    .record(
+      z.string(),
+      z.object({
+        sourceHash: z.string().optional(),
+        teaserHash: z.string().optional(),
+        // Locale rapatriée de la base (traduite côté app, cf. scripts/pull-db-translations.ts) :
+        // `pulledContentVersion` = version FR dont elle dérive (= editorial.contentVersion au pull).
+        origin: z.literal("db-pull").optional(),
+        pulledContentVersion: z.number().int().optional(),
+      }),
+    )
     .default({}),
 });
 
