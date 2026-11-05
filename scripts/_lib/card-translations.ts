@@ -1,8 +1,8 @@
 // Émission des `cardTranslations` (locales non-source) vers InstantDB, depuis les
 // cartes générées en amont (display.locales.<loc> rempli par le skill translate-cards).
 //
-// - Locales cibles = SOURCE UNIQUE : app/historydex/lib/i18n/supported-locales.json
-//   (lu via chemin frère). Toute locale non-`source` est une cible de traduction.
+// - Locales cibles = SOURCE UNIQUE : <repo app>/lib/i18n/supported-locales.json
+//   (repo app localisé par appRepoDir(), surchargeable par SUPPORTED_LOCALES_JSON). Toute locale non-`source` est une cible de traduction.
 // - Mapping LocaleText (schéma scrap) → ligne `cardTranslations` (schéma app) :
 //   wherePrompt/whenPrompt {pre,verb,post} → where/whenConsigne* ; placeLabel (lieu
 //   précis, bonne réponse OÙ du recap Historien) est poussé tel quel — ce n'est PAS
@@ -15,6 +15,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Card } from "../../schemas/card.schema.js";
+import { appRepoDir } from "./app-dir.js";
 import { countryName } from "./country-en.js";
 import { normalizeForSearch } from "./normalize.js";
 
@@ -49,9 +50,10 @@ type LocaleEntry = { code: string; name?: string; native?: string; source?: bool
 
 export function loadSupportedLocales(): LocaleEntry[] {
   // SUPPORTED_LOCALES_JSON : pointer un worktree de l'app (branche pas encore mergée).
+  // Sinon : repo app localisé par appRepoDir() (HISTORYDEX_APP_DIR, ../app/historydex, ../Historydex).
   const p =
     process.env.SUPPORTED_LOCALES_JSON ??
-    path.resolve(process.cwd(), "..", "app", "historydex", "lib", "i18n", "supported-locales.json");
+    path.join(appRepoDir(), "lib", "i18n", "supported-locales.json");
   try {
     return JSON.parse(fs.readFileSync(p, "utf8")) as LocaleEntry[];
   } catch {
@@ -87,11 +89,42 @@ export const WHEN_LEAD_INS: Record<string, Record<TemporalTag, string>> = {
   tr: { ponctuelle: "ne zaman", periodique: "hangi dönemde" },
   ja: { ponctuelle: "いつ", periodique: "どの時代" },
   ko: { ponctuelle: "언제", periodique: "어느 시기" },
+  // Vague 2026-11 (miroir exact de l'app). Interrogatif EN TÊTE sauf mention :
+  ru: { ponctuelle: "Когда", periodique: "В какой период" },
+  uk: { ponctuelle: "Коли", periodique: "У який період" },
+  cs: { ponctuelle: "Kdy", periodique: "V jakém období" },
+  el: { ponctuelle: "Πότε", periodique: "Σε ποια περίοδο" },
+  ro: { ponctuelle: "Când", periodique: "În ce perioadă" },
+  id: { ponctuelle: "Kapan", periodique: "Pada periode apa" },
+  sv: { ponctuelle: "När", periodique: "Under vilken period" },
+  da: { ponctuelle: "Hvornår", periodique: "I hvilken periode" },
+  nb: { ponctuelle: "Når", periodique: "I hvilken periode" },
+  fi: { ponctuelle: "Milloin", periodique: "Millä aikakaudella" },
+  // ar/he : interrogatif en tête ; arabe comparé SANS tashkīl (« أيّ » = « أي »).
+  ar: { ponctuelle: "متى", periodique: "في أي فترة" },
+  he: { ponctuelle: "מתי", periodique: "באיזו תקופה" },
+  // Hongrois : sujet possible avant l'interrogatif (« Ez az emlékmű mikor épült? ») → « contient ».
+  hu: { ponctuelle: "mikor", periodique: "melyik korszakban" },
+  // Vietnamien : « khi nào » en tête vise le futur → amorce « Vào năm nào » (en quelle année).
+  vi: { ponctuelle: "Vào năm nào", periodique: "Vào thời kỳ nào" },
+  // Chinois : interrogatif après le sujet (« 这座纪念碑是什么时候建造的？ »).
+  "zh-Hans": { ponctuelle: "什么时候", periodique: "哪个时期" },
 };
 
 // Miroir de app/historydex/lib/i18n/translationQuality.ts (LEAD_IN_INSIDE / NO_WORD_SPACING).
-const LEAD_IN_INSIDE = new Set(["tr", "ja", "ko"]);
-const NO_WORD_SPACING = new Set(["ja"]);
+const LEAD_IN_INSIDE = new Set(["tr", "ja", "ko", "zh-Hans", "hu"]);
+const NO_WORD_SPACING = new Set(["ja", "zh-Hans"]);
+
+// Diacritiques facultatifs retirés avant la comparaison du lead-in (arabe : tashkīl
+// U+064B–U+065F + alef suscrit U+0670 ; hébreu : points/cantillation U+0591–U+05C7).
+const OPTIONAL_MARKS: Record<string, RegExp> = {
+  ar: /[\u064B-\u065F\u0670]/g,
+  he: /[\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7]/g,
+};
+function leadInText(pre: string, locale: string): string {
+  const marks = OPTIONAL_MARKS[locale];
+  return marks ? pre.replace(marks, "") : pre;
+}
 
 const WORD_END = /[\p{L}\p{N}]$/u;
 const WORD_START = /^[\p{L}\p{N}]/u;
@@ -129,7 +162,7 @@ export function validateTranslatedLocale(
   if (!leadIns) {
     issues.push(`locale '${locale}' missing from WHEN_LEAD_INS — add its lead-ins`);
   } else {
-    const pre = typeof loc.whenPrompt?.pre === "string" ? loc.whenPrompt.pre : "";
+    const pre = leadInText(typeof loc.whenPrompt?.pre === "string" ? loc.whenPrompt.pre : "", locale);
     const inside = LEAD_IN_INSIDE.has(locale);
     const ok = inside ? pre.toLocaleLowerCase(locale).includes(leadIns[tag]) : pre.trimStart().startsWith(leadIns[tag]);
     if (!ok) {

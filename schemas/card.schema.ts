@@ -200,8 +200,9 @@ const LocaleTextSchema = z.object({
 // donc l'expansion, avec un garde-fou généreux (~2× le FR) contre une sortie MT
 // aberrante. Le rendu app scrolle le body, et `cardTranslations.body` côté DB n'a
 // aucune contrainte de longueur — la seule limite était ce schéma Zod.
-// Minimums assouplis pour les traductions : en japonais/coréen un titre peut tenir
-// en 1 caractère (« 紙 ») et un blurb complet en < 20.
+// Minimums assouplis pour les traductions : en japonais/coréen/chinois un titre peut
+// tenir en 1 caractère (« 紙 ») et un blurb complet en < 20 (mêmes bornes pour les
+// 15 langues de 2026-11 : aucune règle ne compte les mots).
 const TranslatedLocaleTextSchema = z.object({
   title: z.string().min(1).max(160),
   blurb: z.string().min(10).max(440),
@@ -228,6 +229,21 @@ const DisplaySchema = z.object({
     nl: TranslatedLocaleTextSchema.nullable().default(null),
     ja: TranslatedLocaleTextSchema.nullable().default(null),
     ko: TranslatedLocaleTextSchema.nullable().default(null),
+    ru: TranslatedLocaleTextSchema.nullable().default(null),
+    "zh-Hans": TranslatedLocaleTextSchema.nullable().default(null),
+    cs: TranslatedLocaleTextSchema.nullable().default(null),
+    el: TranslatedLocaleTextSchema.nullable().default(null),
+    ro: TranslatedLocaleTextSchema.nullable().default(null),
+    uk: TranslatedLocaleTextSchema.nullable().default(null),
+    vi: TranslatedLocaleTextSchema.nullable().default(null),
+    id: TranslatedLocaleTextSchema.nullable().default(null),
+    hu: TranslatedLocaleTextSchema.nullable().default(null),
+    ar: TranslatedLocaleTextSchema.nullable().default(null),
+    he: TranslatedLocaleTextSchema.nullable().default(null),
+    sv: TranslatedLocaleTextSchema.nullable().default(null),
+    da: TranslatedLocaleTextSchema.nullable().default(null),
+    nb: TranslatedLocaleTextSchema.nullable().default(null),
+    fi: TranslatedLocaleTextSchema.nullable().default(null),
   }),
   imageLabel: z.string().min(1).max(16),
   translationNotes: z.array(z.string()).default([]),
@@ -240,7 +256,17 @@ const DisplaySchema = z.object({
   // Séparé de `sourceHash` pour qu'un teaser corrigé ne relance que la MT du teaser
   // (150 caractères × 11 locales), pas tout le pipeline prose + where/when.
   translationMeta: z
-    .record(z.string(), z.object({ sourceHash: z.string().optional(), teaserHash: z.string().optional() }))
+    .record(
+      z.string(),
+      z.object({
+        sourceHash: z.string().optional(),
+        teaserHash: z.string().optional(),
+        // Locale rapatriée de la base (traduite côté app, cf. scripts/pull-db-translations.ts) :
+        // `pulledContentVersion` = version FR dont elle dérive (= editorial.contentVersion au pull).
+        origin: z.literal("db-pull").optional(),
+        pulledContentVersion: z.number().int().optional(),
+      }),
+    )
     .default({}),
 });
 
