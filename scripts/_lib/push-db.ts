@@ -22,6 +22,7 @@ import { countryNameFr } from "./country-fr.js";
 import { sha256FileIfExists } from "./image-hash.js";
 import { db } from "./instantdb-client.js";
 import type { Card } from "../../schemas/card.schema.js";
+import { appRepoDir } from "./app-dir.js";
 import { normalizeForSearch } from "./normalize.js";
 import { cardTranslationId } from "./ids.js";
 import {
@@ -460,7 +461,8 @@ async function refreshCatalogStats(errors: string[]): Promise<void> {
 // (watermark publishedAt, anti-spoiler compte-seul, no-op propre sans EXPO_ACCESS_TOKEN).
 // Best-effort : un échec n'invalide pas le push — relancer le script à la main.
 function notifyNewCards(errors: string[]): void {
-  const appDir = path.resolve(process.cwd(), "..", "app", "historydex");
+  // Repo app : HISTORYDEX_APP_DIR, sinon ../app/historydex ou ../Historydex (appRepoDir).
+  const appDir = appRepoDir();
   try {
     const res = spawnSync("npx", ["tsx", "scripts/send-new-card-push.ts", "--apply"], {
       cwd: appDir,
