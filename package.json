@@ -19,7 +19,8 @@
     "audit-translations": "tsx scripts/audit-translations.ts",
     "generate-teasers": "tsx scripts/generate-teasers.ts",
     "translate-teasers": "tsx scripts/translate-teasers.ts",
-    "test": "node --import tsx --test \"tests/**/*.test.ts\""
+    "test": "node --import tsx --test \"tests/**/*.test.ts\"",
+    "backup:data": "node scripts/backup-data.mjs"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
