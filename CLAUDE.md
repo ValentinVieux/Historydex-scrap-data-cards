@@ -65,6 +65,14 @@ npm run validate                                       # puis seulement push:db
 1. `.env` du pipeline contient `EXPO_PUBLIC_INSTANT_APP_ID` + `INSTANT_APP_ADMIN_TOKEN` (cf. `.env.example`).
 2. Schéma DB à jour côté app : `cd ../app/historydex && npx instant-cli push schema` (pour propager `contentVersion` + `imageHash` + `eraSort` + l'entité `catalogStats`).
 
+## Sauvegarde de `data/` (obligatoire)
+
+`data/` est gitignoré et c'est la **seule** source du catalogue : il a disparu de tous les postes en novembre 2026 (reconstruit depuis un snapshot + la base). Désormais :
+
+- `npm run backup:data` → archive datée `OneDrive/Historydex/pipeline-data/data-AAAA-MM-JJ_HHMM.tar.gz` (synchronisée entre les deux PC, 20 dernières gardées, `PIPELINE_BACKUP_DIR` pour un autre dossier).
+- **Quand** : en début de session (après le pull), **avant** toute écriture de masse (`sync-from-db --apply`, `pull-db-translations --apply`, `apply-*-rewrites --apply`, `merge-translations`), et **avant** chaque `push:db` réel.
+- **Restaurer** : `tar -xzf "<archive>" -C .` depuis la racine du pipeline (Windows : `C:\Windows\System32\tar.exe`, le tar de Git Bash lit `C:` comme un hôte), puis `npx tsx scripts/sync-from-db.ts` pour vérifier l'écart avec la base.
+
 ## Structure du repo
 
 | Dossier | Rôle |
