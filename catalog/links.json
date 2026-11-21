@@ -2665,6 +2665,571 @@
       "to": "1116",
       "kind": "suite",
       "why": "Les ondes gravitationnelles prédites par la relativité générale sont détectées un siècle plus tard."
+    },
+    {
+      "from": "1487",
+      "to": "001",
+      "kind": "lieu"
+    },
+    {
+      "from": "1487",
+      "to": "241",
+      "kind": "lieu"
+    },
+    {
+      "from": "1487",
+      "to": "105",
+      "kind": "lieu"
+    },
+    {
+      "from": "1496",
+      "to": "018",
+      "kind": "lieu"
+    },
+    {
+      "from": "1496",
+      "to": "849",
+      "kind": "lieu"
+    },
+    {
+      "from": "1496",
+      "to": "1361",
+      "kind": "lieu"
+    },
+    {
+      "from": "195",
+      "to": "1496",
+      "kind": "perso"
+    },
+    {
+      "from": "1485",
+      "to": "462",
+      "kind": "sujet"
+    },
+    {
+      "from": "1492",
+      "to": "1385",
+      "kind": "lieu"
+    },
+    {
+      "from": "1491",
+      "to": "1179",
+      "kind": "perso"
+    },
+    {
+      "from": "1491",
+      "to": "1384",
+      "kind": "lieu"
+    },
+    {
+      "from": "1491",
+      "to": "1444",
+      "kind": "sujet"
+    },
+    {
+      "from": "996",
+      "to": "1494",
+      "kind": "creation"
+    },
+    {
+      "from": "1497",
+      "to": "1321",
+      "kind": "sujet"
+    },
+    {
+      "from": "1497",
+      "to": "117",
+      "kind": "perso"
+    },
+    {
+      "from": "1499",
+      "to": "928",
+      "kind": "lieu"
+    },
+    {
+      "from": "1498",
+      "to": "1171",
+      "kind": "suite"
+    },
+    {
+      "from": "1498",
+      "to": "931",
+      "kind": "partie"
+    },
+    {
+      "from": "998",
+      "to": "1502",
+      "kind": "perso"
+    },
+    {
+      "from": "1495",
+      "to": "1322",
+      "kind": "lieu"
+    },
+    {
+      "from": "1495",
+      "to": "020",
+      "kind": "perso"
+    },
+    {
+      "from": "1495",
+      "to": "1330",
+      "kind": "perso"
+    },
+    {
+      "from": "113",
+      "to": "1500",
+      "kind": "partie"
+    },
+    {
+      "from": "1490",
+      "to": "110",
+      "kind": "suite"
+    },
+    {
+      "from": "1490",
+      "to": "114",
+      "kind": "suite"
+    },
+    {
+      "from": "1505",
+      "to": "923",
+      "kind": "lieu"
+    },
+    {
+      "from": "1486",
+      "to": "1485",
+      "kind": "sujet"
+    },
+    {
+      "from": "1174",
+      "to": "1493",
+      "kind": "partie"
+    },
+    {
+      "from": "487",
+      "to": "1493",
+      "kind": "lieu"
+    },
+    {
+      "from": "1424",
+      "to": "1506",
+      "kind": "suite"
+    },
+    {
+      "from": "1506",
+      "to": "798",
+      "kind": "suite"
+    },
+    {
+      "from": "1520",
+      "to": "174",
+      "kind": "perso"
+    },
+    {
+      "from": "1520",
+      "to": "042",
+      "kind": "perso"
+    },
+    {
+      "from": "468",
+      "to": "1508",
+      "kind": "lieu"
+    },
+    {
+      "from": "1192",
+      "to": "1508",
+      "kind": "partie"
+    },
+    {
+      "from": "1516",
+      "to": "1469",
+      "kind": "suite"
+    },
+    {
+      "from": "1516",
+      "to": "1503",
+      "kind": "suite"
+    },
+    {
+      "from": "1516",
+      "to": "122",
+      "kind": "partie"
+    },
+    {
+      "from": "1187",
+      "to": "1511",
+      "kind": "partie"
+    },
+    {
+      "from": "030",
+      "to": "1511",
+      "kind": "lieu"
+    },
+    {
+      "from": "999",
+      "to": "1514",
+      "kind": "perso"
+    },
+    {
+      "from": "1502",
+      "to": "1514",
+      "kind": "lieu"
+    },
+    {
+      "from": "1522",
+      "to": "805",
+      "kind": "perso"
+    },
+    {
+      "from": "1526",
+      "to": "049",
+      "kind": "lieu"
+    },
+    {
+      "from": "128",
+      "to": "1526",
+      "kind": "perso"
+    },
+    {
+      "from": "1521",
+      "to": "035",
+      "kind": "perso"
+    },
+    {
+      "from": "1521",
+      "to": "232",
+      "kind": "lieu"
+    },
+    {
+      "from": "366",
+      "to": "1521",
+      "kind": "partie"
+    },
+    {
+      "from": "1512",
+      "to": "036",
+      "kind": "partie"
+    },
+    {
+      "from": "998",
+      "to": "1515",
+      "kind": "perso"
+    },
+    {
+      "from": "1183",
+      "to": "1515",
+      "kind": "partie"
+    },
+    {
+      "from": "1528",
+      "to": "232",
+      "kind": "lieu"
+    },
+    {
+      "from": "1528",
+      "to": "035",
+      "kind": "lieu"
+    },
+    {
+      "from": "1527",
+      "to": "853",
+      "kind": "lieu"
+    },
+    {
+      "from": "470",
+      "to": "1527",
+      "kind": "perso"
+    },
+    {
+      "from": "247",
+      "to": "1529",
+      "kind": "sujet"
+    },
+    {
+      "from": "1013",
+      "to": "1532",
+      "kind": "creation"
+    },
+    {
+      "from": "080",
+      "to": "1530",
+      "kind": "perso"
+    },
+    {
+      "from": "1531",
+      "to": "043",
+      "kind": "lieu"
+    },
+    {
+      "from": "1446",
+      "to": "1531",
+      "kind": "cause"
+    },
+    {
+      "from": "1513",
+      "to": "117",
+      "kind": "lieu"
+    },
+    {
+      "from": "1513",
+      "to": "497",
+      "kind": "lieu"
+    },
+    {
+      "from": "031",
+      "to": "1513",
+      "kind": "suite"
+    },
+    {
+      "from": "1191",
+      "to": "1513",
+      "kind": "partie"
+    },
+    {
+      "from": "1004",
+      "to": "1513",
+      "kind": "perso"
+    },
+    {
+      "from": "1548",
+      "to": "719",
+      "kind": "suite"
+    },
+    {
+      "from": "989",
+      "to": "1549",
+      "kind": "lieu"
+    },
+    {
+      "from": "1541",
+      "to": "1219",
+      "kind": "suite"
+    },
+    {
+      "from": "1361",
+      "to": "1541",
+      "kind": "lieu"
+    },
+    {
+      "from": "1544",
+      "to": "1106",
+      "kind": "perso"
+    },
+    {
+      "from": "093",
+      "to": "1538",
+      "kind": "sujet"
+    },
+    {
+      "from": "961",
+      "to": "1543",
+      "kind": "suite"
+    },
+    {
+      "from": "1199",
+      "to": "1543",
+      "kind": "partie"
+    },
+    {
+      "from": "1546",
+      "to": "1193",
+      "kind": "perso"
+    },
+    {
+      "from": "468",
+      "to": "1546",
+      "kind": "lieu"
+    },
+    {
+      "from": "1381",
+      "to": "1537",
+      "kind": "creation"
+    },
+    {
+      "from": "1450",
+      "to": "1537",
+      "kind": "partie"
+    },
+    {
+      "from": "1533",
+      "to": "097",
+      "kind": "suite"
+    },
+    {
+      "from": "1547",
+      "to": "1197",
+      "kind": "perso"
+    },
+    {
+      "from": "042",
+      "to": "1553",
+      "kind": "partie"
+    },
+    {
+      "from": "1494",
+      "to": "1553",
+      "kind": "lieu"
+    },
+    {
+      "from": "1227",
+      "to": "1539",
+      "kind": "suite"
+    },
+    {
+      "from": "1552",
+      "to": "050",
+      "kind": "cause"
+    },
+    {
+      "from": "1114",
+      "to": "1552",
+      "kind": "suite"
+    },
+    {
+      "from": "1423",
+      "to": "1552",
+      "kind": "partie"
+    },
+    {
+      "from": "443",
+      "to": "1540",
+      "kind": "sujet"
+    },
+    {
+      "from": "599",
+      "to": "1562",
+      "kind": "suite"
+    },
+    {
+      "from": "1566",
+      "to": "550",
+      "kind": "partie"
+    },
+    {
+      "from": "1017",
+      "to": "1566",
+      "kind": "perso"
+    },
+    {
+      "from": "048",
+      "to": "1559",
+      "kind": "cause"
+    },
+    {
+      "from": "1010",
+      "to": "1561",
+      "kind": "creation"
+    },
+    {
+      "from": "1558",
+      "to": "1423",
+      "kind": "sujet"
+    },
+    {
+      "from": "1572",
+      "to": "1343",
+      "kind": "lieu"
+    },
+    {
+      "from": "048",
+      "to": "1573",
+      "kind": "cause"
+    },
+    {
+      "from": "1198",
+      "to": "1573",
+      "kind": "suite"
+    },
+    {
+      "from": "1573",
+      "to": "1218",
+      "kind": "suite"
+    },
+    {
+      "from": "1475",
+      "to": "1574",
+      "kind": "cause"
+    },
+    {
+      "from": "1574",
+      "to": "051",
+      "kind": "suite"
+    },
+    {
+      "from": "1196",
+      "to": "1574",
+      "kind": "partie"
+    },
+    {
+      "from": "470",
+      "to": "1574",
+      "kind": "perso"
+    },
+    {
+      "from": "1574",
+      "to": "505",
+      "kind": "partie"
+    },
+    {
+      "from": "1574",
+      "to": "090",
+      "kind": "partie"
+    },
+    {
+      "from": "1380",
+      "to": "1570",
+      "kind": "perso"
+    },
+    {
+      "from": "052",
+      "to": "1582",
+      "kind": "suite"
+    },
+    {
+      "from": "1582",
+      "to": "237",
+      "kind": "lieu"
+    },
+    {
+      "from": "134",
+      "to": "1578",
+      "kind": "lieu"
+    },
+    {
+      "from": "1578",
+      "to": "1541",
+      "kind": "suite"
+    },
+    {
+      "from": "1581",
+      "to": "522",
+      "kind": "lieu"
+    },
+    {
+      "from": "1292",
+      "to": "1576",
+      "kind": "cause"
+    },
+    {
+      "from": "1579",
+      "to": "1361",
+      "kind": "lieu"
+    },
+    {
+      "from": "1579",
+      "to": "849",
+      "kind": "lieu"
+    },
+    {
+      "from": "1579",
+      "to": "1356",
+      "kind": "partie"
+    },
+    {
+      "from": "1423",
+      "to": "1577",
+      "kind": "partie"
     }
   ]
 }

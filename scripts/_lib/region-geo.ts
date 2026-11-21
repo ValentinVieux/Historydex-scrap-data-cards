@@ -167,6 +167,9 @@ const EXTRA_ISLANDS: readonly ExtraIsland[] = [
   { name: "Atoll de Midway", regionId: 8, ring: box(-178.5, 27.5, -176.5, 29) },
   { name: "Île de Pâques (Rapa Nui)", regionId: 8, ring: box(-110, -28, -108.5, -26.5) },
   { name: "Yap (Micronésie)", regionId: 8, ring: box(137, 8.5, 139, 10.5) },
+  { name: "Tonga", regionId: 8, ring: box(-176.3, -22.5, -173.5, -15.5) },
+  // Synchro avec l'app (extraIslands.ts, ajout 2026-07-20 pour la carte 742 Séga).
+  { name: "Maurice", regionId: 5, ring: box(57.2, -20.6, 57.85, -19.95) },
   // Caraïbes & Amériques (R9)
   { name: "Bahamas", regionId: 9, ring: box(-79, 21, -72.5, 27.5) },
   { name: "Martinique", regionId: 9, ring: box(-61.4, 14.3, -60.7, 14.95) },

@@ -28,9 +28,15 @@ const AUDIT_PROGRESS = path.join(PATHS.cards, "..", "_audit", "_progress.json");
 // cartes). `null` = fichier absent (gitignoré, checkout frais) → on NE bloque
 // PAS l'approbation dans ce cas (le gate ne s'applique que si l'historique
 // d'audit existe localement).
+// Invalidé si le fichier change (mtime) : l'app de review est un process long,
+// un audit enregistré après son démarrage doit être pris en compte sans redémarrage.
 let _auditedCache: Set<string> | null | undefined;
+let _auditedMtime = -1;
 function loadAuditedDexNums(): Set<string> | null {
-  if (_auditedCache !== undefined) return _auditedCache;
+  let mtime = -1;
+  try { mtime = fs.statSync(AUDIT_PROGRESS).mtimeMs; } catch { /* absent */ }
+  if (_auditedCache !== undefined && mtime === _auditedMtime) return _auditedCache;
+  _auditedMtime = mtime;
   try {
     const raw = JSON.parse(fs.readFileSync(AUDIT_PROGRESS, "utf8")) as { auditedDexNums?: string[] };
     _auditedCache = new Set(raw.auditedDexNums ?? []);
