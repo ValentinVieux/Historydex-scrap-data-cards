@@ -49,6 +49,7 @@ const __dirname = path.dirname(__filename);
 
 const IMAGES_CACHE = path.join(PATHS.exports, "..", "data", "_images-cache");
 const IMAGES_FINAL = path.join(PATHS.exports, "..", "data", "_images-final");
+const IMAGES_CANDIDATES = path.join(PATHS.exports, "..", "data", "_images-candidates");
 const INDEX_FILE = path.join(IMAGES_CACHE, "_index.json");
 const APP_DIR = path.join(__dirname, "review-app");
 
@@ -174,6 +175,49 @@ async function readOrientedSourceBuffer(
   const raw = readSourceBuffer(entry, dexNum);
   if (!raw) return null;
   return sharp(raw).rotate().jpeg({ quality: 90 }).toBuffer();
+}
+
+type CandidateMeta = { file: string; local?: string; width: number; height: number; url: string; license: string; artist: string; descUrl: string };
+
+// Remplace l'image source d'une carte (upload manuel ou candidate choisie) : écrit
+// _images-cache/<dex>.<ext>, supprime l'ancien fichier et le crop final devenus
+// obsolètes, réinitialise l'entrée d'index (crop à refaire).
+function replaceSourceImage(
+  dexNum: string,
+  buffer: Buffer,
+  ext: "jpg" | "png",
+  meta: { attribution: string | null; sourcePageUrl: string | null; sourceUrl: string | null },
+): CacheEntry {
+  const index = loadIndex();
+  const entry: CacheEntry = index[dexNum] ?? {
+    dexNum, cardId: dexNum, wikipediaTitle: null, sourceUrl: null, sourcePageUrl: null,
+    resolvedLang: null, attribution: null, localFile: null, status: "ok", fetchedAt: nowIso(),
+  };
+  const newLocalFile = `${dexNum}.${ext}`;
+  ensureDir(IMAGES_CACHE);
+  for (const stale of [
+    entry.localFile && entry.localFile !== newLocalFile ? path.join(IMAGES_CACHE, entry.localFile) : null,
+    path.join(IMAGES_FINAL, `${dexNum}.jpg`),
+  ]) {
+    if (stale && fs.existsSync(stale)) {
+      try { fs.unlinkSync(stale); } catch { /* best-effort */ }
+    }
+  }
+  fs.writeFileSync(path.join(IMAGES_CACHE, newLocalFile), buffer);
+  entry.localFile = newLocalFile;
+  entry.attribution = meta.attribution ?? entry.attribution ?? "Image personnalisée";
+  entry.sourcePageUrl = meta.sourcePageUrl;
+  entry.sourceUrl = meta.sourceUrl;
+  entry.wikipediaTitle = null;
+  entry.resolvedLang = null;
+  entry.status = "ok";
+  entry.fetchedAt = nowIso();
+  // Source image changée → les anciens crops ne sont plus comparables.
+  delete entry.crop;
+  delete entry.previousCrops;
+  index[dexNum] = entry;
+  saveIndex(index);
+  return entry;
 }
 
 async function writeFinal(dexNum: string, buffer: Buffer): Promise<string> {
@@ -824,37 +868,17 @@ async function main(): Promise<void> {
     },
     async (req: Request, res: Response) => {
       try {
-        const { dexNum } = req.params;
+        const dexNum = String(req.params.dexNum);
         const file = (req as Request & { file?: Express.Multer.File }).file;
         if (!file) {
           res.status(400).json({ error: "Champ 'file' manquant ou fichier vide." });
           return;
         }
-        const index = loadIndex();
-        let entry = index[dexNum];
-
-        // Si la carte n'a pas encore d'entrée cache, on en crée une minimale.
-        if (!entry) {
-          // Vérifie qu'au moins la carte existe pour ce dexNum.
-          try {
-            loadCardFile(dexNum);
-          } catch (err) {
-            res.status(404).json({ error: (err as Error).message });
-            return;
-          }
-          entry = {
-            dexNum,
-            cardId: dexNum,
-            wikipediaTitle: null,
-            sourceUrl: null,
-            sourcePageUrl: null,
-            resolvedLang: null,
-            attribution: null,
-            localFile: null,
-            status: "ok",
-            fetchedAt: nowIso(),
-          };
-          index[dexNum] = entry;
+        try {
+          loadCardFile(dexNum);
+        } catch (err) {
+          res.status(404).json({ error: (err as Error).message });
+          return;
         }
 
         // WebP et AVIF sont acceptés à l'upload mais convertis immédiatement
@@ -871,57 +895,14 @@ async function main(): Promise<void> {
           outBuffer = file.buffer;
           ext = file.mimetype === "image/png" ? "png" : "jpg";
         }
-        const newLocalFile = `${dexNum}.${ext}`;
-
-        // Nettoie l'ancien fichier source s'il avait une autre extension.
-        ensureDir(IMAGES_CACHE);
-        if (entry.localFile && entry.localFile !== newLocalFile) {
-          const oldPath = path.join(IMAGES_CACHE, entry.localFile);
-          if (fs.existsSync(oldPath)) {
-            try {
-              fs.unlinkSync(oldPath);
-            } catch {
-              // best-effort, on ignore
-            }
-          }
-        }
-        // Nettoie le crop final s'il existe (devient stale).
-        const finalPath = path.join(IMAGES_FINAL, `${dexNum}.jpg`);
-        if (fs.existsSync(finalPath)) {
-          try {
-            fs.unlinkSync(finalPath);
-          } catch {
-            // best-effort
-          }
-        }
-
-        // Écrit le nouveau fichier.
-        fs.writeFileSync(path.join(IMAGES_CACHE, newLocalFile), outBuffer);
-
-        // MAJ entrée index — on garde le cardId existant si présent.
-        const attribution = isString(req.body?.attribution)
-          ? req.body.attribution
-          : entry.attribution;
-        const sourcePageUrl = isString(req.body?.sourcePageUrl)
-          ? req.body.sourcePageUrl
-          : null;
-
-        entry.localFile = newLocalFile;
-        entry.attribution = attribution ?? "Image personnalisée";
-        entry.sourcePageUrl = sourcePageUrl;
-        entry.sourceUrl = null;
-        entry.wikipediaTitle = null;
-        entry.resolvedLang = null;
-        entry.status = "ok";
-        entry.fetchedAt = nowIso();
-        // Source image changée → les anciens crops ne sont plus comparables.
-        delete entry.crop;
-        delete entry.previousCrops;
-
-        saveIndex(index);
+        const entry = replaceSourceImage(dexNum, outBuffer, ext, {
+          attribution: isString(req.body?.attribution) ? req.body.attribution : null,
+          sourcePageUrl: isString(req.body?.sourcePageUrl) ? req.body.sourcePageUrl : null,
+          sourceUrl: null,
+        });
         res.json({
           ok: true,
-          localFile: newLocalFile,
+          localFile: entry.localFile,
           attribution: entry.attribution,
           sourcePageUrl: entry.sourcePageUrl,
         });
@@ -930,6 +911,50 @@ async function main(): Promise<void> {
       }
     },
   );
+
+  // Candidates collectées par scripts/image-candidates.ts (data/_images-candidates/<dex>/).
+  // GET liste (métadonnées + URL de vignette), POST { n } = la candidate n devient
+  // l'image source (même effet qu'un upload : crop remis à zéro, à recadrer).
+  app.get("/api/cards/:dexNum/candidates", (req, res) => {
+    const file = path.join(IMAGES_CANDIDATES, req.params.dexNum, "candidates.json");
+    if (!fs.existsSync(file)) {
+      res.json({ candidates: [] });
+      return;
+    }
+    const list = JSON.parse(fs.readFileSync(file, "utf8")) as CandidateMeta[];
+    res.json({
+      candidates: list.map((c, i) => ({
+        n: i + 1,
+        file: c.file,
+        width: c.width,
+        height: c.height,
+        license: c.license,
+        url: `/images/candidates/${req.params.dexNum}/${c.local}`,
+      })),
+    });
+  });
+  app.use("/images/candidates", express.static(IMAGES_CANDIDATES));
+  app.post("/api/cards/:dexNum/use-candidate", (req, res) => {
+    try {
+      const { dexNum } = req.params;
+      const n = Number((req.body as { n?: unknown })?.n);
+      const file = path.join(IMAGES_CANDIDATES, dexNum, "candidates.json");
+      const list = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, "utf8")) as CandidateMeta[]) : [];
+      const c = list[n - 1];
+      if (!c?.local) {
+        res.status(404).json({ error: `candidate #${n} introuvable` });
+        return;
+      }
+      const entry = replaceSourceImage(dexNum, fs.readFileSync(path.join(IMAGES_CANDIDATES, dexNum, c.local)), "jpg", {
+        attribution: `${c.artist || "auteur inconnu"} — ${c.license} — Wikimedia Commons (${c.file})`,
+        sourcePageUrl: c.descUrl,
+        sourceUrl: c.url,
+      });
+      res.json({ ok: true, localFile: entry.localFile, attribution: entry.attribution });
+    } catch (err) {
+      res.status(500).json({ error: (err as Error).message });
+    }
+  });
 
   // ── Push to DB ────────────────────────────────────────────────────────
   //

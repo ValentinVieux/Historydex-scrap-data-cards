@@ -31,7 +31,7 @@ relecture (`_lib/translation-review.ts`), `validateTranslatedLocale` (détermini
 
 ## Pré-requis
 - `.env` : `AZURE_TRANSLATOR_KEY` (+ `AZURE_TRANSLATOR_REGION` si ressource régionale, ex. `francecentral`).
-- Locales cibles = `targetLocales()` (`scripts/_lib/card-translations.ts`, lit `../app/historydex/lib/i18n/supported-locales.json` — **source unique**). Aujourd'hui : **en, es, de, it, pt, pt-PT, pl, tr, nl, ja, ko** (`en` inclus). S'étend automatiquement : ajouter une locale à `supported-locales.json` + son lead-in à `WHEN_LEAD_INS` suffit pour que cette skill la prenne en compte.
+- Locales cibles = `targetLocales()` (`scripts/_lib/card-translations.ts`, lit `../app/historydex/lib/i18n/supported-locales.json` — **source unique**). Aujourd'hui : **26 langues** — en, es, de, it, pt, pt-PT, pl, tr, nl, ja, ko + les 15 de la vague 2026-11 (ru, zh-Hans, cs, el, ro, uk, vi, id, hu, ar, he, sv, da, nb, fi ; lead-ins dans `WHEN_LEAD_INS`, codes Azure ajoutés le 2026-11-15). S'étend automatiquement : ajouter une locale à `supported-locales.json` + son lead-in à `WHEN_LEAD_INS` suffit pour que cette skill la prenne en compte.
 
 ## Procédure (pour CHAQUE locale de `targetLocales()` — en, es, de, it, pt, pt-PT, pl, tr, nl, ja, ko)
 

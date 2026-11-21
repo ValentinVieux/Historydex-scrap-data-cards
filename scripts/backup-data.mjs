@@ -21,7 +21,7 @@ const file = join(dest, `data-${stamp}.tar.gz`);
 // Caches régénérables exclus (images téléchargées) ; tout le reste part.
 // Windows : le tar système (bsdtar) ; le tar GNU de Git Bash lit « C: » comme un hôte distant.
 const tar = process.platform === "win32" ? join(process.env.SystemRoot ?? "C:\\Windows", "System32", "tar.exe") : "tar";
-execFileSync(tar, ["-czf", file, "--exclude=data/_images-cache", "-C", root, "data"], { stdio: "inherit" });
+execFileSync(tar, ["-czf", file, "--exclude=data/_images-cache", "--exclude=data/_images-candidates", "-C", root, "data"], { stdio: "inherit" });
 console.log(`✓ ${file} (${(statSync(file).size / 1e6).toFixed(1)} Mo)`);
 
 const old = readdirSync(dest).filter((f) => /^data-.*\.tar\.gz$/.test(f)).sort().slice(0, -KEEP);

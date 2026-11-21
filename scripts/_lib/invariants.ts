@@ -59,6 +59,7 @@ export const PROMPT_VERB_JARGON: Record<string, string> = {
   codifié: "rédigé / écrit",
   inoculé: "administré / testé",
   décimalisé: "reformuler (« passé au système décimal »)",
+  rayonné: "QUAND : prospéré ; OÙ : « Où se trouvait cette cité ? » (MT « irradier », OÙ circulaire)",
 };
 
 // placeKind ↔ verbe WHERE : familles de verbes attendues (warning si hors-famille —
