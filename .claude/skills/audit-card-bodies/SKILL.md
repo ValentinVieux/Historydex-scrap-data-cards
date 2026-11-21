@@ -155,6 +155,12 @@ After writing the file, return a SHORT (≤ 100 words) summary of cards flagged 
 <Liste : pour chaque carte, dexNum + title + body verbatim + claims C1-Cn>
 ```
 
+> **Gros volume (≥ 10 sous-lots en parallèle)** : le quota WebSearch est **partagé** entre agents et s'épuise
+> vers la moitié (constaté au batch 63, 40 vérificateurs). Ajouter au prompt : « si WebSearch échoue, récupère
+> les sources directement avec WebFetch (Britannica bloque souvent : Larousse, Universalis, encyclopedia.com,
+> pages de musées, d'universités, de l'UNESCO) ». Un `nuanced`/`not_found` dû au seul manque de source ne
+> déclenche pas de correction.
+
 Le harness re-invoquera le skill dès que chaque agent finit. Attends les **deux** notifications avant de passer à l'étape 5 (un seul fichier YAML ne suffit pas).
 
 ### 5. Synthèse A vs B

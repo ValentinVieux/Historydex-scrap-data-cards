@@ -55,7 +55,10 @@ Une fois tous les sujets traités (cf. CLAUDE.md § « Workflow images d'illustr
 npx tsx scripts/image-candidates.ts --dex <liste du batch>     # ≤ 12 candidates libres / carte + planche contact (≈ 25 s / carte : lancer en arrière-plan)
 ```
 
-Puis **un sous-agent juge par tranche de 12-13 cartes** (prompt type : celui des batches 1047-1146 —
+Découper le brief (`data/_images-candidates/brief-<ts>.json`) en fichiers `judge-<a>-<b>.json` de 12-13 cartes.
+Puis **un sous-agent juge par tranche**, avec pour prompt « Lis tes consignes :
+`.claude/skills/generate-cards-batch/judge-instructions.md`, applique-les à `judge-<a>-<b>.json`, écris
+`picks-<a>-<b>.jsonl` » (consignes complètes dans ce fichier — résumé :
 lit `sheet.jpg`, écarte ce qui trahit la réponse (texte daté/situé, page de titre, pochette, carte,
 drapeau, monument-réponse), le portrait de l'auteur/compositeur/savant, les homonymes ; préfère une
 scène de l'œuvre / l'objet / le phénomène ; écrit `picks-<range>.jsonl` avec la boîte du sujet et une
@@ -66,7 +69,9 @@ npx tsx scripts/apply-image-picks.ts data/_images-candidates/picks-<range>.jsonl
 ```
 
 Cartes sans image acceptable (`pick: null`) ou choix faible : relancer une **recherche ciblée**
-`image-candidates.ts --dex <n> --force --query "<requête anglaise>"` (une requête par carte), puis un
+`image-candidates.ts --dex <n> --force --query "<2 à 4 mots-clés anglais>"` (une requête par carte ;
+**requête courte** — « Hippocrates », « Masada Israel » : les requêtes longues et précises renvoient souvent
+0 fichier, ce qui a laissé 8 cartes sans image au 1er passage du 2026-11-21), puis un
 juge de rattrapage qui n'écrit une ligne que s'il fait mieux. Finir par une **planche des cadrages
 finaux** relue par l'orchestrateur. Les `low` restent marquées « à revoir » dans l'app de review, où
 Valentin peut aussi choisir une autre candidate (bouton « Remplacer image »).
