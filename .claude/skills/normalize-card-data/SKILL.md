@@ -30,7 +30,7 @@ Tu prends une fiche raw vérifiée et tu produis un JSON conforme au schéma Zod
    - Récap de la carte (titre, type, ère, région, dates, lieu, deltas, confidence).
    - Liste des warnings restants à examiner manuellement.
    - Chemin du fichier `data/cards/<slug>.json`.
-   - Étapes suivantes : « Image : `npx tsx scripts/image-candidates.ts --dex <n>` + juge + `apply-image-picks` (cf. CLAUDE.md § images), puis `npm run review-images` : vérifie l'image (ou choisis une autre candidate) et clique « ✓ Approuver ». **Puis traduis la carte dans les 26 langues** (`/translate-cards-mt`, avec `--dex` et `--no-mt`, y compris les 15 langues de la vague 2026-11). Pas de push manuel : elle partira avec le lot du lundi (`push:db --next 25`). »
+   - Étapes suivantes : « Image : `npx tsx scripts/image-candidates.ts --dex <n>` + juge + `apply-image-picks` (cf. CLAUDE.md § images), puis `npm run review-images` : vérifie l'image (ou choisis une autre candidate) et clique « ✓ Approuver ». **Puis traduis la carte dans les 26 langues** (`/translate-cards-mt`, avec `--dex` et `--no-mt`, y compris les 15 langues de la vague 2026-11). Pas de push manuel : elle partira avec le lot du lundi (`push:db --next 50`). »
 
 ## Choix du `dexNum`
 
