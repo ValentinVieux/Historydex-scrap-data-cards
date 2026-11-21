@@ -40,7 +40,7 @@ const LIMIT = Number(val("--limit") ?? Infinity);
 const dexRaw = val("--dex") ?? "";
 const ONLY_DEX = dexRaw ? new Set(dexRaw.split(",").map((s) => s.trim()).filter(Boolean)) : null;
 
-const locales = localeArg === "all" ? targetLocales() : [localeArg];
+const locales = localeArg === "all" || val("--import") ? targetLocales() : [localeArg];
 for (const l of locales) {
   if (!targetLocales().includes(l) || !AZURE_TO[l]) {
     console.error(`locale invalide '${l}' — cibles : ${targetLocales().join(", ")}`);
@@ -111,4 +111,36 @@ async function run() {
   if (!APPLY) console.log("Les cartes « hors portée » (locale absente localement) passent par translate-cards-mt.ts <loc> (prose complète, teaser inclus).");
 }
 
-void run();
+// --import <jsonl> : teasers traduits par un sous-agent (⛔ Azure abandonné le 2026-11-21), une ligne
+// {dexNum, locale, teaser}. Même écriture que le mode Azure (teaser + teaserHash, Zod), sans appel réseau.
+// Ne touche que les cartes dont display.locales.<locale> existe. Dry-run sans --apply.
+function importRows(file: string) {
+  const rows = fs.readFileSync(file, "utf8").split(/\r?\n/).filter((l) => l.trim()).map((l) => JSON.parse(l) as { dexNum: string; locale: string; teaser: string });
+  const byDex = new Map(cards.map((x) => [x.card.dexNum, x] as const));
+  let done = 0;
+  const bad: string[] = [];
+  for (const r of rows) {
+    const x = byDex.get(r.dexNum);
+    const locs = x?.card.display.locales as Record<string, { teaser?: string } | null> | undefined;
+    const tr = (r.teaser ?? "").trim();
+    if (!x || !locs?.[r.locale] || !tr || !targetLocales().includes(r.locale)) {
+      bad.push(`${r.dexNum}/${r.locale}`);
+      continue;
+    }
+    locs[r.locale]!.teaser = tr;
+    x.card.display.translationMeta ??= {};
+    x.card.display.translationMeta[r.locale] = { ...(x.card.display.translationMeta[r.locale] ?? {}), teaserHash: frTeaserHash(x.card)! };
+    const v = CardSchema.safeParse(x.card);
+    if (!v.success) {
+      bad.push(`${r.dexNum}/${r.locale} : ${v.error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(" | ")}`);
+      continue;
+    }
+    if (APPLY) fs.writeFileSync(x.file, JSON.stringify(v.data, null, 2) + "\n");
+    done++;
+  }
+  console.log(`${APPLY ? "écrits" : "à écrire (dry-run)"} : ${done} · rejetés : ${bad.length}${bad.length ? "\n  " + bad.join("\n  ") : ""}`);
+}
+
+const IMPORT = val("--import");
+if (IMPORT) importRows(IMPORT);
+else void run();
