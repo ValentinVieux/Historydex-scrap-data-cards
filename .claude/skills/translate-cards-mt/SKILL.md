@@ -1,9 +1,31 @@
 ---
 name: translate-cards-mt
-description: Auto-translate HistoryDex cards into every target locale (every targetLocales() locale — en/es/de/it/pt/pt-PT/pl/tr/nl/ja/ko, English included) via the cheap Azure-hybrid pipeline (Azure prose + LLM where/when re-split), filling display.locales.<loc> so push:db emits the cardTranslations. Idempotent — only cards still missing a locale. Run as the step BEFORE push:db so newly-approved cards ship multilingual. This is the DEFAULT path for ALL target locales including en; translate-cards (LLM) is the higher-quality opt-in alternative. Use when asked to translate cards cheaply / before pushing.
+description: Translate HistoryDex cards into every target locale (all 26 targetLocales(), English included) WITHOUT Azure (abandoned 2026-11-21) — staging --no-mt + one LLM sub-agent per locale translating from French, filling display.locales.<loc> so push:db emits the cardTranslations. Idempotent — only cards still missing a locale. Run as the step BEFORE push:db so newly-approved cards ship multilingual. This is the DEFAULT path for ALL target locales including en; translate-cards (LLM) is the higher-quality opt-in alternative. Use when asked to translate cards cheaply / before pushing.
 ---
 
 # translate-cards-mt
+
+> ⛔ **Azure abandonné (décision Valentin, 2026-11-21) — ne plus jamais l'appeler.** Les mentions d'Azure plus
+> bas sont historiques. Procédure en vigueur, éprouvée sur 1147-1221 (75 cartes × 26 langues, 0 rejet) :
+>
+> 1. `npm run backup:data`, puis pour **chaque** locale de `targetLocales()` :
+>    `npx tsx scripts/translate-cards-mt.ts <loc> --dex $(seq -s, <a> <b>) --no-mt --apply`
+>    — ⚠️ `--dex` attend une **liste à virgules** : une plage « 1147-1221 » ne matche rien et le script répond
+>    « Rien à faire (tout est déjà staged) ».
+> 2. Source par locale : `npx tsx scripts/whenwhere-source.ts 0 100000 --locale <loc>` filtrée sur le lot →
+>    `data/_translations/_src-<loc>-<lot>.json` (count large : le staging contient aussi les lots précédents).
+> 3. **Un sous-agent par locale** (≤ 20 en parallèle), prompt : « Langue : <loc>. Lis tes consignes :
+>    `.claude/skills/translate-cards-mt/translator-instructions.md`, avec `<loc>` = … et `<lot>` = … ». Il écrit
+>    `<loc>.whenwhere.b<lot>.jsonl` sans rien merger.
+> 4. À chaque retour : relire le rapport (titres, préfixes de `timeDisplayLabel` alignés sur l'existant de la
+>    locale — corriger sinon), ajouter le `.b<lot>.jsonl` à `<loc>.whenwhere.jsonl` (une seule fois), puis
+>    `npx tsx scripts/merge-translations.ts <loc> --dex $(seq -s, <a> <b>) --apply` → objectif 0 rejet.
+> 5. Fin : `npm run validate` (0 erreur) + contrôle qu'aucune carte n'a le même body/teaser dans deux locales
+>    hors pt/pt-PT (signe d'un fichier de travail écrasé entre agents).
+>
+> **Teaser seul** (teaser FR corrigé sur une carte déjà traduite) : un sous-agent écrit
+> `{dexNum, locale, teaser}` × 26 dans un jsonl, puis `npx tsx scripts/translate-teasers.ts --import <jsonl> --apply`
+> (écrit le teaser + `teaserHash`, sans réseau).
 
 Traduction **éco** des cartes (**en**/es/de/it/pt/pt-PT/pl/tr/nl/ja/ko — **toutes** les `targetLocales()`, anglais compris) — le chemin
 **par défaut** pour toute locale cible. L'alternative à la skill LLM `translate-cards`
