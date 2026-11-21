@@ -9,7 +9,7 @@
 //   npm run push:db                       # diff + push delta
 //   npm run push:db -- --dry-run          # diff seulement, sans push
 //   npm run push:db -- --max-dex 120      # ne pousse que dexNum ≤ 120
-//   npm run push:db -- --next 25          # publie les 25 prochaines cartes approuvées absentes de la base (hebdo)
+//   npm run push:db -- --next 50          # publie les 50 prochaines cartes approuvées absentes de la base (hebdo)
 //   npm run push:db -- --allow-untranslated  # pousse même si des cartes n'ont
 //                                            # pas toutes leurs locales cibles
 //
@@ -170,7 +170,7 @@ async function main(): Promise<number> {
 // (app : lib/admin/contentRunway.ts, section « Le contenu »). Runs réels seulement, best-effort :
 // un échec ici ne fait pas échouer le push.
 const PUSH_WATERMARK_ID = "b0a70000-0000-4000-8000-c00000000002"; // miroir de ../app/historydex/scripts/send-new-card-push.ts
-const WEEKLY_LOT = 25; // miroir de scripts/weekly-publish.cmd (--next 25)
+const WEEKLY_LOT = 50; // miroir de scripts/weekly-publish.cmd (--next 50)
 
 /** Prochain lundi 9 h (heure locale du PC, cf. tâche planifiée) en 'YYYY-MM-DD'. */
 function nextPublishKey(now = new Date()): string {

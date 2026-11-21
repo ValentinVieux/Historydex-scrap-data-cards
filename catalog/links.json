@@ -7,6 +7,7 @@
       "titleName": "Grognard de l'Empire",
       "dexNums": [
         "1227",
+        "1539",
         "1420",
         "1306",
         "1211",
@@ -19,6 +20,7 @@
         "1228",
         "1199",
         "961",
+        "1543",
         "045",
         "982"
       ]
@@ -146,7 +148,8 @@
         "773",
         "698",
         "461",
-        "673"
+        "673",
+        "1518"
       ]
     },
     {
@@ -164,7 +167,8 @@
         "1159",
         "1158",
         "099",
-        "1163"
+        "1163",
+        "1550"
       ]
     },
     {
@@ -393,10 +397,12 @@
       "dexNums": [
         "042",
         "213",
+        "1540",
         "049",
         "270",
         "1450",
-        "095"
+        "095",
+        "1542"
       ]
     },
     {
@@ -441,6 +447,7 @@
         "1213",
         "1226",
         "1219",
+        "1549",
         "1218",
         "1217"
       ]
@@ -464,11 +471,13 @@
         "1478",
         "1205",
         "1482",
+        "1577",
         "423",
         "367",
         "1204",
         "050",
-        "446"
+        "446",
+        "1552"
       ]
     },
     {
@@ -485,6 +494,7 @@
         "506",
         "266",
         "1190",
+        "1512",
         "527",
         "079",
         "582",
@@ -530,6 +540,7 @@
       "titleName": "Cosmonaute",
       "dexNums": [
         "052",
+        "1582",
         "237",
         "1285",
         "1268",
@@ -552,7 +563,8 @@
         "1261",
         "1284",
         "1288",
-        "1266"
+        "1266",
+        "1554"
       ]
     },
     {
@@ -595,6 +607,389 @@
         "1142",
         "1141",
         "1140"
+      ]
+    },
+    {
+      "id": "guerrefroide",
+      "icon": "swords",
+      "name": "La guerre froide",
+      "dexNums": [
+        "449",
+        "1548",
+        "972",
+        "719",
+        "053"
+      ]
+    },
+    {
+      "id": "vikings",
+      "icon": "ship",
+      "name": "Les Vikings",
+      "dexNums": [
+        "1501",
+        "574",
+        "120",
+        "1377",
+        "523"
+      ]
+    },
+    {
+      "id": "croisades",
+      "icon": "cross",
+      "name": "Les croisades",
+      "dexNums": [
+        "024",
+        "998",
+        "473",
+        "1502",
+        "483",
+        "1303",
+        "1470"
+      ]
+    },
+    {
+      "id": "jerusalem",
+      "icon": "column",
+      "name": "Jérusalem, ville sainte",
+      "dexNums": [
+        "1579",
+        "1361",
+        "018",
+        "1496",
+        "849",
+        "024",
+        "473"
+      ]
+    },
+    {
+      "id": "babylone",
+      "icon": "tablets",
+      "name": "Babylone",
+      "dexNums": [
+        "011",
+        "471",
+        "487",
+        "1174",
+        "1493"
+      ]
+    },
+    {
+      "id": "azteques",
+      "icon": "sculpt",
+      "name": "Les Aztèques",
+      "dexNums": [
+        "232",
+        "366",
+        "430",
+        "1528",
+        "035"
+      ]
+    },
+    {
+      "id": "precolombiennes",
+      "icon": "map",
+      "name": "Les cités précolombiennes",
+      "dexNums": [
+        "594",
+        "1511",
+        "856",
+        "231"
+      ]
+    },
+    {
+      "id": "califats",
+      "icon": "book",
+      "name": "Les califats",
+      "dexNums": [
+        "1516",
+        "1469",
+        "1503"
+      ]
+    },
+    {
+      "id": "assassinats",
+      "icon": "candle",
+      "name": "Les assassinats politiques",
+      "dexNums": [
+        "365",
+        "164",
+        "1519",
+        "1433",
+        "1547",
+        "1461"
+      ]
+    },
+    {
+      "id": "ecritures",
+      "icon": "pencil",
+      "name": "Les écritures",
+      "dexNums": [
+        "1490",
+        "009",
+        "196",
+        "222",
+        "1565",
+        "502"
+      ]
+    },
+    {
+      "id": "dansesdumonde",
+      "icon": "dance",
+      "name": "Les danses du monde",
+      "dexNums": [
+        "551",
+        "744",
+        "1416",
+        "738",
+        "351",
+        "494",
+        "737",
+        "743",
+        "1481",
+        "1529",
+        "693",
+        "1379",
+        "1564"
+      ]
+    },
+    {
+      "id": "dansesdesalon",
+      "icon": "dance",
+      "name": "Les danses de salon",
+      "dexNums": [
+        "596",
+        "1563",
+        "351",
+        "1481"
+      ]
+    },
+    {
+      "id": "musiquesdumonde",
+      "icon": "music",
+      "name": "Les musiques du monde",
+      "dexNums": [
+        "598",
+        "551",
+        "351",
+        "737",
+        "1575",
+        "389",
+        "599",
+        "1562",
+        "400",
+        "1089"
+      ]
+    },
+    {
+      "id": "legendesmusique",
+      "icon": "music",
+      "name": "Légendes de la musique populaire",
+      "dexNums": [
+        "1480",
+        "1080",
+        "1421",
+        "1544",
+        "1106"
+      ]
+    },
+    {
+      "id": "beethoven",
+      "icon": "music",
+      "name": "Beethoven",
+      "dexNums": [
+        "1010",
+        "1090",
+        "1561",
+        "535"
+      ]
+    },
+    {
+      "id": "postimpressionnistes",
+      "icon": "paint",
+      "name": "Les post-impressionnistes",
+      "dexNums": [
+        "886",
+        "885",
+        "909",
+        "1580"
+      ]
+    },
+    {
+      "id": "jeuxolympiques",
+      "icon": "trophy",
+      "name": "Les Jeux olympiques modernes",
+      "dexNums": [
+        "254",
+        "160",
+        "1233",
+        "1567",
+        "1245"
+      ]
+    },
+    {
+      "id": "sportsmecaniques",
+      "icon": "trophy",
+      "name": "Les sports mécaniques",
+      "dexNums": [
+        "1250",
+        "1249",
+        "1251",
+        "1568"
+      ]
+    },
+    {
+      "id": "jeux",
+      "icon": "star",
+      "name": "Jeux et casse-têtes",
+      "dexNums": [
+        "1392",
+        "331",
+        "1252",
+        "1555",
+        "303"
+      ]
+    },
+    {
+      "id": "ponts",
+      "icon": "column",
+      "name": "Les grands ponts",
+      "dexNums": [
+        "846",
+        "987",
+        "986",
+        "1577"
+      ]
+    },
+    {
+      "id": "hydrauliques",
+      "icon": "globe",
+      "name": "Les grands ouvrages hydrauliques",
+      "dexNums": [
+        "1507",
+        "134",
+        "140",
+        "1581"
+      ]
+    },
+    {
+      "id": "empirescoloniaux",
+      "icon": "flag",
+      "name": "Les empires coloniaux",
+      "dexNums": [
+        "1195",
+        "1194",
+        "1196",
+        "1574"
+      ]
+    },
+    {
+      "id": "chinedemao",
+      "icon": "flag",
+      "name": "La Chine de Mao",
+      "dexNums": [
+        "1381",
+        "092",
+        "260",
+        "1537",
+        "1450"
+      ]
+    },
+    {
+      "id": "cousinshumains",
+      "icon": "person",
+      "name": "Nos cousins humains",
+      "dexNums": [
+        "627",
+        "591",
+        "593",
+        "481",
+        "1427",
+        "239",
+        "1415",
+        "533",
+        "1484",
+        "281",
+        "293",
+        "532",
+        "1489"
+      ]
+    },
+    {
+      "id": "basiliques",
+      "icon": "column",
+      "name": "Les grandes basiliques",
+      "dexNums": [
+        "1497",
+        "117",
+        "852",
+        "857"
+      ]
+    },
+    {
+      "id": "colosses",
+      "icon": "sculpt",
+      "name": "Les colosses de pierre",
+      "dexNums": [
+        "445",
+        "1500",
+        "064",
+        "294"
+      ]
+    },
+    {
+      "id": "bouddhas",
+      "icon": "sculpt",
+      "name": "Les Bouddhas colossaux",
+      "dexNums": [
+        "064",
+        "479",
+        "1517",
+        "162"
+      ]
+    },
+    {
+      "id": "palais",
+      "icon": "crown",
+      "name": "Les palais",
+      "dexNums": [
+        "978",
+        "174",
+        "979",
+        "1526"
+      ]
+    },
+    {
+      "id": "florence",
+      "icon": "paint",
+      "name": "Florence de la Renaissance",
+      "dexNums": [
+        "1295",
+        "1505",
+        "917",
+        "923",
+        "422",
+        "210"
+      ]
+    },
+    {
+      "id": "pacifique",
+      "icon": "ship",
+      "name": "Arts et cultures du Pacifique",
+      "dexNums": [
+        "294",
+        "1530",
+        "692",
+        "738"
+      ]
+    },
+    {
+      "id": "inventionsprehist",
+      "icon": "hand",
+      "name": "Inventions préhistoriques",
+      "dexNums": [
+        "417",
+        "199",
+        "1488"
       ]
     }
   ],

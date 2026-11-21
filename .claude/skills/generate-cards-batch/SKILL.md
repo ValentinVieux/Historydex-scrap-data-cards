@@ -152,8 +152,8 @@ Prochaine étape :
   → review visuelle + image (recadrer / choisir une autre candidate) + clic "Approuver"
   → puis traduction des cartes approuvées dans les 26 langues (skill translate-cards-mt,
     `--dex` + `--no-mt` + sous-agents, y compris les 15 langues de la vague 2026-11)
-  → PAS de push manuel : la publication se fait par lots de 25 chaque lundi
-    (tâche planifiée → push:db --next 25). Le stock prêt est visible sur le site de stats.
+  → PAS de push manuel : la publication se fait par lots de 50 chaque lundi
+    (tâche planifiée → push:db --next 50). Le stock prêt est visible sur le site de stats.
 ```
 
 ## Garanties à respecter
@@ -172,7 +172,7 @@ Prochaine étape :
 
 - Tu n'approuves pas les cartes — c'est `editorial.status="reviewed"` à la fin.
 - Tu ne pousses pas en DB — la publication est hebdomadaire et automatique
-  (`push:db --next 25` le lundi), après validation humaine et traduction 26 langues.
+  (`push:db --next 50` le lundi), après validation humaine et traduction 26 langues.
 - Tu ne lances pas un nouveau batch tant que celui-ci n'est pas reviewé côté
   humain (sauf demande explicite).
 
