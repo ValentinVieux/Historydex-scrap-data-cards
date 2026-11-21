@@ -120,6 +120,18 @@ brièvement pourquoi (sujet niche, source primaire unique, etc.). Le card-editor
    - Relevance : date | place | fact | context | image | general
    - Quote : "<extrait textuel court>"
 2. **<Titre>** — ...
+
+## Liens et séries proposés
+<!-- Cartes DÉJÀ au catalogue (registre catalog/links.json + data/cards) liées à ce sujet.
+Une ligne par lien, dexNum vérifié par Grep sur data/cards (jamais deviné) :
+- <kind> <dexNum source> → <dexNum cible> : <justification courte, sourcée>
+  kind ∈ creation (auteur→œuvre) · perso (personne↔événement) · cause (A provoque B, source
+  ANTÉRIEURE — attention au raccourci téléologique P3) · suite (B succède à A) · partie (B est
+  un épisode de A) · sujet (œuvre qui représente A) · lieu (même lieu emblématique)
+- série <id> : la carte entre dans une série existante du registre
+- série nouvelle « <nom> » : <3+ dexNums existants qui la formeraient> (validation Valentin)
+« néant » si rien de solide. Pas de lien d'opportunité : seulement ce qu'un joueur trouverait
+évident ou instructif. -->
 ```
 
 ## Règles non négociables

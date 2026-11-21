@@ -1,0 +1,2670 @@
+{
+  "series": [
+    {
+      "id": "napoleon",
+      "icon": "crown",
+      "name": "Napoléon",
+      "titleName": "Grognard de l'Empire",
+      "dexNums": [
+        "1227",
+        "1420",
+        "1306",
+        "1211",
+        "356",
+        "044",
+        "318",
+        "129",
+        "464",
+        "900",
+        "1228",
+        "1199",
+        "961",
+        "045",
+        "982"
+      ]
+    },
+    {
+      "id": "domestications",
+      "icon": "wheat",
+      "name": "Les domestications",
+      "titleName": "Premier éleveur",
+      "dexNums": [
+        "008",
+        "106",
+        "675",
+        "784",
+        "338",
+        "463",
+        "289",
+        "339",
+        "198",
+        "513",
+        "678",
+        "759",
+        "180",
+        "677",
+        "884",
+        "562"
+      ]
+    },
+    {
+      "id": "conciles",
+      "icon": "mitre",
+      "name": "Les conciles",
+      "titleName": "Père conciliaire",
+      "dexNums": [
+        "195",
+        "680",
+        "679",
+        "733",
+        "1325",
+        "1320",
+        "561",
+        "124",
+        "1339",
+        "452"
+      ]
+    },
+    {
+      "id": "eruptions",
+      "icon": "volcano",
+      "name": "Les éruptions",
+      "titleName": "Chasseur de volcans",
+      "dexNums": [
+        "007",
+        "197",
+        "019",
+        "1150",
+        "283",
+        "251",
+        "435",
+        "609",
+        "1148",
+        "1149"
+      ]
+    },
+    {
+      "id": "independances",
+      "icon": "flag",
+      "name": "Les indépendances",
+      "titleName": "Héraut des libertés",
+      "dexNums": [
+        "041",
+        "1210",
+        "043",
+        "248",
+        "442",
+        "082",
+        "320",
+        "051",
+        "147",
+        "973",
+        "101",
+        "268"
+      ]
+    },
+    {
+      "id": "codes",
+      "icon": "tablets",
+      "name": "Les codes de lois",
+      "titleName": "Gardien des lois",
+      "dexNums": [
+        "011",
+        "666",
+        "579",
+        "223",
+        "318"
+      ]
+    },
+    {
+      "id": "grottes",
+      "icon": "hand",
+      "name": "Les grottes ornées",
+      "titleName": "Explorateur des grottes",
+      "dexNums": [
+        "645",
+        "626",
+        "240",
+        "618",
+        "756",
+        "004",
+        "485",
+        "055"
+      ]
+    },
+    {
+      "id": "tresors",
+      "icon": "chest",
+      "name": "Les trésors",
+      "titleName": "Chasseur de trésors",
+      "dexNums": [
+        "219",
+        "646",
+        "517",
+        "670",
+        "530",
+        "773",
+        "698",
+        "461",
+        "673"
+      ]
+    },
+    {
+      "id": "catastrophes",
+      "icon": "factory",
+      "name": "Les catastrophes industrielles",
+      "titleName": "Témoin industriel",
+      "dexNums": [
+        "1164",
+        "1162",
+        "507",
+        "1157",
+        "496",
+        "152",
+        "1159",
+        "1158",
+        "099",
+        "1163"
+      ]
+    },
+    {
+      "id": "voyages",
+      "icon": "ship",
+      "name": "Les grands voyages",
+      "titleName": "Grand voyageur",
+      "dexNums": [
+        "717",
+        "701",
+        "777",
+        "264",
+        "709",
+        "776",
+        "731",
+        "275",
+        "027",
+        "754",
+        "613",
+        "277",
+        "774",
+        "033",
+        "345",
+        "825",
+        "173",
+        "826",
+        "753",
+        "802",
+        "804",
+        "038",
+        "775",
+        "827",
+        "828",
+        "714",
+        "080",
+        "736",
+        "1274",
+        "348",
+        "1289",
+        "752",
+        "1460",
+        "617",
+        "1273",
+        "1282",
+        "751",
+        "1276",
+        "1271",
+        "1277",
+        "1264",
+        "1263",
+        "702",
+        "1270",
+        "750",
+        "1262",
+        "1280"
+      ]
+    },
+    {
+      "id": "coupes",
+      "icon": "trophy",
+      "name": "Les premières coupes",
+      "titleName": "Pionnier du sport",
+      "dexNums": [
+        "1244",
+        "510",
+        "352",
+        "1240",
+        "217",
+        "089",
+        "1247",
+        "304",
+        "230",
+        "1246"
+      ]
+    },
+    {
+      "id": "venus",
+      "icon": "venus",
+      "name": "Les Vénus paléolithiques",
+      "titleName": "Gardien des Vénus",
+      "dexNums": [
+        "623",
+        "358",
+        "005",
+        "274",
+        "625",
+        "308"
+      ]
+    },
+    {
+      "id": "genocides",
+      "icon": "candle",
+      "name": "Les génocides",
+      "dexNums": [
+        "087",
+        "091",
+        "1373",
+        "440",
+        "096"
+      ]
+    },
+    {
+      "id": "merveilles",
+      "icon": "column",
+      "name": "Les Sept Merveilles du monde",
+      "titleName": "Voyageur des Sept Merveilles",
+      "dexNums": [
+        "010",
+        "471",
+        "848",
+        "504",
+        "059",
+        "934",
+        "058"
+      ]
+    },
+    {
+      "id": "souveraines",
+      "icon": "crown",
+      "name": "Les souveraines",
+      "titleName": "Conseiller des reines",
+      "dexNums": [
+        "764",
+        "370",
+        "165",
+        "863",
+        "475",
+        "221",
+        "799",
+        "279",
+        "128",
+        "398",
+        "470"
+      ]
+    },
+    {
+      "id": "navales",
+      "icon": "anchor",
+      "name": "Les batailles navales",
+      "titleName": "Amiral",
+      "dexNums": [
+        "107",
+        "115",
+        "950",
+        "574",
+        "509",
+        "601",
+        "074",
+        "801",
+        "464",
+        "465",
+        "144"
+      ]
+    },
+    {
+      "id": "epopees",
+      "icon": "book",
+      "name": "Les grandes épopées",
+      "titleName": "Conteur d'épopées",
+      "dexNums": [
+        "565",
+        "1050",
+        "315",
+        "247",
+        "1051",
+        "208",
+        "1054",
+        "1053",
+        "866",
+        "227",
+        "823"
+      ]
+    },
+    {
+      "id": "astronomes",
+      "icon": "star",
+      "name": "Lire le ciel",
+      "titleName": "Astronome",
+      "dexNums": [
+        "212",
+        "648",
+        "788",
+        "385",
+        "581",
+        "321",
+        "1406",
+        "374",
+        "218",
+        "830",
+        "1026",
+        "614",
+        "037",
+        "820",
+        "1133",
+        "040",
+        "653",
+        "761",
+        "1110",
+        "478",
+        "288",
+        "1117",
+        "1131",
+        "1130",
+        "1116"
+      ]
+    },
+    {
+      "id": "pharaons",
+      "icon": "crown",
+      "name": "Les pharaons",
+      "titleName": "Scribe royal",
+      "dexNums": [
+        "110",
+        "764",
+        "472",
+        "1463",
+        "996",
+        "165"
+      ]
+    },
+    {
+      "id": "revolutions",
+      "icon": "flag",
+      "name": "Les révolutions",
+      "titleName": "Révolutionnaire",
+      "dexNums": [
+        "042",
+        "213",
+        "049",
+        "270",
+        "1450",
+        "095"
+      ]
+    },
+    {
+      "id": "epidemies",
+      "icon": "cross",
+      "name": "Les grandes épidémies",
+      "titleName": "Médecin de peste",
+      "dexNums": [
+        "1438",
+        "572",
+        "416",
+        "029",
+        "1167",
+        "252",
+        "1479",
+        "1448",
+        "1166"
+      ]
+    },
+    {
+      "id": "paix",
+      "icon": "treaty",
+      "name": "Les traités de paix",
+      "titleName": "Plénipotentiaire",
+      "dexNums": [
+        "413",
+        "615",
+        "216",
+        "841",
+        "786",
+        "840",
+        "1210",
+        "1227",
+        "1228",
+        "1200",
+        "1223",
+        "1225",
+        "1214",
+        "1224",
+        "1212",
+        "002",
+        "1213",
+        "1226",
+        "1219",
+        "1218",
+        "1217"
+      ]
+    },
+    {
+      "id": "secondeguerre",
+      "icon": "swords",
+      "name": "La Seconde Guerre mondiale",
+      "titleName": "Résistant",
+      "dexNums": [
+        "1203",
+        "971",
+        "968",
+        "465",
+        "1423",
+        "144",
+        "969",
+        "970",
+        "1373",
+        "143",
+        "1478",
+        "1205",
+        "1482",
+        "423",
+        "367",
+        "1204",
+        "050",
+        "446"
+      ]
+    },
+    {
+      "id": "royaumesafrique",
+      "icon": "laurel",
+      "name": "Les royaumes d'Afrique",
+      "titleName": "Griot des royaumes",
+      "dexNums": [
+        "563",
+        "061",
+        "060",
+        "065",
+        "642",
+        "506",
+        "266",
+        "1190",
+        "527",
+        "079",
+        "582",
+        "369"
+      ]
+    },
+    {
+      "id": "steppes",
+      "icon": "map",
+      "name": "Les conquérants des steppes",
+      "titleName": "Cavalier des steppes",
+      "dexNums": [
+        "1382",
+        "641",
+        "119",
+        "1183",
+        "1359",
+        "372",
+        "269",
+        "397",
+        "580"
+      ]
+    },
+    {
+      "id": "dynastieschinoises",
+      "icon": "vase",
+      "name": "Les dynasties chinoises",
+      "titleName": "Mandarin",
+      "dexNums": [
+        "062",
+        "112",
+        "1172",
+        "159",
+        "1468",
+        "1192",
+        "1193"
+      ]
+    },
+    {
+      "id": "espace",
+      "icon": "star",
+      "name": "Les premières fois dans l'espace",
+      "titleName": "Cosmonaute",
+      "dexNums": [
+        "052",
+        "237",
+        "1285",
+        "1268",
+        "1269",
+        "094",
+        "1278",
+        "1275"
+      ]
+    },
+    {
+      "id": "aviation",
+      "icon": "globe",
+      "name": "Les pionniers de l'air",
+      "titleName": "As de l'aviation",
+      "dexNums": [
+        "606",
+        "085",
+        "521",
+        "1272",
+        "1261",
+        "1284",
+        "1288",
+        "1266"
+      ]
+    },
+    {
+      "id": "poles",
+      "icon": "pin",
+      "name": "La conquête des pôles",
+      "titleName": "Explorateur polaire",
+      "dexNums": [
+        "1289",
+        "1271",
+        "1264",
+        "1263",
+        "702",
+        "1270",
+        "750",
+        "1284",
+        "1280"
+      ]
+    },
+    {
+      "id": "seismes",
+      "icon": "quake",
+      "name": "Les grands séismes",
+      "titleName": "Sismologue",
+      "dexNums": [
+        "662",
+        "384",
+        "636",
+        "250",
+        "434",
+        "1144",
+        "688",
+        "433",
+        "1146",
+        "1143",
+        "1147",
+        "1169",
+        "1145",
+        "098",
+        "1142",
+        "1141",
+        "1140"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "from": "1000",
+      "to": "003",
+      "kind": "creation"
+    },
+    {
+      "from": "1000",
+      "to": "154",
+      "kind": "creation"
+    },
+    {
+      "from": "1000",
+      "to": "904",
+      "kind": "creation"
+    },
+    {
+      "from": "1001",
+      "to": "155",
+      "kind": "creation"
+    },
+    {
+      "from": "1001",
+      "to": "916",
+      "kind": "creation"
+    },
+    {
+      "from": "1001",
+      "to": "421",
+      "kind": "creation"
+    },
+    {
+      "from": "1002",
+      "to": "037",
+      "kind": "creation"
+    },
+    {
+      "from": "1002",
+      "to": "076",
+      "kind": "perso"
+    },
+    {
+      "from": "037",
+      "to": "076",
+      "kind": "cause"
+    },
+    {
+      "from": "1011",
+      "to": "135",
+      "kind": "creation"
+    },
+    {
+      "from": "1014",
+      "to": "175",
+      "kind": "perso"
+    },
+    {
+      "from": "1008",
+      "to": "541",
+      "kind": "creation"
+    },
+    {
+      "from": "1010",
+      "to": "535",
+      "kind": "creation"
+    },
+    {
+      "from": "042",
+      "to": "044",
+      "kind": "cause"
+    },
+    {
+      "from": "044",
+      "to": "129",
+      "kind": "suite"
+    },
+    {
+      "from": "129",
+      "to": "045",
+      "kind": "suite"
+    },
+    {
+      "from": "044",
+      "to": "318",
+      "kind": "perso"
+    },
+    {
+      "from": "044",
+      "to": "900",
+      "kind": "sujet"
+    },
+    {
+      "from": "044",
+      "to": "045",
+      "kind": "perso"
+    },
+    {
+      "from": "172",
+      "to": "1062",
+      "kind": "sujet"
+    },
+    {
+      "from": "172",
+      "to": "044",
+      "kind": "lieu"
+    },
+    {
+      "from": "166",
+      "to": "164",
+      "kind": "perso"
+    },
+    {
+      "from": "164",
+      "to": "115",
+      "kind": "cause"
+    },
+    {
+      "from": "115",
+      "to": "165",
+      "kind": "cause"
+    },
+    {
+      "from": "021",
+      "to": "454",
+      "kind": "creation"
+    },
+    {
+      "from": "021",
+      "to": "1054",
+      "kind": "sujet"
+    },
+    {
+      "from": "958",
+      "to": "216",
+      "kind": "cause"
+    },
+    {
+      "from": "048",
+      "to": "002",
+      "kind": "cause"
+    },
+    {
+      "from": "048",
+      "to": "087",
+      "kind": "partie"
+    },
+    {
+      "from": "048",
+      "to": "252",
+      "kind": "cause"
+    },
+    {
+      "from": "109",
+      "to": "993",
+      "kind": "perso"
+    },
+    {
+      "from": "994",
+      "to": "169",
+      "kind": "creation"
+    },
+    {
+      "from": "168",
+      "to": "498",
+      "kind": "lieu"
+    },
+    {
+      "from": "119",
+      "to": "372",
+      "kind": "cause"
+    },
+    {
+      "from": "119",
+      "to": "269",
+      "kind": "cause"
+    },
+    {
+      "from": "269",
+      "to": "373",
+      "kind": "creation"
+    },
+    {
+      "from": "356",
+      "to": "348",
+      "kind": "cause"
+    },
+    {
+      "from": "283",
+      "to": "1061",
+      "kind": "cause"
+    },
+    {
+      "from": "353",
+      "to": "027",
+      "kind": "partie"
+    },
+    {
+      "from": "174",
+      "to": "002",
+      "kind": "lieu",
+      "why": "Le traité est signé dans la galerie des Glaces du château."
+    },
+    {
+      "from": "174",
+      "to": "455",
+      "kind": "lieu",
+      "why": "L'Empire allemand est proclamé dans la galerie des Glaces de Versailles."
+    },
+    {
+      "from": "1201",
+      "to": "002",
+      "kind": "suite",
+      "why": "L'armistice de 1918 ouvre la négociation qui aboutit au traité de Versailles."
+    },
+    {
+      "from": "010",
+      "to": "445",
+      "kind": "lieu",
+      "why": "Le Sphinx garde le complexe funéraire du plateau de Gizeh, à côté de la Grande Pyramide."
+    },
+    {
+      "from": "012",
+      "to": "1323",
+      "kind": "perso",
+      "why": "Siddhartha Gautama atteint l'Éveil et devient le Bouddha."
+    },
+    {
+      "from": "012",
+      "to": "1343",
+      "kind": "perso",
+      "why": "Le Bouddha prononce son premier sermon après l'Éveil."
+    },
+    {
+      "from": "013",
+      "to": "1334",
+      "kind": "creation",
+      "why": "L'enseignement de Confucius donne naissance au confucianisme."
+    },
+    {
+      "from": "254",
+      "to": "160",
+      "kind": "cause",
+      "why": "Le congrès de la Sorbonne vote la rénovation des Jeux, qui reprennent à Athènes en 1896."
+    },
+    {
+      "from": "015",
+      "to": "568",
+      "kind": "suite",
+      "why": "Après Marathon, la seconde guerre médique mène les Perses aux Thermopyles."
+    },
+    {
+      "from": "568",
+      "to": "107",
+      "kind": "suite",
+      "why": "Même campagne perse : les Thermopyles précèdent de peu la bataille navale de Salamine."
+    },
+    {
+      "from": "990",
+      "to": "017",
+      "kind": "perso",
+      "why": "Alexandre mène lui-même ces conquêtes."
+    },
+    {
+      "from": "017",
+      "to": "1180",
+      "kind": "cause",
+      "why": "L'empire séleucide naît du partage de l'empire d'Alexandre."
+    },
+    {
+      "from": "017",
+      "to": "1181",
+      "kind": "cause",
+      "why": "Ptolémée, général d'Alexandre, prend l'Égypte au partage de l'empire."
+    },
+    {
+      "from": "1330",
+      "to": "020",
+      "kind": "suite",
+      "why": "La révélation ouvre la mission de Mahomet, qui émigre ensuite à Médine."
+    },
+    {
+      "from": "020",
+      "to": "319",
+      "kind": "suite",
+      "why": "Arrivé à Médine, Mahomet conclut aussitôt ce pacte entre communautés."
+    },
+    {
+      "from": "1184",
+      "to": "021",
+      "kind": "partie",
+      "why": "Le couronnement de Charlemagne est l'acte fondateur de l'Empire carolingien."
+    },
+    {
+      "from": "999",
+      "to": "023",
+      "kind": "perso",
+      "why": "Guillaume de Normandie remporte la bataille et conquiert l'Angleterre."
+    },
+    {
+      "from": "665",
+      "to": "023",
+      "kind": "sujet",
+      "why": "La tapisserie raconte la conquête normande et la bataille de Hastings."
+    },
+    {
+      "from": "1325",
+      "to": "024",
+      "kind": "cause",
+      "why": "L'appel d'Urbain II à Clermont lance la Première croisade."
+    },
+    {
+      "from": "123",
+      "to": "026",
+      "kind": "cause",
+      "why": "La défaite de Jean sans Terre à Bouvines provoque la révolte des barons qui lui imposent la Magna Carta."
+    },
+    {
+      "from": "1055",
+      "to": "029",
+      "kind": "sujet",
+      "why": "Les dix conteurs du Décaméron fuient Florence ravagée par la peste noire."
+    },
+    {
+      "from": "031",
+      "to": "117",
+      "kind": "lieu",
+      "why": "Sainte-Sophie devient une mosquée lors de la prise de Constantinople par Mehmed II."
+    },
+    {
+      "from": "033",
+      "to": "686",
+      "kind": "cause",
+      "why": "Au retour de Colomb, le pape partage les terres découvertes entre Espagne et Portugal."
+    },
+    {
+      "from": "033",
+      "to": "610",
+      "kind": "cause",
+      "why": "Le traité partage entre Espagne et Portugal les terres ouvertes par le voyage de Colomb."
+    },
+    {
+      "from": "034",
+      "to": "668",
+      "kind": "cause",
+      "why": "Luther est convoqué à Worms pour rétracter ses thèses et refuse."
+    },
+    {
+      "from": "035",
+      "to": "232",
+      "kind": "lieu",
+      "why": "Cortés assiège et rase Tenochtitlán en 1521."
+    },
+    {
+      "from": "035",
+      "to": "844",
+      "kind": "cause",
+      "why": "La vice-royauté est créée sur les terres aztèques conquises, gouvernée depuis Mexico-Tenochtitlan."
+    },
+    {
+      "from": "1026",
+      "to": "037",
+      "kind": "cause",
+      "why": "Galilée perfectionne la lunette tout juste inventée et la tourne vers le ciel."
+    },
+    {
+      "from": "1006",
+      "to": "040",
+      "kind": "creation",
+      "why": "Newton écrit les Principia."
+    },
+    {
+      "from": "041",
+      "to": "1210",
+      "kind": "suite",
+      "why": "Le traité de Paris fait reconnaître par la Grande-Bretagne l'indépendance déclarée en 1776."
+    },
+    {
+      "from": "042",
+      "to": "418",
+      "kind": "partie",
+      "why": "La Déclaration des droits est l'un des textes fondateurs de la Révolution."
+    },
+    {
+      "from": "042",
+      "to": "960",
+      "kind": "partie",
+      "why": "Valmy est la première victoire de la France révolutionnaire."
+    },
+    {
+      "from": "129",
+      "to": "982",
+      "kind": "cause",
+      "why": "Napoléon décide l'Arc de Triomphe après la victoire d'Austerlitz."
+    },
+    {
+      "from": "1433",
+      "to": "048",
+      "kind": "cause",
+      "why": "L'assassinat de l'archiduc François-Ferdinand déclenche la crise qui mène à la guerre."
+    },
+    {
+      "from": "048",
+      "to": "966",
+      "kind": "partie",
+      "why": "La Marne est une bataille majeure de la Première Guerre mondiale."
+    },
+    {
+      "from": "048",
+      "to": "967",
+      "kind": "partie",
+      "why": "Les Dardanelles sont une campagne de la Première Guerre mondiale."
+    },
+    {
+      "from": "048",
+      "to": "444",
+      "kind": "partie",
+      "why": "Verdun est une bataille majeure de la Première Guerre mondiale."
+    },
+    {
+      "from": "048",
+      "to": "965",
+      "kind": "partie",
+      "why": "La Somme est une bataille majeure de la Première Guerre mondiale."
+    },
+    {
+      "from": "048",
+      "to": "1201",
+      "kind": "partie",
+      "why": "L'armistice de Rethondes met fin aux combats de la Première Guerre mondiale."
+    },
+    {
+      "from": "1440",
+      "to": "049",
+      "kind": "perso",
+      "why": "Lénine dirige la prise du pouvoir bolchevique."
+    },
+    {
+      "from": "049",
+      "to": "1212",
+      "kind": "cause",
+      "why": "Les bolcheviks au pouvoir signent une paix séparée avec l'Allemagne."
+    },
+    {
+      "from": "1423",
+      "to": "050",
+      "kind": "partie",
+      "why": "Le bombardement d'Hiroshima est un épisode de la Seconde Guerre mondiale."
+    },
+    {
+      "from": "1423",
+      "to": "143",
+      "kind": "partie",
+      "why": "Stalingrad est une bataille majeure de la Seconde Guerre mondiale."
+    },
+    {
+      "from": "1423",
+      "to": "144",
+      "kind": "partie",
+      "why": "Midway est le tournant de la guerre du Pacifique."
+    },
+    {
+      "from": "1350",
+      "to": "090",
+      "kind": "perso",
+      "why": "Gandhi conduit la marche du sel."
+    },
+    {
+      "from": "1350",
+      "to": "051",
+      "kind": "perso",
+      "why": "Gandhi est la figure centrale du mouvement d'indépendance indien."
+    },
+    {
+      "from": "988",
+      "to": "053",
+      "kind": "lieu",
+      "why": "Isolée par le Mur, la porte de Brandebourg devient l'emblème de sa chute et de la réunification."
+    },
+    {
+      "from": "060",
+      "to": "710",
+      "kind": "partie",
+      "why": "La conversion au christianisme sous le roi Ezana est un épisode du royaume d'Aksoum."
+    },
+    {
+      "from": "071",
+      "to": "851",
+      "kind": "lieu",
+      "why": "Boabdil remet les clés de l'Alhambra aux Rois catholiques."
+    },
+    {
+      "from": "1005",
+      "to": "077",
+      "kind": "creation",
+      "why": "Akbar conçoit la politique de concorde religieuse du sulh-i-kul."
+    },
+    {
+      "from": "261",
+      "to": "078",
+      "kind": "cause",
+      "why": "Vainqueur à Sekigahara, Ieyasu devient shogun trois ans plus tard."
+    },
+    {
+      "from": "1232",
+      "to": "084",
+      "kind": "cause",
+      "why": "Le lawn tennis de Wingfield se diffuse et l'All England Club organise le premier Wimbledon."
+    },
+    {
+      "from": "1015",
+      "to": "086",
+      "kind": "creation",
+      "why": "Einstein publie la relativité restreinte."
+    },
+    {
+      "from": "086",
+      "to": "453",
+      "kind": "suite",
+      "why": "La relativité générale étend à la gravitation la relativité restreinte."
+    },
+    {
+      "from": "1381",
+      "to": "092",
+      "kind": "perso",
+      "why": "Mao s'impose à la tête du Parti communiste pendant la Longue Marche."
+    },
+    {
+      "from": "1017",
+      "to": "093",
+      "kind": "creation",
+      "why": "Picasso peint Guernica."
+    },
+    {
+      "from": "1269",
+      "to": "094",
+      "kind": "suite",
+      "why": "Apollo 8 prépare directement l'alunissage d'Apollo 11."
+    },
+    {
+      "from": "1140",
+      "to": "099",
+      "kind": "cause",
+      "why": "Le tsunami de Tōhoku noie la centrale de Fukushima."
+    },
+    {
+      "from": "973",
+      "to": "101",
+      "kind": "cause",
+      "why": "La guerre d'Algérie s'achève par l'indépendance du pays."
+    },
+    {
+      "from": "102",
+      "to": "271",
+      "kind": "cause",
+      "why": "Le New Deal de Roosevelt répond à la Grande Dépression."
+    },
+    {
+      "from": "1206",
+      "to": "103",
+      "kind": "cause",
+      "why": "Le traité de Maastricht prévoit la monnaie unique."
+    },
+    {
+      "from": "995",
+      "to": "108",
+      "kind": "perso",
+      "why": "Hannibal remporte la bataille de Cannae."
+    },
+    {
+      "from": "567",
+      "to": "108",
+      "kind": "partie",
+      "why": "Cannae est une bataille de la deuxième guerre punique."
+    },
+    {
+      "from": "991",
+      "to": "115",
+      "kind": "perso",
+      "why": "Octave, futur Auguste, est le vainqueur d'Actium."
+    },
+    {
+      "from": "346",
+      "to": "117",
+      "kind": "cause",
+      "why": "L'émeute de Nika détruit l'ancienne église, que Justinien fait reconstruire."
+    },
+    {
+      "from": "120",
+      "to": "297",
+      "kind": "partie",
+      "why": "Le baptême de Vladimir fait entrer la Rus' de Kiev dans la chrétienté."
+    },
+    {
+      "from": "683",
+      "to": "127",
+      "kind": "cause",
+      "why": "Les échanges d'actions de la VOC créent la Bourse d'Amsterdam."
+    },
+    {
+      "from": "136",
+      "to": "1209",
+      "kind": "cause",
+      "why": "L'initiative d'Henry Dunant aboutit dès 1864 à la Convention de Genève."
+    },
+    {
+      "from": "1019",
+      "to": "150",
+      "kind": "creation",
+      "why": "Martin Luther King prononce le discours « I Have a Dream »."
+    },
+    {
+      "from": "156",
+      "to": "1347",
+      "kind": "perso",
+      "why": "Ashoka favorise la diffusion du bouddhisme."
+    },
+    {
+      "from": "1129",
+      "to": "175",
+      "kind": "suite",
+      "why": "Les Curie prolongent la découverte de Becquerel et trouvent le radium."
+    },
+    {
+      "from": "1384",
+      "to": "170",
+      "kind": "lieu",
+      "why": "La tombe de Toutânkhamon est découverte dans la Vallée des Rois."
+    },
+    {
+      "from": "170",
+      "to": "1463",
+      "kind": "partie",
+      "why": "Le masque funéraire est dégagé dans la tombe découverte en 1922."
+    },
+    {
+      "from": "1424",
+      "to": "171",
+      "kind": "partie",
+      "why": "Jeanne d'Arc, capturée et livrée aux Anglais, est une figure de la guerre de Cent Ans."
+    },
+    {
+      "from": "177",
+      "to": "1286",
+      "kind": "suite",
+      "why": "L'épave du Titanic est retrouvée 73 ans après le naufrage."
+    },
+    {
+      "from": "1137",
+      "to": "1113",
+      "kind": "suite",
+      "why": "La découverte de l'électron ouvre la voie aux modèles de l'atome, dont celui de Rutherford."
+    },
+    {
+      "from": "306",
+      "to": "1125",
+      "kind": "suite",
+      "why": "Une fois la structure de l'ADN connue, on finit par lire l'intégralité du génome humain."
+    },
+    {
+      "from": "1006",
+      "to": "1132",
+      "kind": "creation",
+      "why": "Newton pose les bases du calcul infinitésimal, inventé indépendamment par Leibniz."
+    },
+    {
+      "from": "1451",
+      "to": "1221",
+      "kind": "suite",
+      "why": "L'Accord de Paris prend le relais du protocole de Kyoto dans la lutte contre le réchauffement."
+    },
+    {
+      "from": "048",
+      "to": "1156",
+      "kind": "partie",
+      "why": "Le Lusitania est torpillé par un sous-marin allemand pendant la Première Guerre mondiale."
+    },
+    {
+      "from": "1381",
+      "to": "1165",
+      "kind": "perso",
+      "why": "La famine résulte du Grand Bond en avant lancé par Mao Zedong."
+    },
+    {
+      "from": "1171",
+      "to": "1170",
+      "kind": "suite",
+      "why": "L'Empire romain succède à la République romaine avec Auguste."
+    },
+    {
+      "from": "991",
+      "to": "1170",
+      "kind": "creation",
+      "why": "Auguste, premier empereur, fonde le régime impérial romain."
+    },
+    {
+      "from": "1170",
+      "to": "1428",
+      "kind": "partie",
+      "why": "La chute de l'Empire romain d'Occident est la fin de la moitié occidentale de l'Empire."
+    },
+    {
+      "from": "1171",
+      "to": "164",
+      "kind": "partie",
+      "why": "L'assassinat de César est un épisode décisif de la fin de la République romaine."
+    },
+    {
+      "from": "1171",
+      "to": "567",
+      "kind": "partie",
+      "why": "Les guerres puniques opposent la République romaine à Carthage."
+    },
+    {
+      "from": "1178",
+      "to": "567",
+      "kind": "partie",
+      "why": "Les guerres puniques scellent le sort de Carthage face à Rome."
+    },
+    {
+      "from": "1173",
+      "to": "411",
+      "kind": "partie",
+      "why": "La bibliothèque d'Assurbanipal est réunie à Ninive, capitale de l'empire assyrien."
+    },
+    {
+      "from": "1174",
+      "to": "487",
+      "kind": "lieu",
+      "why": "La ziggourat Etemenanki est reconstruite à Babylone, capitale de l'empire néo-babylonien."
+    },
+    {
+      "from": "1175",
+      "to": "413",
+      "kind": "partie",
+      "why": "Le traité de Qadesh est conclu entre l'empire hittite et l'Égypte de Ramsès II."
+    },
+    {
+      "from": "1176",
+      "to": "568",
+      "kind": "partie",
+      "why": "Aux Thermopyles, le roi de Sparte Léonidas tient tête aux Perses."
+    },
+    {
+      "from": "1176",
+      "to": "1435",
+      "kind": "partie",
+      "why": "La guerre du Péloponnèse oppose Sparte et ses alliés à Athènes."
+    },
+    {
+      "from": "1177",
+      "to": "1435",
+      "kind": "partie",
+      "why": "La guerre du Péloponnèse oppose Athènes à Sparte et ruine sa puissance."
+    },
+    {
+      "from": "1177",
+      "to": "169",
+      "kind": "lieu",
+      "why": "Le Parthénon, sur l'Acropole, est le grand temple de l'Athènes antique."
+    },
+    {
+      "from": "1179",
+      "to": "1384",
+      "kind": "partie",
+      "why": "La Vallée des Rois est la nécropole des pharaons du Nouvel Empire."
+    },
+    {
+      "from": "1179",
+      "to": "472",
+      "kind": "partie",
+      "why": "Le culte d'Aton d'Akhenaton est un épisode du Nouvel Empire."
+    },
+    {
+      "from": "1181",
+      "to": "165",
+      "kind": "partie",
+      "why": "La mort de Cléopâtre VII met fin à la dynastie des Ptolémées."
+    },
+    {
+      "from": "1181",
+      "to": "1360",
+      "kind": "partie",
+      "why": "La Grande Bibliothèque d'Alexandrie est fondée sous les Ptolémées."
+    },
+    {
+      "from": "1182",
+      "to": "031",
+      "kind": "partie",
+      "why": "La prise de Constantinople par les Ottomans met fin à l'Empire byzantin."
+    },
+    {
+      "from": "1182",
+      "to": "117",
+      "kind": "lieu",
+      "why": "Sainte-Sophie est la grande église de Constantinople, capitale byzantine."
+    },
+    {
+      "from": "1183",
+      "to": "119",
+      "kind": "partie",
+      "why": "L'Empire mongol naît quand Gengis Khan unifie les tribus des steppes."
+    },
+    {
+      "from": "1183",
+      "to": "070",
+      "kind": "partie",
+      "why": "À Aïn Djalout, les Mamelouks arrêtent l'expansion de l'Empire mongol."
+    },
+    {
+      "from": "1184",
+      "to": "454",
+      "kind": "lieu",
+      "why": "Aix-la-Chapelle, résidence de Charlemagne, abrite sa chapelle palatine."
+    },
+    {
+      "from": "1185",
+      "to": "1333",
+      "kind": "partie",
+      "why": "À Canossa, l'empereur Henri IV s'humilie devant le pape Grégoire VII."
+    },
+    {
+      "from": "1185",
+      "to": "958",
+      "kind": "partie",
+      "why": "La guerre de Trente Ans ravage le Saint-Empire romain germanique."
+    },
+    {
+      "from": "1186",
+      "to": "355",
+      "kind": "partie",
+      "why": "La conquête de Pizarro met fin à l'Empire inca."
+    },
+    {
+      "from": "1186",
+      "to": "231",
+      "kind": "partie",
+      "why": "Machu Picchu est un domaine royal construit au temps de l'Empire inca."
+    },
+    {
+      "from": "1187",
+      "to": "030",
+      "kind": "partie",
+      "why": "L'effondrement des cités classiques est un tournant de la civilisation maya."
+    },
+    {
+      "from": "1187",
+      "to": "385",
+      "kind": "partie",
+      "why": "Le calendrier du Compte long est l'une des créations de la civilisation maya."
+    },
+    {
+      "from": "1188",
+      "to": "211",
+      "kind": "partie",
+      "why": "Le ducat est la monnaie d'or de la République de Venise."
+    },
+    {
+      "from": "1188",
+      "to": "852",
+      "kind": "lieu",
+      "why": "La basilique Saint-Marc est l'église des doges de Venise."
+    },
+    {
+      "from": "1189",
+      "to": "025",
+      "kind": "lieu",
+      "why": "Angkor Vat est le grand temple d'Angkor, capitale de l'Empire khmer."
+    },
+    {
+      "from": "205",
+      "to": "1190",
+      "kind": "creation",
+      "why": "Soundiata Keïta fonde l'empire du Mali après sa victoire de Kirina."
+    },
+    {
+      "from": "1191",
+      "to": "363",
+      "kind": "partie",
+      "why": "Le siège de Vienne marque l'avancée maximale de l'Empire ottoman en Europe."
+    },
+    {
+      "from": "1191",
+      "to": "1226",
+      "kind": "partie",
+      "why": "Le traité de Sèvres organise le démembrement de l'Empire ottoman vaincu."
+    },
+    {
+      "from": "1192",
+      "to": "468",
+      "kind": "partie",
+      "why": "La Cité interdite est le palais construit par les empereurs Ming à Pékin."
+    },
+    {
+      "from": "1192",
+      "to": "277",
+      "kind": "partie",
+      "why": "Les grandes expéditions maritimes de Zheng He sont lancées par les Ming."
+    },
+    {
+      "from": "1192",
+      "to": "1193",
+      "kind": "suite",
+      "why": "La dynastie Qing succède aux Ming à Pékin."
+    },
+    {
+      "from": "1193",
+      "to": "583",
+      "kind": "partie",
+      "why": "La révolte des Boxers secoue la Chine des Qing finissants."
+    },
+    {
+      "from": "280",
+      "to": "1223",
+      "kind": "suite",
+      "why": "Le traité de Nankin met fin à la première guerre de l'opium."
+    },
+    {
+      "from": "1194",
+      "to": "844",
+      "kind": "partie",
+      "why": "La Nouvelle-Espagne est la grande vice-royauté américaine de l'Empire espagnol."
+    },
+    {
+      "from": "1194",
+      "to": "801",
+      "kind": "partie",
+      "why": "L'Invincible Armada est lancée par l'Espagne de Philippe II contre l'Angleterre."
+    },
+    {
+      "from": "1195",
+      "to": "345",
+      "kind": "partie",
+      "why": "La route de Vasco de Gama vers l'Inde fonde l'empire maritime portugais."
+    },
+    {
+      "from": "1195",
+      "to": "825",
+      "kind": "partie",
+      "why": "L'arrivée de Cabral au Brésil ouvre la plus grande colonie portugaise."
+    },
+    {
+      "from": "1196",
+      "to": "589",
+      "kind": "partie",
+      "why": "L'abolition de 1833 met fin à l'esclavage dans l'Empire britannique."
+    },
+    {
+      "from": "1196",
+      "to": "1475",
+      "kind": "partie",
+      "why": "La révolte des Cipayes ébranle la domination britannique en Inde."
+    },
+    {
+      "from": "1197",
+      "to": "049",
+      "kind": "partie",
+      "why": "La révolution de 1917 renverse le tsar et met fin à l'Empire russe."
+    },
+    {
+      "from": "1197",
+      "to": "133",
+      "kind": "lieu",
+      "why": "Saint-Pétersbourg, fondée par Pierre le Grand, est la capitale de l'Empire russe."
+    },
+    {
+      "from": "1198",
+      "to": "1213",
+      "kind": "partie",
+      "why": "Le traité de Trianon consacre le démantèlement de la moitié hongroise de l'Empire."
+    },
+    {
+      "from": "1199",
+      "to": "044",
+      "kind": "partie",
+      "why": "Le sacre de Notre-Dame inaugure le Premier Empire."
+    },
+    {
+      "from": "1199",
+      "to": "045",
+      "kind": "partie",
+      "why": "Waterloo met définitivement fin au Premier Empire."
+    },
+    {
+      "from": "1199",
+      "to": "1200",
+      "kind": "suite",
+      "why": "Le Congrès de Vienne redessine l'Europe après la chute de Napoléon."
+    },
+    {
+      "from": "1203",
+      "to": "1423",
+      "kind": "cause",
+      "why": "Le pacte ouvre la voie à l'invasion de la Pologne qui déclenche la guerre en Europe."
+    },
+    {
+      "from": "1423",
+      "to": "1205",
+      "kind": "partie",
+      "why": "À Téhéran, Staline, Roosevelt et Churchill coordonnent la guerre contre l'Allemagne."
+    },
+    {
+      "from": "1205",
+      "to": "367",
+      "kind": "suite",
+      "why": "Yalta est la deuxième rencontre des trois grands après Téhéran."
+    },
+    {
+      "from": "367",
+      "to": "1204",
+      "kind": "suite",
+      "why": "Potsdam prolonge Yalta et règle le sort de l'Allemagne vaincue."
+    },
+    {
+      "from": "1206",
+      "to": "1302",
+      "kind": "cause",
+      "why": "Le traité de Maastricht prévoit l'union monétaire et sa banque centrale."
+    },
+    {
+      "from": "1302",
+      "to": "103",
+      "kind": "suite",
+      "why": "La BCE prépare puis conduit le passage à l'euro."
+    },
+    {
+      "from": "1380",
+      "to": "1207",
+      "kind": "perso",
+      "why": "De Gaulle signe avec Adenauer le traité de réconciliation franco-allemande."
+    },
+    {
+      "from": "959",
+      "to": "1210",
+      "kind": "cause",
+      "why": "La défaite britannique de Yorktown conduit à la paix qui reconnaît l'indépendance américaine."
+    },
+    {
+      "from": "962",
+      "to": "1225",
+      "kind": "cause",
+      "why": "La défaite de Sedan scelle l'issue de la guerre que conclut le traité de Francfort."
+    },
+    {
+      "from": "1260",
+      "to": "1287",
+      "kind": "suite",
+      "why": "Vingt-cinq ans après la première ascension, l'Everest est gravi sans oxygène."
+    },
+    {
+      "from": "1272",
+      "to": "1261",
+      "kind": "suite",
+      "why": "Après la première traversée sans escale à deux, Lindbergh traverse l'Atlantique seul."
+    },
+    {
+      "from": "1261",
+      "to": "1266",
+      "kind": "suite",
+      "why": "Amelia Earhart refait en solitaire la traversée de Lindbergh, première femme à le faire."
+    },
+    {
+      "from": "702",
+      "to": "1270",
+      "kind": "suite",
+      "why": "Scott atteint le pôle Sud un mois après Amundsen, qui l'a devancé."
+    },
+    {
+      "from": "1283",
+      "to": "231",
+      "kind": "lieu",
+      "why": "La redécouverte de 1911 fait connaître au monde la cité inca de Machu Picchu."
+    },
+    {
+      "from": "587",
+      "to": "1294",
+      "kind": "suite",
+      "why": "Le choc Nixon met fin au système de change-or créé à Bretton Woods."
+    },
+    {
+      "from": "1312",
+      "to": "1296",
+      "kind": "cause",
+      "why": "La panique de 1907 précipite la création de la Réserve fédérale."
+    },
+    {
+      "from": "1303",
+      "to": "1470",
+      "kind": "suite",
+      "why": "La richesse de l'ordre du Temple attise Philippe le Bel, qui fait arrêter et juger les Templiers."
+    },
+    {
+      "from": "778",
+      "to": "1307",
+      "kind": "suite",
+      "why": "La Riksbank naît en 1668 sur les ruines de la Stockholms Banco, qui avait émis les premiers billets d'Europe."
+    },
+    {
+      "from": "157",
+      "to": "1311",
+      "kind": "partie",
+      "why": "Le yen est créé en 1871 par le gouvernement de Meiji, une des réformes de la modernisation du Japon."
+    },
+    {
+      "from": "1294",
+      "to": "1314",
+      "kind": "cause",
+      "why": "Le serpent monétaire est créé en 1972 pour amortir l'instabilité des changes après la fin de Bretton Woods."
+    },
+    {
+      "from": "807",
+      "to": "1319",
+      "kind": "cause",
+      "why": "La Bourse de Paris est instituée en 1724 pour encadrer le négoce après la banqueroute du système de Law."
+    },
+    {
+      "from": "1321",
+      "to": "1341",
+      "kind": "suite",
+      "why": "Milan accorde la tolérance aux chrétiens en 313 ; Thessalonique fait du christianisme la religion d'État en 380."
+    },
+    {
+      "from": "1323",
+      "to": "1343",
+      "kind": "suite",
+      "why": "Après l'Éveil, le Bouddha prononce son premier sermon à Sarnath."
+    },
+    {
+      "from": "1339",
+      "to": "452",
+      "kind": "suite",
+      "why": "Vatican I, interrompu en 1870 et jamais repris, a pour successeur le concile Vatican II."
+    },
+    {
+      "from": "1342",
+      "to": "1340",
+      "kind": "cause",
+      "why": "Dominique fonde l'ordre des Prêcheurs après avoir constaté la diffusion de l'hérésie cathare en Languedoc."
+    },
+    {
+      "from": "1359",
+      "to": "601",
+      "kind": "perso",
+      "why": "Kubilai Khan lance les invasions mongoles du Japon."
+    },
+    {
+      "from": "1361",
+      "to": "849",
+      "kind": "lieu",
+      "why": "Le Mur des Lamentations soutient l'esplanade du Temple où s'élève le Dôme du Rocher."
+    },
+    {
+      "from": "1423",
+      "to": "1373",
+      "kind": "partie",
+      "why": "Auschwitz-Birkenau est le principal lieu de la Shoah, commise pendant la Seconde Guerre mondiale."
+    },
+    {
+      "from": "1375",
+      "to": "835",
+      "kind": "creation",
+      "why": "Bach compose les Concertos brandebourgeois."
+    },
+    {
+      "from": "1081",
+      "to": "1379",
+      "kind": "partie",
+      "why": "Le breaking naît dans les block parties du Bronx, sur les breaks des DJ du hip-hop."
+    },
+    {
+      "from": "1381",
+      "to": "260",
+      "kind": "perso",
+      "why": "Mao proclame la République populaire de Chine place Tian'anmen."
+    },
+    {
+      "from": "1381",
+      "to": "1450",
+      "kind": "perso",
+      "why": "Mao lance la Révolution culturelle."
+    },
+    {
+      "from": "1382",
+      "to": "949",
+      "kind": "perso",
+      "why": "Attila est battu aux champs Catalauniques."
+    },
+    {
+      "from": "208",
+      "to": "1399",
+      "kind": "partie",
+      "why": "La Bhagavad-Gîtâ est un poème inséré dans l'épopée du Mahabharata."
+    },
+    {
+      "from": "1404",
+      "to": "270",
+      "kind": "perso",
+      "why": "Che Guevara est l'un des chefs de la Révolution cubaine."
+    },
+    {
+      "from": "1423",
+      "to": "465",
+      "kind": "partie",
+      "why": "L'attaque de Pearl Harbor fait entrer les États-Unis dans la Seconde Guerre mondiale."
+    },
+    {
+      "from": "1423",
+      "to": "423",
+      "kind": "partie",
+      "why": "Le Débarquement de Normandie ouvre le front de l'Ouest en 1944."
+    },
+    {
+      "from": "1423",
+      "to": "968",
+      "kind": "partie",
+      "why": "La bataille d'Angleterre oppose la RAF et la Luftwaffe en 1940."
+    },
+    {
+      "from": "1423",
+      "to": "969",
+      "kind": "partie",
+      "why": "Le siège de Léningrad est l'un des plus longs et meurtriers de la guerre."
+    },
+    {
+      "from": "1423",
+      "to": "970",
+      "kind": "partie",
+      "why": "El Alamein est le tournant de la guerre en Afrique du Nord."
+    },
+    {
+      "from": "1423",
+      "to": "971",
+      "kind": "partie",
+      "why": "L'évacuation de Dunkerque sauve l'armée britannique en 1940."
+    },
+    {
+      "from": "1423",
+      "to": "1478",
+      "kind": "partie",
+      "why": "L'insurrection du ghetto de Varsovie est la plus grande révolte juive de la guerre."
+    },
+    {
+      "from": "1423",
+      "to": "367",
+      "kind": "partie",
+      "why": "À Yalta, les Alliés préparent l'après-guerre avant la victoire."
+    },
+    {
+      "from": "1424",
+      "to": "953",
+      "kind": "partie",
+      "why": "Crécy est l'une des grandes batailles de la guerre de Cent Ans."
+    },
+    {
+      "from": "1424",
+      "to": "954",
+      "kind": "partie",
+      "why": "Azincourt est l'une des grandes batailles de la guerre de Cent Ans."
+    },
+    {
+      "from": "1424",
+      "to": "955",
+      "kind": "partie",
+      "why": "La levée du siège d'Orléans par Jeanne d'Arc est un tournant de la guerre de Cent Ans."
+    },
+    {
+      "from": "1425",
+      "to": "419",
+      "kind": "partie",
+      "why": "La machine à vapeur de Watt est l'un des moteurs de la révolution industrielle."
+    },
+    {
+      "from": "1435",
+      "to": "1438",
+      "kind": "partie",
+      "why": "La peste d'Athènes frappe la cité dès la deuxième année de la guerre du Péloponnèse."
+    },
+    {
+      "from": "315",
+      "to": "1443",
+      "kind": "sujet",
+      "why": "L'Iliade raconte un épisode de la guerre de Troie."
+    },
+    {
+      "from": "080",
+      "to": "1455",
+      "kind": "lieu",
+      "why": "Cook cartographie Botany Bay en 1770, où la Première Flotte arrive dix-huit ans plus tard."
+    },
+    {
+      "from": "1456",
+      "to": "974",
+      "kind": "partie",
+      "why": "La chute de Saïgon met fin à la guerre du Viêt Nam."
+    },
+    {
+      "from": "1011",
+      "to": "1460",
+      "kind": "perso",
+      "why": "Darwin observe la faune des Galápagos lors de l'escale du Beagle."
+    },
+    {
+      "from": "1466",
+      "to": "755",
+      "kind": "partie",
+      "why": "Monte Verde est l'un des sites qui repoussent la date du peuplement de l'Amérique."
+    },
+    {
+      "from": "188",
+      "to": "393",
+      "kind": "suite",
+      "why": "Le royaume de Sukhothai est absorbé par Ayutthaya en 1438, qui prend le relais comme État dominant du Siam."
+    },
+    {
+      "from": "1004",
+      "to": "191",
+      "kind": "perso",
+      "why": "Soliman le Magnifique commande l'armée ottomane qui écrase les Hongrois à Mohács."
+    },
+    {
+      "from": "202",
+      "to": "569",
+      "kind": "lieu",
+      "why": "Persépolis, fondée par Darius Iᵉʳ, est la capitale de cérémonie de l'empire achéménide."
+    },
+    {
+      "from": "203",
+      "to": "722",
+      "kind": "sujet",
+      "why": "Les plus anciennes images de didgeridoo sont des peintures rupestres de la Terre d'Arnhem."
+    },
+    {
+      "from": "204",
+      "to": "1370",
+      "kind": "lieu",
+      "why": "Les Jeux Pythiques se tiennent au sanctuaire d'Apollon à Delphes, celui de l'oracle."
+    },
+    {
+      "from": "557",
+      "to": "205",
+      "kind": "sujet",
+      "why": "Les griots mandingues transmettent oralement l'épopée de Sundiata."
+    },
+    {
+      "from": "209",
+      "to": "475",
+      "kind": "sujet",
+      "why": "Les mosaïques de San Vitale à Ravenne montrent le portrait de l'impératrice Théodora."
+    },
+    {
+      "from": "214",
+      "to": "381",
+      "kind": "cause",
+      "why": "Les disciples de Cyrille et Méthode apportent l'écrit slave en Bulgarie, base de l'école de Preslav."
+    },
+    {
+      "from": "576",
+      "to": "381",
+      "kind": "perso",
+      "why": "L'âge d'or littéraire de Preslav se déroule sous le règne du tsar Siméon Iᵉʳ."
+    },
+    {
+      "from": "220",
+      "to": "859",
+      "kind": "creation",
+      "why": "Ivan IV fait élever la cathédrale Saint-Basile après la prise de Kazan."
+    },
+    {
+      "from": "227",
+      "to": "950",
+      "kind": "sujet",
+      "why": "La Romance des Trois Royaumes raconte la bataille de la Falaise Rouge, épisode clé du roman."
+    },
+    {
+      "from": "238",
+      "to": "437",
+      "kind": "lieu",
+      "why": "Sankoré et les manuscrits de Tombouctou témoignent du même foyer d'études islamiques."
+    },
+    {
+      "from": "244",
+      "to": "376",
+      "kind": "lieu",
+      "why": "Le temple de Brihadishvara, à Thanjavur, est commandé par l'empereur chola Rajaraja Iᵉʳ."
+    },
+    {
+      "from": "1060",
+      "to": "250",
+      "kind": "sujet",
+      "why": "Voltaire met en scène le tremblement de terre de Lisbonne dans Candide."
+    },
+    {
+      "from": "256",
+      "to": "763",
+      "kind": "lieu",
+      "why": "Avicenne naît près de Boukhara et s'y forme à la cour des Samanides."
+    },
+    {
+      "from": "264",
+      "to": "353",
+      "kind": "cause",
+      "why": "Le rapport de Zhang Qian ouvre ce qu'on appellera la Route de la soie."
+    },
+    {
+      "from": "276",
+      "to": "620",
+      "kind": "suite",
+      "why": "Le traité de Kanagawa met fin à deux siècles de fermeture du Japon."
+    },
+    {
+      "from": "282",
+      "to": "842",
+      "kind": "partie",
+      "why": "Les réductions guaranies sont une entreprise missionnaire des jésuites."
+    },
+    {
+      "from": "285",
+      "to": "347",
+      "kind": "lieu",
+      "why": "La pièce de huit réaux est frappée avec l'argent des mines de Potosí."
+    },
+    {
+      "from": "287",
+      "to": "975",
+      "kind": "cause",
+      "why": "Après le grand incendie de Londres, Christopher Wren reconstruit la cathédrale Saint-Paul."
+    },
+    {
+      "from": "683",
+      "to": "291",
+      "kind": "partie",
+      "why": "La VOC prend Jayakarta et y fonde Batavia, centre de son commerce en Asie."
+    },
+    {
+      "from": "156",
+      "to": "310",
+      "kind": "creation",
+      "why": "L'empereur Ashoka fait ériger le pilier aux lions de Sarnath."
+    },
+    {
+      "from": "310",
+      "to": "1343",
+      "kind": "lieu",
+      "why": "Le pilier d'Ashoka se dresse à Sarnath, là où le Bouddha a prononcé son premier sermon."
+    },
+    {
+      "from": "311",
+      "to": "993",
+      "kind": "sujet",
+      "why": "Au centre de L'École d'Athènes, Raphaël peint Platon."
+    },
+    {
+      "from": "311",
+      "to": "992",
+      "kind": "sujet",
+      "why": "Au centre de L'École d'Athènes, Aristote fait face à Platon."
+    },
+    {
+      "from": "315",
+      "to": "1050",
+      "kind": "suite",
+      "why": "L'Odyssée, attribuée elle aussi à Homère, raconte le retour d'Ulysse après la guerre de Troie."
+    },
+    {
+      "from": "774",
+      "to": "345",
+      "kind": "suite",
+      "why": "Vasco de Gama reprend la route ouverte par Dias autour du cap de Bonne-Espérance pour atteindre l'Inde."
+    },
+    {
+      "from": "346",
+      "to": "644",
+      "kind": "lieu",
+      "why": "L'émeute de Nika éclate entre les factions des Bleus et des Verts de l'hippodrome."
+    },
+    {
+      "from": "363",
+      "to": "786",
+      "kind": "suite",
+      "why": "L'échec ottoman devant Vienne ouvre la guerre que le traité de Karlowitz conclut en 1699."
+    },
+    {
+      "from": "1183",
+      "to": "372",
+      "kind": "partie",
+      "why": "La Horde d'Or est l'un des quatre khanats issus de l'Empire mongol."
+    },
+    {
+      "from": "372",
+      "to": "397",
+      "kind": "suite",
+      "why": "Le khanat de Kazan naît du morcellement de la Horde d'Or et lui succède sur la Volga."
+    },
+    {
+      "from": "245",
+      "to": "377",
+      "kind": "suite",
+      "why": "La Compagnie anglaise frappe des roupies de style moghol avec l'autorisation de l'empereur moghol."
+    },
+    {
+      "from": "384",
+      "to": "1140",
+      "kind": "lieu",
+      "why": "Le tsunami de Jogan a frappé la même plaine de Sendai que celui de 2011, dont il est le précédent."
+    },
+    {
+      "from": "1012",
+      "to": "388",
+      "kind": "perso",
+      "why": "Lincoln dirige l'Union pendant toute la guerre de Sécession."
+    },
+    {
+      "from": "388",
+      "to": "963",
+      "kind": "partie",
+      "why": "Gettysburg est le tournant et la bataille la plus meurtrière de la guerre de Sécession."
+    },
+    {
+      "from": "561",
+      "to": "404",
+      "kind": "cause",
+      "why": "Le concile de Constance condamne Jan Hus au bûcher, ce qui déclenche le mouvement hussite."
+    },
+    {
+      "from": "156",
+      "to": "407",
+      "kind": "creation",
+      "why": "Ashoka commande le noyau de briques du Grand Stûpa de Sânchî."
+    },
+    {
+      "from": "408",
+      "to": "156",
+      "kind": "suite",
+      "why": "Ashoka, petit-fils de Chandragupta, règne sur l'empire maurya fondé par son grand-père."
+    },
+    {
+      "from": "411",
+      "to": "565",
+      "kind": "partie",
+      "why": "Les tablettes de l'Épopée de Gilgamesh ont été retrouvées dans la bibliothèque d'Assurbanipal à Ninive."
+    },
+    {
+      "from": "412",
+      "to": "525",
+      "kind": "lieu",
+      "why": "Al-Khwârizmî écrit son traité d'algèbre à la Maison de la sagesse de Bagdad."
+    },
+    {
+      "from": "996",
+      "to": "413",
+      "kind": "perso",
+      "why": "Ramsès II conclut le traité de Qadesh avec le roi hittite Hattusili III."
+    },
+    {
+      "from": "1425",
+      "to": "426",
+      "kind": "partie",
+      "why": "La locomotive de Stephenson ouvre l'ère du chemin de fer, pilier de la révolution industrielle."
+    },
+    {
+      "from": "424",
+      "to": "1206",
+      "kind": "suite",
+      "why": "La Communauté économique européenne créée à Rome devient l'Union européenne à Maastricht."
+    },
+    {
+      "from": "1423",
+      "to": "446",
+      "kind": "suite",
+      "why": "Le procès de Nuremberg juge les dirigeants nazis au lendemain de la Seconde Guerre mondiale."
+    },
+    {
+      "from": "1015",
+      "to": "453",
+      "kind": "creation",
+      "why": "Einstein présente les équations de la relativité générale en 1915."
+    },
+    {
+      "from": "962",
+      "to": "455",
+      "kind": "suite",
+      "why": "La victoire de Sedan permet la proclamation de l'Empire allemand quelques mois plus tard."
+    },
+    {
+      "from": "455",
+      "to": "002",
+      "kind": "lieu",
+      "why": "La France fait signer le traité de 1919 dans la galerie des Glaces, là où l'Empire allemand avait été proclamé."
+    },
+    {
+      "from": "459",
+      "to": "264",
+      "kind": "perso",
+      "why": "L'empereur Wu confie à Zhang Qian sa mission vers l'Asie centrale."
+    },
+    {
+      "from": "465",
+      "to": "144",
+      "kind": "suite",
+      "why": "Six mois après Pearl Harbor, Midway renverse le rapport de force dans le Pacifique."
+    },
+    {
+      "from": "1019",
+      "to": "469",
+      "kind": "perso",
+      "why": "Martin Luther King se fait connaître en présidant l'association qui organise le boycott."
+    },
+    {
+      "from": "998",
+      "to": "473",
+      "kind": "perso",
+      "why": "Saladin assiège et reprend Jérusalem après sa victoire de Hattin."
+    },
+    {
+      "from": "475",
+      "to": "346",
+      "kind": "perso",
+      "why": "Pendant l'émeute Nika, le discours de Théodora dissuade Justinien de fuir."
+    },
+    {
+      "from": "492",
+      "to": "640",
+      "kind": "partie",
+      "why": "La lutte mongole est le plus prestigieux des trois jeux du Naadam."
+    },
+    {
+      "from": "112",
+      "to": "495",
+      "kind": "creation",
+      "why": "L'armée en terre cuite est enterrée pour garder le tombeau du Premier Empereur."
+    },
+    {
+      "from": "996",
+      "to": "499",
+      "kind": "creation",
+      "why": "Ramsès II fait creuser les temples d'Abou Simbel dans une falaise de Nubie."
+    },
+    {
+      "from": "014",
+      "to": "504",
+      "kind": "lieu",
+      "why": "La statue de Zeus trônait dans le sanctuaire d'Olympie où se tenaient les Jeux."
+    },
+    {
+      "from": "1004",
+      "to": "515",
+      "kind": "creation",
+      "why": "Sinan bâtit la Süleymaniye pour le sultan Soliman le Magnifique."
+    },
+    {
+      "from": "069",
+      "to": "527",
+      "kind": "suite",
+      "why": "Le Monomotapa est fondé par des élites qui quittent le Grand Zimbabwe en déclin."
+    },
+    {
+      "from": "528",
+      "to": "783",
+      "kind": "suite",
+      "why": "Koguryŏ tombe en 668 face à Silla, qui unifie alors la péninsule coréenne."
+    },
+    {
+      "from": "546",
+      "to": "537",
+      "kind": "creation",
+      "why": "Claude Debussy compose Clair de lune."
+    },
+    {
+      "from": "545",
+      "to": "539",
+      "kind": "creation",
+      "why": "John Williams compose le thème de Star Wars."
+    },
+    {
+      "from": "547",
+      "to": "540",
+      "kind": "creation",
+      "why": "Hans Zimmer compose la musique d'Interstellar."
+    },
+    {
+      "from": "729",
+      "to": "555",
+      "kind": "partie",
+      "why": "Le qawwali est le chant de groupe des assemblées soufies."
+    },
+    {
+      "from": "068",
+      "to": "560",
+      "kind": "lieu",
+      "why": "Les rois sont sacrés à Reims en mémoire du baptême de Clovis par l'évêque Remi"
+    },
+    {
+      "from": "564",
+      "to": "566",
+      "kind": "suite",
+      "why": "L'empire d'Akkad naît de la conquête des cités-États sumériennes"
+    },
+    {
+      "from": "995",
+      "to": "567",
+      "kind": "perso",
+      "why": "Hannibal mène la deuxième guerre punique jusqu'en Italie"
+    },
+    {
+      "from": "057",
+      "to": "569",
+      "kind": "creation",
+      "why": "Cyrus II fonde l'empire achéménide"
+    },
+    {
+      "from": "577",
+      "to": "781",
+      "kind": "suite",
+      "why": "La victoire de Babur sur le sultan de Delhi à Panipat fonde l'Empire moghol"
+    },
+    {
+      "from": "577",
+      "to": "1401",
+      "kind": "lieu",
+      "why": "Le minaret est commencé par le fondateur du sultanat de Delhi"
+    },
+    {
+      "from": "372",
+      "to": "580",
+      "kind": "suite",
+      "why": "Le khanat de Crimée naît de l'éclatement de la Horde d'Or"
+    },
+    {
+      "from": "584",
+      "to": "261",
+      "kind": "partie",
+      "why": "Sekigahara est la bataille qui clôt l'époque Sengoku"
+    },
+    {
+      "from": "591",
+      "to": "593",
+      "kind": "cause",
+      "why": "Sortis d'Afrique, les Sapiens rencontrent les Néandertaliens au Proche-Orient"
+    },
+    {
+      "from": "596",
+      "to": "1100",
+      "kind": "partie",
+      "why": "Le Beau Danube bleu est la valse viennoise la plus célèbre"
+    },
+    {
+      "from": "1359",
+      "to": "638",
+      "kind": "creation",
+      "why": "Le chao est émis à partir de 1260 sous Kubilai"
+    },
+    {
+      "from": "607",
+      "to": "958",
+      "kind": "cause",
+      "why": "La défenestration lance la révolte de Bohême et déclenche la guerre de Trente Ans"
+    },
+    {
+      "from": "686",
+      "to": "610",
+      "kind": "suite",
+      "why": "La ligne de la bulle, jugée trop favorable à la Castille, est renégociée à Tordesillas"
+    },
+    {
+      "from": "830",
+      "to": "614",
+      "kind": "cause",
+      "why": "Kepler tire ses lois des observations de Tycho Brahe"
+    },
+    {
+      "from": "617",
+      "to": "751",
+      "kind": "suite",
+      "why": "Stanley retrouve Livingstone, porté disparu au cours de ses voyages"
+    },
+    {
+      "from": "111",
+      "to": "639",
+      "kind": "partie",
+      "why": "Les sceaux sont l'une des productions emblématiques de la civilisation de l'Indus"
+    },
+    {
+      "from": "642",
+      "to": "069",
+      "kind": "suite",
+      "why": "Le Grand Zimbabwe prend le relais de Mapungubwe en Afrique australe"
+    },
+    {
+      "from": "497",
+      "to": "650",
+      "kind": "partie",
+      "why": "L'intérieur de la Mosquée bleue est couvert de carreaux d'Iznik"
+    },
+    {
+      "from": "1004",
+      "to": "651",
+      "kind": "perso",
+      "why": "Soliman accorde ces privilèges à François Iᵉʳ contre Charles Quint"
+    },
+    {
+      "from": "668",
+      "to": "685",
+      "kind": "suite",
+      "why": "À Spire, les princes luthériens protestent contre l'application de l'édit de Worms"
+    },
+    {
+      "from": "292",
+      "to": "669",
+      "kind": "perso",
+      "why": "Le traité est conclu par la Chine de l'empereur Kangxi"
+    },
+    {
+      "from": "676",
+      "to": "1464",
+      "kind": "suite",
+      "why": "Le bronze est un alliage du cuivre, dont la métallurgie le précède"
+    },
+    {
+      "from": "680",
+      "to": "679",
+      "kind": "suite",
+      "why": "Chalcédoine reprend vingt ans plus tard le débat sur la nature du Christ ouvert à Éphèse"
+    },
+    {
+      "from": "729",
+      "to": "694",
+      "kind": "partie",
+      "why": "Les derviches tourneurs forment une confrérie soufie, les Mevlevi"
+    },
+    {
+      "from": "060",
+      "to": "726",
+      "kind": "partie",
+      "why": "Aksoum frappe la seule monnaie d'or d'Afrique subsaharienne"
+    },
+    {
+      "from": "376",
+      "to": "732",
+      "kind": "partie",
+      "why": "Cette monnaie d'or est frappée par l'empire Chola à son apogée"
+    },
+    {
+      "from": "828",
+      "to": "714",
+      "kind": "suite",
+      "why": "Après le détroit, Béring repart et atteint l'Alaska en 1741"
+    },
+    {
+      "from": "764",
+      "to": "717",
+      "kind": "perso",
+      "why": "Hatchepsout envoie l'expédition au pays de Pount"
+    },
+    {
+      "from": "790",
+      "to": "791",
+      "kind": "creation",
+      "why": "Jean Calvin fonde à Genève la doctrine et l'Église qui portent son nom."
+    },
+    {
+      "from": "1007",
+      "to": "792",
+      "kind": "creation",
+      "why": "Rembrandt peint La Ronde de nuit à Amsterdam."
+    },
+    {
+      "from": "1001",
+      "to": "857",
+      "kind": "creation",
+      "why": "Michel-Ange conçoit l'immense coupole de la basilique Saint-Pierre."
+    },
+    {
+      "from": "800",
+      "to": "174",
+      "kind": "creation",
+      "why": "Louis XIV fait du pavillon de chasse de son père le château de Versailles et y installe la cour."
+    },
+    {
+      "from": "807",
+      "to": "806",
+      "kind": "partie",
+      "why": "La Nouvelle-Orléans est fondée pour la Compagnie du Mississippi de John Law, qui contrôle alors la Louisiane."
+    },
+    {
+      "from": "1008",
+      "to": "813",
+      "kind": "creation",
+      "why": "Mozart compose l'opéra Don Giovanni, créé à Prague."
+    },
+    {
+      "from": "1003",
+      "to": "822",
+      "kind": "creation",
+      "why": "Shakespeare écrit Hamlet pour le théâtre du Globe."
+    },
+    {
+      "from": "826",
+      "to": "803",
+      "kind": "lieu",
+      "why": "Cartier atteint Stadaconé en 1535, le site où Champlain fonde Québec en 1608."
+    },
+    {
+      "from": "999",
+      "to": "853",
+      "kind": "creation",
+      "why": "Guillaume le Conquérant fait élever la Tour blanche à Londres après la conquête normande."
+    },
+    {
+      "from": "856",
+      "to": "183",
+      "kind": "lieu",
+      "why": "Chichén Itzá abrite le plus grand terrain du jeu de balle mésoaméricain."
+    },
+    {
+      "from": "866",
+      "to": "370",
+      "kind": "sujet",
+      "why": "Le Kebra Nagast raconte la légende de la reine de Saba et de Salomon."
+    },
+    {
+      "from": "112",
+      "to": "871",
+      "kind": "creation",
+      "why": "Qin Shi Huang fait tailler le sceau de jade qui prouve le Mandat du Ciel."
+    },
+    {
+      "from": "1016",
+      "to": "885",
+      "kind": "creation",
+      "why": "Van Gogh peint La Nuit étoilée à Saint-Rémy-de-Provence."
+    },
+    {
+      "from": "1016",
+      "to": "886",
+      "kind": "creation",
+      "why": "Van Gogh peint la série des Tournesols à Arles."
+    },
+    {
+      "from": "1017",
+      "to": "894",
+      "kind": "creation",
+      "why": "Picasso peint Les Demoiselles d'Avignon à Montmartre."
+    },
+    {
+      "from": "1007",
+      "to": "914",
+      "kind": "creation",
+      "why": "Rembrandt peint La Leçon d'anatomie du docteur Tulp à Amsterdam."
+    },
+    {
+      "from": "1001",
+      "to": "915",
+      "kind": "creation",
+      "why": "Michel-Ange sculpte la Pietà de la basilique Saint-Pierre."
+    },
+    {
+      "from": "857",
+      "to": "915",
+      "kind": "lieu",
+      "why": "La Pietà de Michel-Ange est exposée dans la basilique Saint-Pierre."
+    },
+    {
+      "from": "927",
+      "to": "204",
+      "kind": "sujet",
+      "why": "L'Aurige de Delphes célèbre une victoire de course de chars aux Jeux pythiques."
+    },
+    {
+      "from": "760",
+      "to": "033",
+      "kind": "sujet",
+      "why": "La carte de Piri Reis montre les côtes du Nouveau Monde d'après une carte de Colomb."
+    },
+    {
+      "from": "932",
+      "to": "991",
+      "kind": "sujet",
+      "why": "Statue de propagande représentant l'empereur Auguste en vainqueur et pacificateur."
+    },
+    {
+      "from": "928",
+      "to": "997",
+      "kind": "sujet",
+      "why": "Statue équestre en bronze représentant l'empereur Marc Aurèle."
+    },
+    {
+      "from": "933",
+      "to": "169",
+      "kind": "lieu",
+      "why": "Les Cariatides ornent l'Érechthéion, voisin du Parthénon sur l'Acropole d'Athènes."
+    },
+    {
+      "from": "938",
+      "to": "1424",
+      "kind": "sujet",
+      "why": "Rodin y évoque la reddition des notables de Calais à la fin du siège de 1347, pendant la guerre de Cent Ans."
+    },
+    {
+      "from": "955",
+      "to": "171",
+      "kind": "suite",
+      "why": "Deux ans après avoir libéré Orléans, Jeanne d'Arc est capturée puis brûlée à Rouen."
+    },
+    {
+      "from": "1009",
+      "to": "959",
+      "kind": "perso",
+      "why": "Washington commande, avec Rochambeau, les troupes qui font capituler Cornwallis à Yorktown."
+    },
+    {
+      "from": "987",
+      "to": "853",
+      "kind": "lieu",
+      "why": "Le Tower Bridge doit son nom et le style de ses tours à la Tour de Londres voisine."
+    },
+    {
+      "from": "1003",
+      "to": "1057",
+      "kind": "creation",
+      "why": "Shakespeare écrit Roméo et Juliette."
+    },
+    {
+      "from": "1008",
+      "to": "1091",
+      "kind": "creation",
+      "why": "Mozart compose La Flûte enchantée, son dernier opéra."
+    },
+    {
+      "from": "1008",
+      "to": "1102",
+      "kind": "creation",
+      "why": "Mozart compose la Symphonie n°40."
+    },
+    {
+      "from": "1010",
+      "to": "1090",
+      "kind": "creation",
+      "why": "Beethoven compose la 5e Symphonie."
+    },
+    {
+      "from": "1070",
+      "to": "961",
+      "kind": "sujet",
+      "why": "Tolstoï fait de la bataille de Borodino l'un des sommets du roman."
+    },
+    {
+      "from": "1421",
+      "to": "1080",
+      "kind": "perso",
+      "why": "Elvis Presley popularise le rock'n'roll auprès d'un large public, sans l'avoir inventé."
+    },
+    {
+      "from": "1110",
+      "to": "478",
+      "kind": "suite",
+      "why": "Hubble confirme par l'observation l'expansion de l'Univers prédite par Lemaître."
+    },
+    {
+      "from": "1110",
+      "to": "1117",
+      "kind": "suite",
+      "why": "Le fond diffus cosmologique est l'une des preuves majeures du Big Bang."
+    },
+    {
+      "from": "453",
+      "to": "1116",
+      "kind": "suite",
+      "why": "Les ondes gravitationnelles prédites par la relativité générale sont détectées un siècle plus tard."
+    }
+  ]
+}

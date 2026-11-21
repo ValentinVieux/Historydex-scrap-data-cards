@@ -10,6 +10,8 @@
     "normalize": "tsx scripts/normalize-card.ts",
     "check-subject": "tsx scripts/check-subject.ts",
     "fetch-images": "tsx scripts/fetch-card-images.ts",
+    "image-candidates": "tsx scripts/image-candidates.ts",
+    "apply-image-picks": "tsx scripts/apply-image-picks.ts",
     "process-images": "tsx scripts/process-card-images.ts",
     "verify-geo": "tsx scripts/verify-geo.ts",
     "review-images": "tsx scripts/review-server.ts",

@@ -12,6 +12,9 @@ import "dotenv/config";
 export const AZURE_TO: Record<string, string> = {
   es: "es", de: "de", it: "it", en: "en", pt: "pt",
   "pt-PT": "pt-pt", pl: "pl", tr: "tr", nl: "nl", ja: "ja", ko: "ko",
+  // Vague 2026-11 (codes Azure standard ; jusqu'ici traduites côté app, cf. CLAUDE.md).
+  ru: "ru", "zh-Hans": "zh-Hans", cs: "cs", el: "el", ro: "ro", uk: "uk", vi: "vi", id: "id",
+  hu: "hu", ar: "ar", he: "he", sv: "sv", da: "da", nb: "nb", fi: "fi",
 };
 
 // Limites Azure : ≤ 1000 éléments ET ≤ 50 000 caractères/requête. On reste bien en dessous

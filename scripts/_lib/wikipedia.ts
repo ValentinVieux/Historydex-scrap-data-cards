@@ -1,7 +1,7 @@
 // Helper pour interroger Wikipedia REST API summary.
 // Documentation : https://fr.wikipedia.org/api/rest_v1/
 
-const USER_AGENT = "HistoryDex-Pipeline/0.1 (https://github.com/historydex; contact via issues)";
+export const USER_AGENT = "HistoryDex-Pipeline/0.1 (https://github.com/historydex; contact via issues)";
 
 export type WikipediaImage = {
   imageUrl: string;             // URL originalimage.source

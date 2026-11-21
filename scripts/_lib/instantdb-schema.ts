@@ -106,6 +106,15 @@ const _schema = i.schema({
       eraCounts: i.json().optional(),
       registeredCollectors: i.number().optional(),
       rarityComputedAt: i.number().optional(),
+      // Séries + relations éditoriales publiées (push:db ← catalog/links.json), lues par l'app.
+      links: i.json().optional(),
+      updatedAt: i.number(),
+    }),
+    // Miroir partiel de l'app (singleton ops). Le pipeline n'y écrit que `cardQueue` :
+    // état de la file de publication hebdo, lu par le site de stats (« Le contenu »).
+    pushWatermarks: i.entity({
+      lastPublishedAt: i.number(),
+      cardQueue: i.json().optional(),
       updatedAt: i.number(),
     }),
   },

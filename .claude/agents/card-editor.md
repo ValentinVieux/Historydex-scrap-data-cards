@@ -135,7 +135,7 @@ Pour `tag: "periodique"` : **préfixer par un label de type** pour lever l'ambig
 - [ ] Si `tag = "periodique"` : `timeDisplayLabel` commence par un **préfixe de type** (`construction:`, `règne:`, `extension:`…) et ses bornes numériques matchent `startYear`/`endYear` (tolérance ±50 ans).
 - [ ] Le titre ne contient **aucune date** (année, « av. J.-C. », date jour-mois), même hors fenêtre de devinette (le **lieu** peut, lui, figurer : « Bataille de Marignan »). Détecté par les invariants **bloquants** `title-contains-date` + `title-when-spoiler`.
 - [ ] Le ton est neutre et pédagogique.
-- [ ] **Clarté pour un joueur non spécialiste** (cf. editorial-rules.md § « Clarté pour un joueur non spécialiste ») — le joueur ne voit que le titre + la consigne, en 11 langues traduites automatiquement :
+- [ ] **Clarté pour un joueur non spécialiste** (cf. editorial-rules.md § « Clarté pour un joueur non spécialiste ») — le joueur ne voit que le titre + la consigne, en 26 langues traduites automatiquement :
   - le verbe est un **mot courant**, pas du jargon (table des verbes proscrits : doublé, élancé, séquencé, codifiées, fondu pour un bronze, paraphé… → warning `prompt-verb-jargon`) ;
   - l'**événement interrogé est explicite** : « pour la première fois » si l'événement se répète (cap, sommet, pôle, record) ; création ≠ première représentation ≠ exposition ; construction ≠ inauguration ; la consigne pose exactement la question à laquelle `pivotYear` / `lat,lon` répondent ;
   - la phrase recomposée est **naturelle et non circulaire** (titre = lieu → « Où se trouve … ? »), relue à voix haute ;

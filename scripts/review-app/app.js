@@ -1873,6 +1873,55 @@ function openUploadModal() {
   els.uploadPreview.classList.add("hidden");
   els.btnUploadGo.disabled = true;
   els.uploadModal.classList.remove("hidden");
+  loadCandidates(activeDexNum);
+}
+
+// Candidates collectées par scripts/image-candidates.ts : un clic = la candidate
+// devient l'image source (crop à refaire, comme après un upload).
+async function loadCandidates(dexNum) {
+  const grid = document.getElementById("candidates-grid");
+  grid.innerHTML = "";
+  const data = await fetch(`/api/cards/${dexNum}/candidates`).then((r) => r.json()).catch(() => ({ candidates: [] }));
+  document.getElementById("candidates-section").classList.toggle("hidden", data.candidates.length === 0);
+  for (const c of data.candidates) {
+    const b = document.createElement("button");
+    b.className = "candidate";
+    b.title = `${c.file} · ${c.license}`;
+    b.innerHTML = `<img src="${escapeAttr(c.url)}" alt="" loading="lazy" /><span>#${c.n} · ${c.width}×${c.height}</span>`;
+    b.addEventListener("click", () => useCandidate(dexNum, c.n, b));
+    grid.appendChild(b);
+  }
+}
+
+async function useCandidate(dexNum, n, btn) {
+  btn.disabled = true;
+  try {
+    const res = await fetch(`/api/cards/${dexNum}/use-candidate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ n }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      toast(data.error ?? "Échec", true);
+      return;
+    }
+    await afterSourceReplaced(`Candidate #${n} retenue — recadre puis approuve`);
+  } catch (err) {
+    toast(err.message, true);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function afterSourceReplaced(message) {
+  closeUploadModal();
+  pendingUploadFile = null;
+  metaPending = {};
+  await selectCard(activeDexNum);
+  await refreshActiveInList();
+  showPushBanner();
+  toast(message);
 }
 
 function closeUploadModal() {
@@ -1914,13 +1963,7 @@ async function doUpload() {
       toast(data.error ?? "Échec upload", true);
       return;
     }
-    closeUploadModal();
-    pendingUploadFile = null;
-    metaPending = {};
-    await selectCard(activeDexNum);
-    await refreshActiveInList();
-    showPushBanner();
-    toast("Image remplacée — re-crop nécessaire");
+    await afterSourceReplaced("Image remplacée — re-crop nécessaire");
   } catch (err) {
     toast(err.message, true);
   } finally {

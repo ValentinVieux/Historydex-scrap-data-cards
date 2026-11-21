@@ -1,6 +1,6 @@
 ---
 name: generate-cards-batch
-description: Use to generate N new HistoryDex cards end-to-end in one shot. Orchestrates subject-curator (gap-driven subject selection) + parallel research+normalization + image fetch + final validate. Outputs N cards in data/cards/ with editorial.status="reviewed", ready for human review in npm run review-images.
+description: Use to generate N new HistoryDex cards end-to-end in one shot. Orchestrates subject-curator (gap-driven subject selection) + parallel research+normalization + automatic image choice/crop + honesty audit + final validate. Outputs N cards in data/cards/ with editorial.status="reviewed", ready for human review in npm run review-images.
 ---
 
 # Generate Cards Batch
@@ -47,16 +47,38 @@ Si un sujet échoue (anti-doublon trop élevé, sources introuvables, validation
 rouge persistente après itération), **note l'échec et continue avec les autres**.
 Le batch n'est pas une transaction atomique.
 
-### 4. Récupération des images
+### 4. Images : choix automatique + cadrage (depuis 2026-11-15)
 
-Une fois tous les sujets traités, lance :
+Une fois tous les sujets traités (cf. CLAUDE.md § « Workflow images d'illustration ») :
 
 ```bash
-npm run fetch-images
+npx tsx scripts/image-candidates.ts --dex <liste du batch>     # ≤ 12 candidates libres / carte + planche contact (≈ 25 s / carte : lancer en arrière-plan)
 ```
 
-Scanne `data/cards/` (toutes cartes y compris les nouvelles), télécharge les
-images Wikipedia pour celles qui ont `canonical.wikipediaTitle != null`.
+Puis **un sous-agent juge par tranche de 12-13 cartes** (prompt type : celui des batches 1047-1146 —
+lit `sheet.jpg`, écarte ce qui trahit la réponse (texte daté/situé, page de titre, pochette, carte,
+drapeau, monument-réponse), le portrait de l'auteur/compositeur/savant, les homonymes ; préfère une
+scène de l'œuvre / l'objet / le phénomène ; écrit `picks-<range>.jsonl` avec la boîte du sujet et une
+confiance `high`/`low`, et vérifie en dry-run). Appliquer :
+
+```bash
+npx tsx scripts/apply-image-picks.ts data/_images-candidates/picks-<range>.jsonl --apply
+```
+
+Cartes sans image acceptable (`pick: null`) ou choix faible : relancer une **recherche ciblée**
+`image-candidates.ts --dex <n> --force --query "<requête anglaise>"` (une requête par carte), puis un
+juge de rattrapage qui n'écrit une ligne que s'il fait mieux. Finir par une **planche des cadrages
+finaux** relue par l'orchestrateur. Les `low` restent marquées « à revoir » dans l'app de review, où
+Valentin peut aussi choisir une autre candidate (bouton « Remplacer image »).
+
+### 4bis. Liens et séries (registre `catalog/links.json`)
+
+Reporte dans `catalog/links.json` (suivi par git, format miroir de l'app) les lignes `LIENS :`
+retenues par `card-qa` : relations `{from, to, kind, why}` et ajout du dexNum aux séries
+existantes **à sa place chronologique**. Une **série nouvelle** (`new:<nom>` du manifest ou
+proposée par le researcher) n'est pas créée d'office : liste-la dans le rapport final pour
+validation de Valentin (id, nom, icône, titre à porter, membres). `npm run validate` contrôle
+le registre (`links-*`, `series-*`, `relation-*`).
 
 ### 5. Validation finale + audit géo
 
@@ -122,8 +144,11 @@ Cartes nouvelles dans data/cards/ (status: reviewed) :
 
 Prochaine étape :
   npm run review-images
-  → review visuelle + recadrage image + clic "Approuver" sur chaque carte
-  → puis bouton "Push to DB" pour propager en prod
+  → review visuelle + image (recadrer / choisir une autre candidate) + clic "Approuver"
+  → puis traduction des cartes approuvées dans les 26 langues (skill translate-cards-mt,
+    `--dex` + `--no-mt` + sous-agents, y compris les 15 langues de la vague 2026-11)
+  → PAS de push manuel : la publication se fait par lots de 25 chaque lundi
+    (tâche planifiée → push:db --next 25). Le stock prêt est visible sur le site de stats.
 ```
 
 ## Garanties à respecter
@@ -141,16 +166,19 @@ Prochaine étape :
 ## Tu ne fais PAS
 
 - Tu n'approuves pas les cartes — c'est `editorial.status="reviewed"` à la fin.
-- Tu ne pousses pas en DB — c'est `npm run push:db` ou le bouton « Push to DB »
-  de l'app de review, après validation humaine.
+- Tu ne pousses pas en DB — la publication est hebdomadaire et automatique
+  (`push:db --next 25` le lundi), après validation humaine et traduction 26 langues.
 - Tu ne lances pas un nouveau batch tant que celui-ci n'est pas reviewé côté
   humain (sauf demande explicite).
 
 ## Cas particuliers
 
-- **N très grand (> 20)** : refuse poliment et propose de découper en plusieurs
-  batches plus petits (10 max recommandé) — le rendement humain de review ne
-  suit pas, et la fenêtre de contexte des agents fatigue.
+- **N grand (> 25)** : découpe en **vagues de 25** (éprouvé sur 1047-1146) et traite-les
+  l'une après l'autre (curation unique, puis recherche/normalisation/images/audit par vague).
+  Plafond pratique : 20 sous-agents simultanés dans la session.
+- **dexNum attribués centralement** : avant la phase 3, réserve la plage du batch
+  (max(dexNum existants)+1 …) et impose à chaque `gameplay-balancer` le dexNum de son sujet
+  — sinon les agents parallèles posent des placeholders qui collisionnent.
 - **Sujet trop niche pour le cercle courant** : le subject-curator filtre déjà,
   mais si tu repères un sujet du cercle 4 alors que `catalogTotal < 200`,
   flag-le à l'utilisateur en étape 2.

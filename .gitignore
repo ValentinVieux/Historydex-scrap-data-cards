@@ -16,6 +16,8 @@ data/_geo-cache/
 
 # Images finales rognées (régénérables via npm run review-images)
 data/_images-final/
+data/_images-candidates/
+data/_norm/
 
 # Snapshot "avant review" — figeage de _images-final/ + data/approved/ pour
 # comparer auto-attention/textes générés vs corrections humaines
@@ -70,3 +72,4 @@ reports/prompt-clarity/
 # Réécriture des bodies « fiche courte » (2026-10-25) : lots de travail + sauvegarde avant écriture
 data/_body-rewrite/
 data/_backup/
+data/_links/

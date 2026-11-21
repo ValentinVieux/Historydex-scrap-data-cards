@@ -60,7 +60,7 @@ Le chemin d'une carte `data/cards/<slug>.json` (canonical + display + gameplay r
   sauf site archéologique non monumental.
 
 ### Clarté pour un joueur non spécialiste (consignes OÙ et QUAND)
-Le joueur ne voit que le titre + la consigne recomposée, **avant** blurb/body, et en 11 langues traduites
+Le joueur ne voit que le titre + la consigne recomposée, **avant** blurb/body, et en 26 langues traduites
 automatiquement (cf. editorial-rules.md § « Clarté pour un joueur non spécialiste » ; revue du 2026-10-18 :
 carte 774 « Quand a été doublé ce cap ? » incomprise et rendue « multiplier par deux » dans 9 locales).
 - [ ] **Verbe compris sans culture du domaine** : pas de jargon nautique / juridique / scientifique /
@@ -131,6 +131,14 @@ Vérifie en priorité les claims qui apparaissent comme `single_source` dans la 
 - [ ] **P7 — Attribution causale erronée** : « invente », « introduit », « fait passer », « premier » sans qualificatif, alors que l'acteur a hérité ou partagé l'innovation (Shang ≠ inventeur du bronze chinois ; Gutenberg ≠ inventeur de l'imprimerie).
 
 **Règle de verdict** : une seule remontée « À NUANCER » ou « À RECHERCHER » dans le VERACITY-CHECK suffit à déclencher `VERDICT : À CORRIGER`. Ne jamais valider PASS avec un pattern actif.
+
+### Liens et séries proposés (section de la fiche raw)
+- [ ] Chaque dexNum cité existe dans `data/cards` et désigne bien la carte annoncée (titre relu).
+- [ ] Le `kind` est juste ; un `cause` va de l'antérieur au postérieur et ne saute pas de maillon
+  (même grille que **P3**). Lien douteux → le retirer de ta liste « à intégrer », pas `À CORRIGER`
+  (un lien manquant ne casse pas la carte).
+- [ ] Rends dans ton verdict une ligne `LIENS : <liste retenue>` que l'orchestrateur reporte
+  dans `catalog/links.json`.
 
 ## Verdict (format de sortie)
 

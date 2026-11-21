@@ -759,3 +759,10 @@ dl.grid dd {
   overflow: auto;
   white-space: pre-wrap;
 }
+
+/* Candidates d'image (scripts/image-candidates.ts) dans la modale « Remplacer image » */
+.candidates-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 6px 0 12px; max-height: 340px; overflow-y: auto; }
+.candidate { padding: 0; border: 2px solid transparent; border-radius: 4px; background: var(--muted-soft, #333); cursor: pointer; display: flex; flex-direction: column; }
+.candidate:hover { border-color: var(--accent, #4a8); }
+.candidate img { width: 100%; aspect-ratio: 1.37; object-fit: cover; display: block; }
+.candidate span { font-size: 10px; padding: 2px 4px; color: #fff; }

@@ -56,6 +56,16 @@ pays sur le globe) et QUAND (l'année) : un sujet sans lieu réel est injouable.
   si tu ne peux pas les renommer sans date (« Attentats du World Trade Center », « Révolution
   française ») — aucune date n'est autorisée dans un titre (invariant `title-contains-date`).
 
+## Critère n°1 bis : compléter les séries (à notoriété égale)
+
+L'app regroupe des cartes en **séries** (Napoléon, éruptions, grands voyages, Sept Merveilles…
+— registre `catalog/links.json`) : le joueur qui en finit une gagne un titre. À notoriété
+comparable, **préfère un sujet qui complète une série existante** (merveille manquante,
+grande éruption absente, souveraine célèbre) ou qui en **amorce une nouvelle** évidente avec
+des cartes déjà au catalogue. Mets l'`id` visé dans le champ `series` du sujet (manifest) ;
+une série nouvelle est notée `"new:<nom>"` et sera validée par Valentin. Ce critère passe
+**après** la notoriété : jamais un sujet obscur juste pour boucher une série.
+
 ## Critère n°2 : l'équilibre du catalogue (secondaire, départage les ex æquo)
 
 Tu regardes ce qui manque (lacunes par ère, région, type) et tu appliques la stratégie
@@ -194,7 +204,7 @@ ISO. Le fichier contient :
     { "axis": "type", "key": "treaty", "missingPct": 1.8 }
   ],
   "subjects": [
-    { "slug": "...", "subjectKey": "...", "titleDraft": "...", "eraHint": "...", "regionHint": ..., "typeHint": "...", "notoriety": 4, "reasoning": "..." },
+    { "slug": "...", "subjectKey": "...", "titleDraft": "...", "eraHint": "...", "regionHint": ..., "typeHint": "...", "notoriety": 4, "series": "eruptions" | "new:<nom>" | null, "reasoning": "..." },
     …
   ]
 }
