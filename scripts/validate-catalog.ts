@@ -3,6 +3,7 @@ import path from "node:path";
 import { loadCardsFromDir } from "./_lib/load-cards.js";
 import { normVerb, runInvariants, type Issue } from "./_lib/invariants.js";
 import { PATHS, ensureDir, nowStamp, writeText } from "./_lib/io.js";
+import { checkLinks } from "./_lib/links.js";
 
 function formatIssues(issues: Issue[]): string {
   if (issues.length === 0) return "_(aucun)_\n";
@@ -31,7 +32,7 @@ function main(): number {
   );
 
   // Invariant-level issues
-  const invariantIssues = runInvariants(result.cards);
+  const invariantIssues = [...runInvariants(result.cards), ...checkLinks(result.cards)];
 
   const errors = [...schemaErrors, ...invariantIssues.filter((i) => i.severity === "error")];
   const warnings = invariantIssues.filter((i) => i.severity === "warning");

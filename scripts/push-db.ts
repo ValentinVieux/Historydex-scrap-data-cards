@@ -9,6 +9,7 @@
 //   npm run push:db                       # diff + push delta
 //   npm run push:db -- --dry-run          # diff seulement, sans push
 //   npm run push:db -- --max-dex 120      # ne pousse que dexNum ≤ 120
+//   npm run push:db -- --next 25          # publie les 25 prochaines cartes approuvées absentes de la base (hebdo)
 //   npm run push:db -- --allow-untranslated  # pousse même si des cartes n'ont
 //                                            # pas toutes leurs locales cibles
 //
@@ -18,8 +19,12 @@
 //     Si ce n'est pas le cas : cd ../app/historydex && npx instant-cli push schema
 
 import { computeDiff, pushDelta, type PushProgress } from "./_lib/push-db.js";
+import { db } from "./_lib/instantdb-client.js";
+import { loadCardsFromDir } from "./_lib/load-cards.js";
+import { PATHS } from "./_lib/io.js";
+import { linksPayload, loadLinks } from "./_lib/links.js";
 
-function parseArgs(): { dryRun: boolean; maxDex: number | undefined; retranslate: boolean; allowUntranslated: boolean } {
+function parseArgs(): { dryRun: boolean; maxDex: number | undefined; retranslate: boolean; allowUntranslated: boolean; next: number | undefined } {
   const args = process.argv.slice(2);
   const dryRun = args.includes("--dry-run");
   // Force le ré-envoi des cardTranslations même si la version correspond (la
@@ -44,7 +49,15 @@ function parseArgs(): { dryRun: boolean; maxDex: number | undefined; retranslate
     }
     maxDex = parseInt(val, 10);
   }
-  return { dryRun, maxDex, retranslate, allowUntranslated };
+  // --next N : publie les N prochaines cartes approuvées absentes de la base
+  // (publication hebdomadaire). Résolu en --max-dex dans main().
+  const nextIdx = args.indexOf("--next");
+  const next = nextIdx >= 0 ? Number(args[nextIdx + 1]) : undefined;
+  if (next != null && !(Number.isInteger(next) && next > 0)) {
+    console.error(`--next demande un entier > 0 (reçu: ${args[nextIdx + 1] ?? "rien"})`);
+    process.exit(2);
+  }
+  return { dryRun, maxDex, retranslate, allowUntranslated, next };
 }
 
 function fmtDexList(arr: Array<{ dexNum: string }>, limit = 5): string {
@@ -53,7 +66,20 @@ function fmtDexList(arr: Array<{ dexNum: string }>, limit = 5): string {
 }
 
 async function main(): Promise<number> {
-  const { dryRun, maxDex, retranslate, allowUntranslated } = parseArgs();
+  const { dryRun, retranslate, allowUntranslated, next } = parseArgs();
+  let { maxDex } = parseArgs();
+  if (next != null) {
+    // Les N plus petits dexNum approuvés absents de la base → borne --max-dex.
+    // ponytail: un second computeDiff (lecture DB en double), acceptable une fois par semaine.
+    const all = await computeDiff({});
+    const pending = all.toCreate.map((c) => Number(c.dexNum)).sort((a, b) => a - b);
+    if (pending.length === 0) {
+      console.log("[push:db] --next : aucune carte approuvée en attente de publication.");
+      return 0;
+    }
+    maxDex = pending[Math.min(next, pending.length) - 1];
+    console.log(`[push:db] --next ${next} : ${Math.min(next, pending.length)} carte(s) à publier (${pending[0]}…${maxDex}), ${Math.max(0, pending.length - next)} restante(s) ensuite.`);
+  }
 
   console.log(`[push:db] ${dryRun ? "DRY-RUN — aucun changement réel ne sera poussé." : "Push effectif vers InstantDB."}`);
   if (maxDex != null) console.log(`[push:db] Restriction --max-dex ${maxDex}`);
@@ -140,8 +166,73 @@ async function main(): Promise<number> {
   return 0;
 }
 
+// Relevé de la file de publication hebdo → pushWatermarks.cardQueue, lu par le site de stats
+// (app : lib/admin/contentRunway.ts, section « Le contenu »). Runs réels seulement, best-effort :
+// un échec ici ne fait pas échouer le push.
+const PUSH_WATERMARK_ID = "b0a70000-0000-4000-8000-c00000000002"; // miroir de ../app/historydex/scripts/send-new-card-push.ts
+const WEEKLY_LOT = 25; // miroir de scripts/weekly-publish.cmd (--next 25)
+
+/** Prochain lundi 9 h (heure locale du PC, cf. tâche planifiée) en 'YYYY-MM-DD'. */
+function nextPublishKey(now = new Date()): string {
+  const d = new Date(now);
+  const add = (8 - d.getDay()) % 7; // 0 = lundi
+  d.setDate(d.getDate() + (add === 0 && d.getHours() >= 9 ? 7 : add));
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+async function recordQueue(): Promise<void> {
+  try {
+    const d = await computeDiff({});
+    const incomplete = new Set(d.untranslated.map((u) => u.dexNum));
+    const pending = d.toCreate.map((c) => c.dexNum).sort((a, b) => Number(a) - Number(b));
+    const ready = pending.filter((n) => !incomplete.has(n));
+    const lot = ready.slice(0, WEEKLY_LOT);
+    const inPrep = loadCardsFromDir(PATHS.cards).cards.filter((c) => c.data.editorial.status === "reviewed").length;
+    const cardQueue = {
+      ready: ready.length,
+      incomplete: pending.length - ready.length,
+      inPrep,
+      lotSize: WEEKLY_LOT,
+      nextLot: lot.length ? `${lot[0]}–${lot[lot.length - 1]}` : null,
+      nextPublishKey: nextPublishKey(),
+      updatedAt: Date.now(),
+    };
+    await db.transact([db.tx.pushWatermarks[PUSH_WATERMARK_ID]!.update({ cardQueue })]);
+    console.log(`[push:db] File relevée pour le site de stats : ${cardQueue.ready} prêtes, ${cardQueue.inPrep} en préparation.`);
+  } catch (err) {
+    console.warn(`[push:db] File de publication non relevée (site de stats) : ${(err as Error).message}`);
+  }
+}
+
+// Registre des séries/relations (catalog/links.json) → catalogStats.links, lu par l'app
+// (lib/links). Filtré aux cartes PUBLIÉES : une série ne montre que ce que le joueur peut
+// collectionner (elle grandit avec la publication hebdo). Écrit seulement si le contenu
+// change. Best-effort, runs réels seulement.
+const CATALOG_STATS_ID = "ca7a1057-0000-4000-8000-c00000000001"; // miroir de scripts/_lib/push-db.ts
+
+async function syncLinks(): Promise<void> {
+  try {
+    const res = await db.query({
+      cards: { $: { fields: ["dexNum"], limit: 100_000 } },
+      catalogStats: { $: { where: { id: CATALOG_STATS_ID }, fields: ["links"] } },
+    });
+    const published = new Set((res.cards ?? []).map((c) => String((c as { dexNum: string }).dexNum)));
+    const payload = linksPayload(loadLinks(), published);
+    const current = (res.catalogStats?.[0] as { links?: { series?: unknown; relations?: unknown } } | undefined)?.links;
+    if (JSON.stringify({ series: current?.series, relations: current?.relations }) === JSON.stringify(payload)) return;
+    await db.transact([db.tx.catalogStats[CATALOG_STATS_ID]!.update({ links: { ...payload, updatedAt: Date.now() } })]);
+    console.log(`[push:db] Séries publiées : ${payload.series.length} séries, ${payload.relations.length} relations.`);
+  } catch (err) {
+    console.warn(`[push:db] Séries non publiées : ${(err as Error).message}`);
+  }
+}
+
 main()
-  .then((code) => process.exit(code))
+  .then(async (code) => {
+    if (code === 0 && !parseArgs().dryRun) await syncLinks();
+    if (code === 0 && !parseArgs().dryRun) await recordQueue();
+    process.exit(code);
+  })
   .catch((err) => {
     console.error("\n✗ Échec push:db :", err);
     process.exit(1);

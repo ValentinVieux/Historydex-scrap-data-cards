@@ -25,9 +25,12 @@ npm run check              # = validate && report
 npm run push:db            # diff vs DB + push delta (texte + images) — idempotent
 npm run push:db -- --dry-run               # diff seulement, sans pousser
 npm run push:db -- --max-dex 120           # restreint aux dexNum ≤ 120
+npm run push:db -- --next 25               # publie les 25 prochaines cartes approuvées absentes de la base (publication hebdo)
 npm run wipe-db            # vide la table cards en DB (double confirmation : taper "WIPE")
 npm run normalize -- data/raw/<slug>.json  # raw → data/cards/ (utilitaire CLI)
 npm run fetch-images       # télécharge les images Wikipedia → data/_images-cache/
+npm run image-candidates -- --dex 1047,1048 [--query "…"]   # candidates libres (Wikipedia FR/EN + Commons, ≥ 800×584, licence libre) + planche contact → data/_images-candidates/<dex>/
+npm run apply-image-picks -- <picks.jsonl> [--apply]        # applique le choix du juge (sous-agent) : cache + crop 1.37 + _index.json (low → à revoir dans review-images)
 npm run review-images      # app de review interactive (recadrage + bouton Approuver + bouton Push to DB)
 npm run verify-geo         # recoupe (lat,lon) ↔ lieu nommé via Nominatim → reports/geo-verify-<ts>.md (advisoire)
 npm run verify-geo -- --card <slug>        # un seul sujet (utilisé par l'agent card-qa)
@@ -47,6 +50,8 @@ npx tsx scripts/apply-body-rewrites.ts <rewrites.jsonl> [--apply]    # applique 
 ```
 
 `validate` exit 1 sur erreur bloquante. `push:db` ne pousse que les cartes à `editorial.status === "approved"`, refuse de tourner si l'une d'elles est invalide, et ne pousse que le delta (cartes neuves + `local.contentVersion > db.contentVersion` côté texte ; `sha256(_images-final/<dexNum>.jpg) ≠ db.imageHash` côté image). Il **calcule `eraSort`** pour chaque carte (visibilité immédiate dans la grille Dex sans attendre le backfill cron) et **recale le singleton `catalogStats`** (cardCount + eraCounts, les « X / N » du profil/Dex) en fin de push quand des cartes ont été créées, puis **déclenche la notif joueurs « 🆕 nouvelles cartes »** (hook `notifyNewCards` → `<repo app>/scripts/send-new-card-push.ts --apply`, repo app = `HISTORYDEX_APP_DIR` sinon `../app/historydex` ou `../Historydex` (`scripts/_lib/app-dir.ts`), watermark anti-doublon, no-op sans `EXPO_ACCESS_TOKEN` dans le `.env` de l'app ; le cron quotidien est débranché, secours manuel = workflow_dispatch `new-card-push.yml`). **Gate traduction** : `push:db` refuse un push réel si une carte approuvée n'a pas toutes ses locales cibles (`display.locales.{en,es,de,it,pt}`) — lance `/translate-cards-mt` avant, ou `--allow-untranslated` pour forcer (le dry-run liste les cartes concernées sans bloquer).
+
+**Publication hebdomadaire (depuis 2026-11-15)** : la tâche planifiée Windows « HistoryDex - publication hebdo » (lundi 9h, ce PC allumé et session ouverte) lance `scripts/weekly-publish.cmd` → `backup:data` puis `push:db -- --next 25`, journal `reports/weekly-publish-<date>.log`. Sans `--allow-untranslated` : une carte approuvée incomplète fait échouer le push. **Donc garder au moins 25 cartes approuvées d'avance, traduites dans les 26 langues** (les 15 de la vague 2026-11 se traduisent désormais aussi dans le pipeline : `translate-cards-mt.ts <loc> --dex … --no-mt --apply` + sous-agents + `merge-translations.ts <loc> --dex … --apply`, codes Azure ajoutés). Gérer la tâche : `schtasks /Query /TN "HistoryDex - publication hebdo"`, `/Change /DISABLE` pour suspendre.
 
 **Traductions faites côté app → à rapatrier AVANT le prochain `push:db`** (sur le poste qui a `data/cards`) :
 depuis 2026-11, le catalogue des 15 langues de la vague 2026-11 (ru, zh-Hans, cs, el, ro, uk, vi, id, hu, ar, he, sv, da, nb, fi) est traduit **côté app** (`<repo app>/.claude/skills/translate-catalog`, écriture directe des `cardTranslations` en `status:'machine'`, teaser + placeLabel compris). Ces lignes n'existent qu'en base.
@@ -88,6 +93,7 @@ npm run validate                                       # puis seulement push:db
 | `data/_images-cache/` | Images source téléchargées de Wikipedia (gitignorées). |
 | `data/_images-final/` | Images rognées validées via l'app de review (gitignorées, prêtes à uploader). |
 | `reports/` | Rapports horodatés (validation, distribution, export). |
+| `catalog/links.json` | **Registre des séries et relations entre cartes** (suivi par git, format miroir de `lib/links/data.ts` côté app). Séries : `{id, icon, name, titleName?, dexNums}` dans l'ordre du temps ; relations : `{from, to, kind, why?}`, kind ∈ creation/cause/suite/partie/sujet/lieu/perso. Contrôlé par `validate` (`links-*`, `series-*`, `relation-*`) ; alimenté par la section « Liens et séries proposés » du researcher, filtrée par `card-qa`. |
 | `.claude/rules/` | Règles éditoriales / recherche / validation / export. |
 | `.claude/agents/` | Subagents (researcher, verifier, editor, balancer, qa, validator). |
 | `.claude/skills/` | Skills user-invocables qui orchestrent les agents. |
@@ -112,7 +118,14 @@ npm run validate                                       # puis seulement push:db
 
 ## Workflow images d'illustration
 
-Les cartes ont une image associée (téléchargée de Wikipedia). L'app les rend en `cover` centré, donc un sujet décentré dans l'image source est tronqué. Le pipeline produit donc une version **finale rognée** au ratio cible (800×1112, ~0.72) :
+Les cartes ont une image associée (téléchargée de Wikipedia). L'app les rend en `cover` centré, donc un sujet décentré dans l'image source est tronqué. Le pipeline produit donc une version **finale rognée** au ratio cible **paysage 1.37 (800×584)** — c'est le format de l'app de review et de `SessionCardZoomModal` (carte 0.72, image paysage dedans).
+
+**Choix automatique (depuis 2026-11-15, recommandé pour les nouvelles cartes)** :
+1. `npm run image-candidates -- --dex <liste>` — collecte jusqu'à 12 candidates par carte (images des articles Wikipedia FR+EN, recherche Commons orientée par type : « illustration » pour `text`, « painting » pour guerres/traités…), filtre licence libre / ≥ 800×584 / pas de drapeau-blason-carte-logo, et écrit une planche contact `sheet.jpg` + un brief.
+2. Sous-agent juge (pas de clé API ici) : lit chaque planche, écarte ce qui **trahit la réponse** (texte daté/situé, page de titre, carte, drapeau, monument-réponse), le **portrait de l'auteur/inventeur**, les homonymes ; préfère une scène de l'œuvre / l'objet ; donne la boîte du sujet (fractions) et une confiance `high`/`low` → `picks.jsonl`. `--query "…"` pour relancer une recherche ciblée quand rien ne convient.
+3. `npm run apply-image-picks -- <picks.jsonl> --apply` — cadrage 1.37 qui contient le sujet, `_images-final/<dex>.jpg`, `_index.json` (`crop.source = "vision"`, attribution Commons). `low` ⇒ `crop.reviewed = false` : la carte ressort à revoir dans l'app de review. Ne touche jamais un crop humain déjà validé.
+
+**Chemin manuel historique** :
 
 1. **`npm run fetch-images`** — télécharge les originaux dans `data/_images-cache/<dexNum>.<ext>`. Idempotent (skip si déjà présent, sauf `--force`). Scanne `data/cards/` (toutes cartes, indépendamment de `editorial.status`).
 2. **`npm run review-images`** — ouvre l'app de review sur `http://localhost:5174`. Liste triée par `dexNum`, les cartes au statut `editorial.status = "reviewed"` sont marquées d'un tag « REVIEWED » bleu :
