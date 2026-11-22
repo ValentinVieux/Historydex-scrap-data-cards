@@ -154,6 +154,7 @@ const COUNTRY_FR: Record<string, string> = {
   NZ: "Nouvelle-Zélande",
   PG: "Papouasie-Nouvelle-Guinée",
   FJ: "Fidji",
+  TO: "Tonga",
   PF: "Polynésie française",
   RE: "La Réunion",
   MU: "Maurice",
