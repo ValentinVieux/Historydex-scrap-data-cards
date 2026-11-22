@@ -187,8 +187,9 @@ export function localeTextOf(card: Card, locale: string): LocaleText | null {
 
 export function buildTranslationRow(card: Card, locale: string, loc: LocaleText): CardTranslationRow {
   // Pays = exonyme localisé dans la locale cible (Intl) ; repli sur le nom de lieu
-  // canonique FR si pas de countryCode (ex. Lune, océan, région diffuse).
-  const country = countryName(card.canonical.place.countryCode, locale) ?? card.canonical.place.placeCanonicalName;
+  // traduit de la locale si pas de countryCode (ex. océan, région diffuse, Jérusalem-Est au statut
+  // contesté) — le nom canonique FR seulement en dernier recours.
+  const country = countryName(card.canonical.place.countryCode, locale) ?? (loc.placeLabel || card.canonical.place.placeCanonicalName);
   const row: CardTranslationRow = {
     locale,
     dexNum: card.dexNum,
