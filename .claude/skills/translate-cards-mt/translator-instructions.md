@@ -31,7 +31,7 @@ La tâche te donne `<loc>` (la langue) et `<lot>` (le numéro du lot, par exempl
 
 Écris les fichiers avec l'outil Write, jamais avec `node -e`.
 
-**Tes fichiers de travail intermédiaires et tes scripts de contrôle portent le préfixe `<loc>-`**, par exemple `<loc>-part1.jsonl` ou `<loc>-check.mjs`. Plusieurs traducteurs tournent en parallèle dans le même dossier temporaire : un nom générique comme `p1.jsonl` ou `check.mjs` serait écrasé par celui d'une autre langue (incident du 2026-11-21).
+**Tes fichiers de travail intermédiaires et tes scripts de contrôle portent le préfixe `<loc>-<lot>-`**, par exemple `<loc>-<lot>-part1.jsonl` ou `<loc>-<lot>-check.mjs` (deux lots d'une même langue peuvent tourner en même temps). Plusieurs traducteurs tournent en parallèle dans le même dossier temporaire : un nom générique comme `p1.jsonl` ou `check.mjs` serait écrasé par celui d'une autre langue (incident du 2026-11-21).
 
 ## Règles
 
