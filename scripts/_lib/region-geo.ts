@@ -168,6 +168,8 @@ const EXTRA_ISLANDS: readonly ExtraIsland[] = [
   { name: "Île de Pâques (Rapa Nui)", regionId: 8, ring: box(-110, -28, -108.5, -26.5) },
   { name: "Yap (Micronésie)", regionId: 8, ring: box(137, 8.5, 139, 10.5) },
   { name: "Tonga", regionId: 8, ring: box(-176.3, -22.5, -173.5, -15.5) },
+  // Synchro avec l'app (extraIslands.ts, ajout 2026-11-23 pour la carte 1716 Iwo Jima).
+  { name: "Iwo Jima", regionId: 6, ring: box(141.1, 24.6, 141.5, 25) },
   // Synchro avec l'app (extraIslands.ts, ajout 2026-07-20 pour la carte 742 Séga).
   { name: "Maurice", regionId: 5, ring: box(57.2, -20.6, 57.85, -19.95) },
   // Caraïbes & Amériques (R9)

@@ -6,6 +6,7 @@
       "name": "Napoléon",
       "titleName": "Grognard de l'Empire",
       "dexNums": [
+        "1683",
         "1227",
         "1539",
         "1420",
@@ -22,7 +23,8 @@
         "961",
         "1543",
         "045",
-        "982"
+        "982",
+        "1647"
       ]
     },
     {
@@ -45,8 +47,10 @@
         "759",
         "180",
         "677",
+        "1583",
         "884",
-        "562"
+        "562",
+        "1596"
       ]
     },
     {
@@ -82,7 +86,8 @@
         "435",
         "609",
         "1148",
-        "1149"
+        "1149",
+        "1680"
       ]
     },
     {
@@ -101,6 +106,7 @@
         "051",
         "147",
         "973",
+        "1672",
         "101",
         "268"
       ]
@@ -204,6 +210,7 @@
         "828",
         "714",
         "080",
+        "1723",
         "736",
         "1274",
         "348",
@@ -267,7 +274,8 @@
         "091",
         "1373",
         "440",
-        "096"
+        "096",
+        "1666"
       ]
     },
     {
@@ -295,13 +303,19 @@
         "370",
         "165",
         "863",
+        "1713",
         "475",
+        "1611",
+        "1603",
         "221",
+        "1622",
         "799",
         "279",
         "128",
         "398",
-        "470"
+        "1649",
+        "470",
+        "1699"
       ]
     },
     {
@@ -335,10 +349,12 @@
         "247",
         "1051",
         "208",
+        "1616",
         "1054",
         "1053",
         "866",
         "227",
+        "1633",
         "823"
       ]
     },
@@ -350,9 +366,12 @@
       "dexNums": [
         "212",
         "648",
+        "1590",
         "788",
         "385",
+        "1593",
         "581",
+        "1711",
         "321",
         "1406",
         "374",
@@ -366,6 +385,7 @@
         "040",
         "653",
         "761",
+        "1653",
         "1110",
         "478",
         "288",
@@ -429,6 +449,7 @@
       "titleName": "Plénipotentiaire",
       "dexNums": [
         "413",
+        "1600",
         "615",
         "216",
         "841",
@@ -462,22 +483,27 @@
         "971",
         "968",
         "465",
+        "1663",
         "1423",
         "144",
         "969",
         "970",
         "1373",
+        "1662",
+        "1665",
         "143",
         "1478",
         "1205",
         "1482",
         "1577",
         "423",
+        "1664",
         "367",
         "1204",
         "050",
         "446",
-        "1552"
+        "1552",
+        "1716"
       ]
     },
     {
@@ -511,6 +537,7 @@
         "641",
         "119",
         "1183",
+        "1607",
         "1359",
         "372",
         "269",
@@ -618,6 +645,8 @@
         "1548",
         "972",
         "719",
+        "448",
+        "1670",
         "053"
       ]
     },
@@ -644,6 +673,7 @@
         "1502",
         "483",
         "1303",
+        "1604",
         "1470"
       ]
     },
@@ -669,6 +699,7 @@
         "011",
         "471",
         "487",
+        "1709",
         "1174",
         "1493"
       ]
@@ -680,8 +711,10 @@
       "dexNums": [
         "232",
         "366",
+        "1726",
         "430",
         "1528",
+        "1521",
         "035"
       ]
     },
@@ -693,6 +726,9 @@
         "594",
         "1511",
         "856",
+        "1618",
+        "1614",
+        "1615",
         "231"
       ]
     },
@@ -702,8 +738,10 @@
       "name": "Les califats",
       "dexNums": [
         "1516",
+        "1710",
         "1469",
-        "1503"
+        "1503",
+        "1617"
       ]
     },
     {
@@ -714,8 +752,10 @@
         "365",
         "164",
         "1519",
+        "1650",
         "1433",
         "1547",
+        "1657",
         "1461"
       ]
     },
@@ -737,6 +777,8 @@
       "icon": "dance",
       "name": "Les danses du monde",
       "dexNums": [
+        "1638",
+        "1639",
         "551",
         "744",
         "1416",
@@ -749,7 +791,8 @@
         "1529",
         "693",
         "1379",
-        "1564"
+        "1564",
+        "1675"
       ]
     },
     {
@@ -760,7 +803,8 @@
         "596",
         "1563",
         "351",
-        "1481"
+        "1481",
+        "1673"
       ]
     },
     {
@@ -777,7 +821,8 @@
         "599",
         "1562",
         "400",
-        "1089"
+        "1089",
+        "1674"
       ]
     },
     {
@@ -785,6 +830,7 @@
       "icon": "music",
       "name": "Légendes de la musique populaire",
       "dexNums": [
+        "1658",
         "1480",
         "1080",
         "1421",
@@ -823,7 +869,9 @@
         "160",
         "1233",
         "1567",
-        "1245"
+        "1245",
+        "1729",
+        "1676"
       ]
     },
     {
@@ -834,7 +882,8 @@
         "1250",
         "1249",
         "1251",
-        "1568"
+        "1568",
+        "1728"
       ]
     },
     {
@@ -845,8 +894,10 @@
         "1392",
         "331",
         "1252",
+        "1698",
         "1555",
-        "303"
+        "303",
+        "1718"
       ]
     },
     {
@@ -855,6 +906,9 @@
       "name": "Les grands ponts",
       "dexNums": [
         "846",
+        "1602",
+        "1700",
+        "1628",
         "987",
         "986",
         "1577"
@@ -868,6 +922,7 @@
         "1507",
         "134",
         "140",
+        "1668",
         "1581"
       ]
     },
@@ -907,6 +962,7 @@
         "239",
         "1415",
         "533",
+        "1585",
         "1484",
         "281",
         "293",
@@ -922,7 +978,8 @@
         "1497",
         "117",
         "852",
-        "857"
+        "857",
+        "1655"
       ]
     },
     {
@@ -931,6 +988,7 @@
       "name": "Les colosses de pierre",
       "dexNums": [
         "445",
+        "1592",
         "1500",
         "064",
         "294"
@@ -952,10 +1010,14 @@
       "icon": "crown",
       "name": "Les palais",
       "dexNums": [
+        "1599",
         "978",
         "174",
         "979",
-        "1526"
+        "1526",
+        "1635",
+        "1631",
+        "1620"
       ]
     },
     {
@@ -988,8 +1050,462 @@
       "name": "Inventions préhistoriques",
       "dexNums": [
         "417",
+        "1586",
         "199",
         "1488"
+      ]
+    },
+    {
+      "id": "hymnes",
+      "icon": "music",
+      "name": "Les hymnes",
+      "dexNums": [
+        "1637",
+        "1107",
+        "1652"
+      ]
+    },
+    {
+      "id": "lieuxdesavoir",
+      "icon": "book",
+      "name": "Les premiers lieux de savoir",
+      "dexNums": [
+        "876",
+        "1609",
+        "066",
+        "682",
+        "238"
+      ]
+    },
+    {
+      "id": "monasteres",
+      "icon": "cross",
+      "name": "Les monastères",
+      "dexNums": [
+        "1394",
+        "1345",
+        "467",
+        "1605",
+        "1632"
+      ]
+    },
+    {
+      "id": "sanctuairesroc",
+      "icon": "column",
+      "name": "Les sanctuaires taillés dans la roche",
+      "dexNums": [
+        "499",
+        "201",
+        "873",
+        "874",
+        "1606",
+        "235"
+      ]
+    },
+    {
+      "id": "sanctuairesbouddhiques",
+      "icon": "candle",
+      "name": "Les sanctuaires bouddhiques",
+      "dexNums": [
+        "407",
+        "263",
+        "186",
+        "1613"
+      ]
+    },
+    {
+      "id": "boissonsdenrees",
+      "icon": "wheat",
+      "name": "Boissons et denrées",
+      "dexNums": [
+        "1583",
+        "1608",
+        "664",
+        "324",
+        "1732"
+      ]
+    },
+    {
+      "id": "cathedralesgothiques",
+      "icon": "column",
+      "name": "Les cathédrales gothiques",
+      "dexNums": [
+        "854",
+        "1601",
+        "172",
+        "068"
+      ]
+    },
+    {
+      "id": "megalithes",
+      "icon": "column",
+      "name": "Les mégalithes",
+      "dexNums": [
+        "006",
+        "105",
+        "1587",
+        "1487",
+        "001",
+        "758",
+        "486"
+      ]
+    },
+    {
+      "id": "grandesmosquees",
+      "icon": "star",
+      "name": "Les grandes mosquées",
+      "dexNums": [
+        "122",
+        "850",
+        "1413",
+        "1714",
+        "515",
+        "497",
+        "1629",
+        "501"
+      ]
+    },
+    {
+      "id": "japonedo",
+      "icon": "laurel",
+      "name": "Le Japon d'Edo",
+      "dexNums": [
+        "078",
+        "402",
+        "276",
+        "1634",
+        "286",
+        "325",
+        "046"
+      ]
+    },
+    {
+      "id": "chinepuissances",
+      "icon": "swords",
+      "name": "La Chine face aux puissances",
+      "dexNums": [
+        "280",
+        "1223",
+        "1648",
+        "583"
+      ]
+    },
+    {
+      "id": "esclavageabolitions",
+      "icon": "hand",
+      "name": "Esclavage et abolitions",
+      "dexNums": [
+        "1630",
+        "1724",
+        "1446",
+        "1471",
+        "043",
+        "589",
+        "1641",
+        "1644"
+      ]
+    },
+    {
+      "id": "lumieres",
+      "icon": "book",
+      "name": "Les Lumières",
+      "dexNums": [
+        "1689",
+        "420",
+        "1060",
+        "1624"
+      ]
+    },
+    {
+      "id": "jacqueslouisdavid",
+      "icon": "paint",
+      "name": "Jacques-Louis David",
+      "dexNums": [
+        "1625",
+        "901",
+        "1420",
+        "900"
+      ]
+    },
+    {
+      "id": "nupeinture",
+      "icon": "paint",
+      "name": "Le nu en peinture",
+      "dexNums": [
+        "422",
+        "912",
+        "1627",
+        "138"
+      ]
+    },
+    {
+      "id": "avantgardes",
+      "icon": "paint",
+      "name": "Les avant-gardes du XXᵉ siècle",
+      "dexNums": [
+        "894",
+        "1659",
+        "093"
+      ]
+    },
+    {
+      "id": "grandsromans",
+      "icon": "book",
+      "name": "Les grands romans",
+      "dexNums": [
+        "317",
+        "1058",
+        "1643",
+        "1061",
+        "1066",
+        "447",
+        "1706"
+      ]
+    },
+    {
+      "id": "litteraturejeunesse",
+      "icon": "book",
+      "name": "La littérature jeunesse",
+      "dexNums": [
+        "1524",
+        "1068",
+        "1071",
+        "1693",
+        "1072",
+        "1645",
+        "450"
+      ]
+    },
+    {
+      "id": "grandsoperas",
+      "icon": "music",
+      "name": "Les grands opéras",
+      "dexNums": [
+        "489",
+        "813",
+        "1091",
+        "1093",
+        "1651",
+        "1092"
+      ]
+    },
+    {
+      "id": "grandsincendies",
+      "icon": "volcano",
+      "name": "Les grands incendies",
+      "dexNums": [
+        "1429",
+        "287",
+        "1160",
+        "1164",
+        "1679"
+      ]
+    },
+    {
+      "id": "telecommunications",
+      "icon": "globe",
+      "name": "Les télécommunications",
+      "dexNums": [
+        "457",
+        "480",
+        "1036",
+        "1035",
+        "1678"
+      ]
+    },
+    {
+      "id": "revolutionfrancaise",
+      "icon": "flag",
+      "name": "La Révolution française",
+      "dexNums": [
+        "1520",
+        "042",
+        "418",
+        "1684",
+        "1107",
+        "960",
+        "901",
+        "1553"
+      ]
+    },
+    {
+      "id": "leonard",
+      "icon": "paint",
+      "name": "Léonard de Vinci",
+      "dexNums": [
+        "1000",
+        "904",
+        "1685",
+        "154",
+        "003"
+      ]
+    },
+    {
+      "id": "michelange",
+      "icon": "sculpt",
+      "name": "Michel-Ange",
+      "dexNums": [
+        "1001",
+        "915",
+        "155",
+        "421",
+        "916",
+        "1686"
+      ]
+    },
+    {
+      "id": "romeimperiale",
+      "icon": "laurel",
+      "name": "Rome impériale",
+      "dexNums": [
+        "991",
+        "1694",
+        "1703",
+        "1170",
+        "997",
+        "1431"
+      ]
+    },
+    {
+      "id": "theatre",
+      "icon": "book",
+      "name": "Le théâtre",
+      "dexNums": [
+        "1003",
+        "1057",
+        "822",
+        "1688",
+        "797"
+      ]
+    },
+    {
+      "id": "grandssieges",
+      "icon": "swords",
+      "name": "Les grands sièges",
+      "dexNums": [
+        "955",
+        "363",
+        "959",
+        "1534",
+        "969",
+        "1701"
+      ]
+    },
+    {
+      "id": "tsars",
+      "icon": "crown",
+      "name": "Les tsars de Russie",
+      "dexNums": [
+        "220",
+        "1704",
+        "128",
+        "1657"
+      ]
+    },
+    {
+      "id": "bandedessinee",
+      "icon": "pencil",
+      "name": "La bande dessinée",
+      "dexNums": [
+        "1690",
+        "1691",
+        "1692"
+      ]
+    },
+    {
+      "id": "sallesspectacle",
+      "icon": "column",
+      "name": "Les grandes salles de spectacle",
+      "dexNums": [
+        "1591",
+        "1705",
+        "983"
+      ]
+    },
+    {
+      "id": "mathematiques",
+      "icon": "tablets",
+      "name": "Les mathématiques",
+      "dexNums": [
+        "1707",
+        "484",
+        "1386",
+        "648",
+        "1374"
+      ]
+    },
+    {
+      "id": "thebes",
+      "icon": "column",
+      "name": "Thèbes, cité d'Amon",
+      "dexNums": [
+        "1592",
+        "1708",
+        "1384",
+        "1383"
+      ]
+    },
+    {
+      "id": "cinema",
+      "icon": "star",
+      "name": "Le cinéma",
+      "dexNums": [
+        "1545",
+        "258",
+        "1731",
+        "1730"
+      ]
+    },
+    {
+      "id": "indemoghole",
+      "icon": "crown",
+      "name": "L'Inde moghole",
+      "dexNums": [
+        "781",
+        "1005",
+        "378",
+        "1719",
+        "245",
+        "077",
+        "039",
+        "1400"
+      ]
+    },
+    {
+      "id": "gratteciel",
+      "icon": "column",
+      "name": "Les gratte-ciel",
+      "dexNums": [
+        "985",
+        "1721",
+        "984"
+      ]
+    },
+    {
+      "id": "istanbul",
+      "icon": "pin",
+      "name": "Istanbul, de Byzance à Constantinople",
+      "dexNums": [
+        "1597",
+        "644",
+        "117",
+        "031",
+        "1712",
+        "515",
+        "497"
+      ]
+    },
+    {
+      "id": "incas",
+      "icon": "crown",
+      "name": "Les Incas",
+      "dexNums": [
+        "307",
+        "231",
+        "344",
+        "1186",
+        "355",
+        "1725"
       ]
     }
   ],
@@ -1902,6 +2418,12 @@
       "to": "583",
       "kind": "partie",
       "why": "La révolte des Boxers secoue la Chine des Qing finissants."
+    },
+    {
+      "from": "1193",
+      "to": "1648",
+      "kind": "partie",
+      "why": "Le Yuanmingyuan, jardins impériaux des Qing, est pillé puis incendié en 1860."
     },
     {
       "from": "280",
@@ -3625,6 +4147,863 @@
       "from": "1423",
       "to": "1577",
       "kind": "partie"
+    },
+    {
+      "from": "135",
+      "to": "1584",
+      "kind": "sujet",
+      "why": "À partir de la 4e édition (1866), l'ouvrage cite l'Archaeopteryx comme forme intermédiaire."
+    },
+    {
+      "from": "1184",
+      "to": "1600",
+      "kind": "partie",
+      "why": "Le traité de Verdun partage l'Empire carolingien entre les petits-fils de Charlemagne."
+    },
+    {
+      "from": "1600",
+      "to": "444",
+      "kind": "lieu",
+      "why": "Verdun, où les petits-fils de Charlemagne se partagent l'empire en 843, est aussi le théâtre de la bataille de 1916."
+    },
+    {
+      "from": "1589",
+      "to": "168",
+      "kind": "lieu",
+      "why": "Le Colisée est bâti à l'extrémité est du Forum, dans le même parc archéologique."
+    },
+    {
+      "from": "164",
+      "to": "1589",
+      "kind": "lieu",
+      "why": "Au bord du Forum, Auguste élève le temple dédié à César divinisé."
+    },
+    {
+      "from": "1589",
+      "to": "1171",
+      "kind": "lieu",
+      "why": "Curie et Rostres font du Forum le centre politique de la République."
+    },
+    {
+      "from": "1593",
+      "to": "788",
+      "kind": "perso",
+      "why": "Hypatie travaille avec son père Théon sur l'Almageste de Ptolémée."
+    },
+    {
+      "from": "1505",
+      "to": "1602",
+      "kind": "lieu",
+      "why": "Même ville, Florence."
+    },
+    {
+      "from": "1597",
+      "to": "1182",
+      "kind": "suite",
+      "why": "La capitale inaugurée en 330 devient le cœur de l'Empire romain d'Orient."
+    },
+    {
+      "from": "1597",
+      "to": "031",
+      "kind": "lieu",
+      "why": "Constantinople, inaugurée en 330, est prise par Mehmed II en 1453."
+    },
+    {
+      "from": "1597",
+      "to": "644",
+      "kind": "lieu",
+      "why": "Constantin achève l'hippodrome pour sa nouvelle capitale."
+    },
+    {
+      "from": "1597",
+      "to": "117",
+      "kind": "lieu",
+      "why": "Sainte-Sophie est bâtie dans la capitale fondée par Constantin."
+    },
+    {
+      "from": "1321",
+      "to": "1597",
+      "kind": "perso",
+      "why": "Même empereur : Constantin."
+    },
+    {
+      "from": "195",
+      "to": "1597",
+      "kind": "perso",
+      "why": "Constantin convoque Nicée pendant le chantier de sa capitale."
+    },
+    {
+      "from": "1590",
+      "to": "490",
+      "kind": "suite",
+      "why": "La réforme grégorienne de 1582 corrige la dérive du calendrier julien tout en gardant sa structure."
+    },
+    {
+      "from": "1583",
+      "to": "430",
+      "kind": "suite",
+      "why": "Diffusé jusqu'en Mésoamérique, le cacao y devient, des millénaires plus tard, une monnaie."
+    },
+    {
+      "from": "1592",
+      "to": "1384",
+      "kind": "lieu",
+      "why": "Même rive ouest de Thèbes."
+    },
+    {
+      "from": "267",
+      "to": "1598",
+      "kind": "partie",
+      "why": "Sigiriya est la capitale du royaume d'Anuradhapura sous Kassapa Iᵉʳ, avant que Moggallana ne ramène la capitale à Anuradhapura en 495."
+    },
+    {
+      "from": "417",
+      "to": "1586",
+      "kind": "suite",
+      "why": "Après les galets et éclats taillés, le biface est l'étape technique suivante de la taille de la pierre."
+    },
+    {
+      "from": "1599",
+      "to": "003",
+      "kind": "lieu",
+      "why": "La Joconde est exposée au Louvre."
+    },
+    {
+      "from": "1599",
+      "to": "888",
+      "kind": "lieu",
+      "why": "Le Radeau de la Méduse est exposé au Louvre."
+    },
+    {
+      "from": "1499",
+      "to": "1588",
+      "kind": "sujet",
+      "why": "La statue montre la louve allaitant les jumeaux du récit de fondation."
+    },
+    {
+      "from": "1588",
+      "to": "1171",
+      "kind": "suite",
+      "why": "Après la période des rois ouverte par la fondation, Rome devient une république."
+    },
+    {
+      "from": "1588",
+      "to": "1589",
+      "kind": "lieu",
+      "why": "Le Forum s'étend au pied du Palatin, berceau légendaire de la ville."
+    },
+    {
+      "from": "1603",
+      "to": "1502",
+      "kind": "perso",
+      "why": "Richard Cœur de Lion est son fils ; tous deux reposent à Fontevraud"
+    },
+    {
+      "from": "1178",
+      "to": "1604",
+      "kind": "lieu",
+      "why": "la mort du roi survient sur le site de l'antique Carthage"
+    },
+    {
+      "from": "1469",
+      "to": "1607",
+      "kind": "partie",
+      "why": "le sac de Bagdad est l'épisode final du califat abbasside"
+    },
+    {
+      "from": "1183",
+      "to": "1607",
+      "kind": "partie",
+      "why": "épisode des conquêtes de l'Empire mongol"
+    },
+    {
+      "from": "412",
+      "to": "1607",
+      "kind": "lieu",
+      "why": "la Maison de la sagesse de Bagdad prend fin avec le sac de 1258"
+    },
+    {
+      "from": "1182",
+      "to": "1606",
+      "kind": "partie",
+      "why": "Les églises rupestres de Göreme sont creusées et peintes dans la Cappadoce byzantine."
+    },
+    {
+      "from": "1619",
+      "to": "922",
+      "kind": "lieu",
+      "why": "les deux grandes fontaines baroques sculptées de Rome"
+    },
+    {
+      "from": "1619",
+      "to": "845",
+      "kind": "lieu",
+      "why": "même ville ; un bas-relief de la fontaine montre Agrippa, commanditaire de l'aqueduc et du premier Panthéon"
+    },
+    {
+      "from": "1621",
+      "to": "957",
+      "kind": "perso",
+      "why": "ses troupes l'emportent à Pavie, où François Ier est fait prisonnier"
+    },
+    {
+      "from": "1621",
+      "to": "668",
+      "kind": "perso",
+      "why": "il préside la Diète de Worms qui condamne Luther"
+    },
+    {
+      "from": "1621",
+      "to": "615",
+      "kind": "perso",
+      "why": "la paix d'Augsbourg est conclue au nom de l'empereur Charles Quint"
+    },
+    {
+      "from": "159",
+      "to": "1611",
+      "kind": "partie",
+      "why": "Les Zhou de Wu Zetian forment un interrègne au sein de la dynastie Tang."
+    },
+    {
+      "from": "470",
+      "to": "1620",
+      "kind": "perso",
+      "why": "Victoria, première souveraine à résider au palais (1837)"
+    },
+    {
+      "from": "1615",
+      "to": "1186",
+      "kind": "suite",
+      "why": "Vers 1470, la capitale chimú est conquise et intégrée à l'Empire inca."
+    },
+    {
+      "from": "1617",
+      "to": "066",
+      "kind": "creation",
+      "why": "Les Fatimides fondent la mosquée al-Azhar au Caire"
+    },
+    {
+      "from": "1617",
+      "to": "730",
+      "kind": "creation",
+      "why": "Le dinar fatimide est la monnaie d'or frappée par ce califat"
+    },
+    {
+      "from": "1617",
+      "to": "998",
+      "kind": "perso",
+      "why": "Saladin, vizir du dernier calife, met fin au califat en 1171"
+    },
+    {
+      "from": "1622",
+      "to": "125",
+      "kind": "perso",
+      "why": "figure centrale associée au massacre de la Saint-Barthélemy, rôle débattu"
+    },
+    {
+      "from": "1004",
+      "to": "1628",
+      "kind": "perso",
+      "why": "Soliman le Magnifique ordonne la construction du pont, achevé sous son règne."
+    },
+    {
+      "from": "1191",
+      "to": "1628",
+      "kind": "partie",
+      "why": "Ouvrage bâti dans l'Empire ottoman."
+    },
+    {
+      "from": "1626",
+      "to": "487",
+      "kind": "sujet",
+      "why": "le tableau représente la Tour de Babel biblique, que la tradition rapproche de l'Etemenanki"
+    },
+    {
+      "from": "1626",
+      "to": "816",
+      "kind": "lieu",
+      "why": "même peintre, même musée (Kunsthistorisches Museum de Vienne)"
+    },
+    {
+      "from": "897",
+      "to": "1627",
+      "kind": "lieu",
+      "why": "même peintre (Goya), même musée (Prado)"
+    },
+    {
+      "from": "898",
+      "to": "1627",
+      "kind": "lieu",
+      "why": "même peintre (Goya), même musée (Prado)"
+    },
+    {
+      "from": "653",
+      "to": "1631",
+      "kind": "lieu",
+      "why": "L'observatoire Jantar Mantar et le Hawa Mahal se trouvent tous deux dans la vieille ville de Jaipur."
+    },
+    {
+      "from": "393",
+      "to": "1635",
+      "kind": "suite",
+      "why": "Après la chute d'Ayutthaya et l'intermède de Thonburi, Rama Ier installe la nouvelle capitale siamoise à Bangkok"
+    },
+    {
+      "from": "1629",
+      "to": "335",
+      "kind": "lieu",
+      "why": "La mosquée borde au sud la place Naqsh-e Jahan, terrain royal de chogan"
+    },
+    {
+      "from": "1446",
+      "to": "1630",
+      "kind": "partie",
+      "why": "Elmina est l'une des principales étapes de la traite atlantique"
+    },
+    {
+      "from": "1195",
+      "to": "1630",
+      "kind": "partie",
+      "why": "premier grand établissement portugais sur la Côte-de-l'Or"
+    },
+    {
+      "from": "1634",
+      "to": "286",
+      "kind": "lieu",
+      "why": "Fukagawa, quartier d'Edo"
+    },
+    {
+      "from": "042",
+      "to": "1640",
+      "kind": "cause",
+      "why": "La Révolution porte la réforme des poids et mesures, instituée par la loi de 1795"
+    },
+    {
+      "from": "804",
+      "to": "1636",
+      "kind": "suite",
+      "why": "La région explorée par Hudson pour les Néerlandais devient la Nouvelle-Néerlande, où s'installe la colonie."
+    },
+    {
+      "from": "1650",
+      "to": "1198",
+      "kind": "perso",
+      "why": "impératrice d'Autriche, reine de Hongrie couronnée en 1867"
+    },
+    {
+      "from": "1658",
+      "to": "389",
+      "kind": "perso",
+      "why": "Armstrong, figure du jazz né à La Nouvelle-Orléans"
+    },
+    {
+      "from": "1649",
+      "to": "583",
+      "kind": "perso",
+      "why": "Cixi soutient les Boxers et déclare la guerre aux puissances étrangères en 1900."
+    },
+    {
+      "from": "1649",
+      "to": "1193",
+      "kind": "perso",
+      "why": "Impératrice douairière, elle domine la cour Qing de 1861 à 1908."
+    },
+    {
+      "from": "1649",
+      "to": "1546",
+      "kind": "perso",
+      "why": "Peu avant sa mort, Cixi désigne Puyi comme héritier du trône."
+    },
+    {
+      "from": "1649",
+      "to": "468",
+      "kind": "lieu",
+      "why": "Cixi gouverne derrière le rideau depuis la Cité interdite."
+    },
+    {
+      "from": "1030",
+      "to": "1654",
+      "kind": "suite",
+      "why": "De l'automobile à essence de Benz à la voiture produite en masse."
+    },
+    {
+      "from": "1660",
+      "to": "986",
+      "kind": "lieu",
+      "why": "Deux emblèmes de la baie de San Francisco, à environ 5 km l un de l autre."
+    },
+    {
+      "from": "962",
+      "to": "1655",
+      "kind": "cause",
+      "why": "Le vœu qui donne naissance à la basilique est formulé après la défaite de 1870."
+    },
+    {
+      "from": "213",
+      "to": "1655",
+      "kind": "lieu",
+      "why": "La Commune éclate sur la butte Montmartre, où la basilique est bâtie ensuite ; leur lien reste débattu."
+    },
+    {
+      "from": "1652",
+      "to": "213",
+      "kind": "sujet",
+      "why": "Ancien communard, Eugène Pottier en écrit les paroles, selon la tradition, au lendemain de la Commune."
+    },
+    {
+      "from": "049",
+      "to": "1657",
+      "kind": "cause",
+      "why": "La révolution de 1917 renverse le tsar puis porte au pouvoir les bolcheviks, qui détiennent et exécutent la famille impériale."
+    },
+    {
+      "from": "1662",
+      "to": "1373",
+      "kind": "suite",
+      "why": "Les familles raflées au Vél d'Hiv sont ensuite déportées vers Auschwitz-Birkenau."
+    },
+    {
+      "from": "1203",
+      "to": "1663",
+      "kind": "suite",
+      "why": "L'invasion rompt le pacte de non-agression de 1939."
+    },
+    {
+      "from": "1423",
+      "to": "1663",
+      "kind": "partie"
+    },
+    {
+      "from": "1663",
+      "to": "969",
+      "kind": "suite",
+      "why": "L'avance allemande de 1941 mène au siège de Léningrad."
+    },
+    {
+      "from": "1212",
+      "to": "1663",
+      "kind": "lieu",
+      "why": "Brest-Litovsk, lieu du traité de 1918 et première bataille de l'invasion."
+    },
+    {
+      "from": "144",
+      "to": "1665",
+      "kind": "suite",
+      "why": "Deux mois après Midway, les Alliés passent à l'offensive à Guadalcanal."
+    },
+    {
+      "from": "1441",
+      "to": "1661",
+      "kind": "perso",
+      "why": "Les camps de la Kolyma sont développés sous le pouvoir de Staline."
+    },
+    {
+      "from": "1666",
+      "to": "1218",
+      "kind": "suite",
+      "why": "Le massacre précède de quatre mois les accords qui mettent fin à la guerre de Bosnie."
+    },
+    {
+      "from": "1668",
+      "to": "499",
+      "kind": "lieu",
+      "why": "Le lac Nasser du barrage oblige à découper et déplacer les temples entre 1964 et 1968."
+    },
+    {
+      "from": "1667",
+      "to": "193",
+      "kind": "perso",
+      "why": "Jean-Paul II soutient publiquement Solidarność, née des accords de Gdańsk."
+    },
+    {
+      "from": "1474",
+      "to": "1669",
+      "kind": "suite",
+      "why": "La guerre du Golfe laisse Saddam Hussein au pouvoir sous un régime d'inspections dont les armes de destruction massive sont l'enjeu de 2003."
+    },
+    {
+      "from": "1423",
+      "to": "1664",
+      "kind": "partie"
+    },
+    {
+      "from": "423",
+      "to": "1664",
+      "kind": "suite",
+      "why": "Après le Débarquement et la percée de l'été 1944, les Alliés atteignent Paris."
+    },
+    {
+      "from": "1380",
+      "to": "1664",
+      "kind": "perso",
+      "why": "De Gaulle obtient l'envoi de la 2e DB et prononce le discours de l'Hôtel de Ville."
+    },
+    {
+      "from": "1036",
+      "to": "1678",
+      "kind": "suite",
+      "why": "Du premier téléphone portable au smartphone tactile."
+    },
+    {
+      "from": "172",
+      "to": "1679",
+      "kind": "lieu",
+      "why": "L'incendie ravage la cathédrale Notre-Dame de Paris."
+    },
+    {
+      "from": "1380",
+      "to": "1681",
+      "kind": "perso",
+      "why": "De Gaulle dissout l'Assemblée le 30 mai et ses partisans remportent les élections de juin."
+    },
+    {
+      "from": "1688",
+      "to": "797",
+      "kind": "creation",
+      "why": "Molière écrit Tartuffe et le joue avec sa troupe."
+    },
+    {
+      "from": "1688",
+      "to": "800",
+      "kind": "perso",
+      "why": "Louis XIV protège la troupe de Molière ; Tartuffe est créé devant lui à Versailles."
+    },
+    {
+      "from": "042",
+      "to": "1684",
+      "kind": "partie"
+    },
+    {
+      "from": "1684",
+      "to": "1553",
+      "kind": "suite",
+      "why": "Après l'arrestation, la monarchie constitutionnelle s'effondre et le roi est exécuté en 1793."
+    },
+    {
+      "from": "1520",
+      "to": "1684",
+      "kind": "perso",
+      "why": "Marie-Antoinette fait partie des fugitifs arrêtés à Varennes."
+    },
+    {
+      "from": "1689",
+      "to": "1060",
+      "kind": "creation",
+      "why": "Voltaire est l'auteur de Candide."
+    },
+    {
+      "from": "1683",
+      "to": "044",
+      "kind": "perso"
+    },
+    {
+      "from": "1683",
+      "to": "045",
+      "kind": "perso"
+    },
+    {
+      "from": "1683",
+      "to": "129",
+      "kind": "perso"
+    },
+    {
+      "from": "1683",
+      "to": "1539",
+      "kind": "perso"
+    },
+    {
+      "from": "1683",
+      "to": "318",
+      "kind": "perso",
+      "why": "Napoléon fait promulguer le Code civil."
+    },
+    {
+      "from": "1683",
+      "to": "1647",
+      "kind": "perso"
+    },
+    {
+      "from": "1687",
+      "to": "447",
+      "kind": "creation"
+    },
+    {
+      "from": "1687",
+      "to": "1062",
+      "kind": "creation"
+    },
+    {
+      "from": "1000",
+      "to": "1685",
+      "kind": "creation"
+    },
+    {
+      "from": "1001",
+      "to": "1686",
+      "kind": "creation"
+    },
+    {
+      "from": "421",
+      "to": "1686",
+      "kind": "lieu",
+      "why": "Le plafond et le Jugement dernier sont les deux œuvres de Michel-Ange dans la chapelle Sixtine."
+    },
+    {
+      "from": "1695",
+      "to": "166",
+      "kind": "perso",
+      "why": "Vercingétorix commande les Gaulois assiégés à Alésia et s'y rend."
+    },
+    {
+      "from": "1604",
+      "to": "1696",
+      "kind": "perso",
+      "why": "Louis IX fait bâtir la Sainte-Chapelle pour abriter la couronne d'épines."
+    },
+    {
+      "from": "1514",
+      "to": "1699",
+      "kind": "lieu",
+      "why": "Élisabeth II est couronnée à l'abbaye de Westminster."
+    },
+    {
+      "from": "1406",
+      "to": "1700",
+      "kind": "lieu",
+      "why": "Même ville, Prague."
+    },
+    {
+      "from": "1573",
+      "to": "1701",
+      "kind": "suite"
+    },
+    {
+      "from": "1701",
+      "to": "1666",
+      "kind": "perso",
+      "why": "Ratko Mladić, commandant de l'armée serbe de Bosnie, condamné pour les deux."
+    },
+    {
+      "from": "1701",
+      "to": "1218",
+      "kind": "suite"
+    },
+    {
+      "from": "1433",
+      "to": "1701",
+      "kind": "lieu"
+    },
+    {
+      "from": "1704",
+      "to": "133",
+      "kind": "perso"
+    },
+    {
+      "from": "1704",
+      "to": "341",
+      "kind": "perso"
+    },
+    {
+      "from": "1704",
+      "to": "1197",
+      "kind": "perso"
+    },
+    {
+      "from": "1633",
+      "to": "1692",
+      "kind": "sujet",
+      "why": "Dragon Ball commence comme une parodie de La Pérégrination vers l'Ouest ; Son Goku est inspiré du roi des singes."
+    },
+    {
+      "from": "1170",
+      "to": "1703",
+      "kind": "partie",
+      "why": "Les guerres daciques portent l'Empire romain vers son extension maximale sous Trajan."
+    },
+    {
+      "from": "1705",
+      "to": "1094",
+      "kind": "lieu",
+      "why": "Le Lac des cygnes est créé au Théâtre Bolchoï."
+    },
+    {
+      "from": "1070",
+      "to": "1706",
+      "kind": "perso",
+      "why": "Même auteur : Léon Tolstoï."
+    },
+    {
+      "from": "1383",
+      "to": "1708",
+      "kind": "lieu",
+      "why": "Karnak et Louxor sont reliés par l'allée de sphinx, parcourue lors de la fête d'Opet."
+    },
+    {
+      "from": "1708",
+      "to": "1494",
+      "kind": "lieu",
+      "why": "L'obélisque de la Concorde ornait l'entrée du temple de Louxor."
+    },
+    {
+      "from": "996",
+      "to": "1708",
+      "kind": "perso",
+      "why": "Ramsès II ajoute au temple son pylône et sa première cour."
+    },
+    {
+      "from": "1592",
+      "to": "1708",
+      "kind": "lieu",
+      "why": "Deux chantiers d'Amenhotep III à Thèbes, de part et d'autre du Nil."
+    },
+    {
+      "from": "1005",
+      "to": "1719",
+      "kind": "perso",
+      "why": "Le mausolée de son père est achevé sous son règne ; des historiens voient en Akbar son véritable commanditaire."
+    },
+    {
+      "from": "1719",
+      "to": "039",
+      "kind": "suite",
+      "why": "Le tombeau impérial dans un jardin, inauguré à Delhi, culmine avec le Taj Mahal."
+    },
+    {
+      "from": "781",
+      "to": "1719",
+      "kind": "partie"
+    },
+    {
+      "from": "1720",
+      "to": "268",
+      "kind": "perso",
+      "why": "La guerre est menée côté indien sous son gouvernement."
+    },
+    {
+      "from": "031",
+      "to": "1712",
+      "kind": "cause",
+      "why": "Après la prise de la ville, Mehmed II fait bâtir le bedesten pour relancer son commerce."
+    },
+    {
+      "from": "1709",
+      "to": "1174",
+      "kind": "perso",
+      "why": "Son règne marque l'apogée de l'empire néo-babylonien."
+    },
+    {
+      "from": "1709",
+      "to": "1493",
+      "kind": "perso",
+      "why": "La porte est construite sous son règne."
+    },
+    {
+      "from": "1709",
+      "to": "471",
+      "kind": "perso",
+      "why": "Jardins que la tradition lui attribue."
+    },
+    {
+      "from": "1709",
+      "to": "1579",
+      "kind": "perso",
+      "why": "Ses troupes détruisent le Temple en 587 ou 586 av. J.-C."
+    },
+    {
+      "from": "1710",
+      "to": "1469",
+      "kind": "perso",
+      "why": "Cinquième calife abbasside."
+    },
+    {
+      "from": "1710",
+      "to": "226",
+      "kind": "perso",
+      "why": "Personnage légendaire des contes."
+    },
+    {
+      "from": "1710",
+      "to": "412",
+      "kind": "lieu",
+      "why": "Même ville, Bagdad."
+    },
+    {
+      "from": "1715",
+      "to": "1480",
+      "kind": "perso",
+      "why": "Bob Marley, rastafari, fait de Hailé Sélassié une figure centrale de ses chansons."
+    },
+    {
+      "from": "1423",
+      "to": "1716",
+      "kind": "partie",
+      "why": "Iwo Jima est l'une des batailles les plus meurtrières de la guerre du Pacifique."
+    },
+    {
+      "from": "1727",
+      "to": "270",
+      "kind": "perso",
+      "why": "Fidel Castro dirige la guérilla qui prend le pouvoir lors de la Révolution cubaine."
+    },
+    {
+      "from": "1727",
+      "to": "448",
+      "kind": "perso",
+      "why": "Fidel Castro dirige Cuba pendant la crise des missiles."
+    },
+    {
+      "from": "1713",
+      "to": "1357",
+      "kind": "perso",
+      "why": "Zénobie gouverne Palmyre au nom de son fils."
+    },
+    {
+      "from": "080",
+      "to": "1723",
+      "kind": "suite",
+      "why": "Le premier voyage de Cook ouvre la carrière qui s'achève à Kealakekua lors du troisième."
+    },
+    {
+      "from": "392",
+      "to": "1723",
+      "kind": "lieu",
+      "why": "Même baie de Kealakekua, escale de 1779."
+    },
+    {
+      "from": "1724",
+      "to": "043",
+      "kind": "perso",
+      "why": "Sa lutte aboutit, après sa mort, à l'indépendance proclamée par Dessalines."
+    },
+    {
+      "from": "1683",
+      "to": "1724",
+      "kind": "perso",
+      "why": "Bonaparte envoie l'expédition qui l'arrête ; il meurt captif au fort de Joux."
+    },
+    {
+      "from": "1725",
+      "to": "355",
+      "kind": "perso",
+      "why": "Atahualpa est capturé à Cajamarca lors de la conquête de Pizarro."
+    },
+    {
+      "from": "1186",
+      "to": "1725",
+      "kind": "partie",
+      "why": "Atahualpa est le dernier souverain de l'Empire inca encore indépendant."
+    },
+    {
+      "from": "1726",
+      "to": "232",
+      "kind": "lieu",
+      "why": "Le temple se dresse au cœur de Tenochtitlán."
+    },
+    {
+      "from": "1726",
+      "to": "035",
+      "kind": "suite",
+      "why": "Le temple est détruit après la conquête de Tenochtitlán par Cortés."
     }
   ]
 }
